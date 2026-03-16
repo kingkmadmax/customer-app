@@ -8,13 +8,12 @@ export default function Footer() {
     <footer className="bg-black text-gray-300 py-5 mt-0">
       <div className=" mx-auto px-3  grid grid-cols-1 md:grid-cols-5 gap-1">
         
-        {/* Brand */}
+
         <div className="space-y-3">
           <h3 className="text-xl font-bold text-white">Exclusive</h3>
 
           <p className="text-sm">Subscription</p>
 
-          {/* Smaller text */}
           <p className="text-xs">
             Get 10% off your first rental
           </p>
