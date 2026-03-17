@@ -10,7 +10,7 @@ export default function Login() {
   const router = useRouter(); // I
   const handleLogin = () => {
     // Navigate to another page
-    router.push("/Pages/auth/SignUp"); // Replace with your target route
+    router.push("/"); // Replace with your target route
   };
 
   return (
