@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { FaSearch } from "react-icons/fa";
 import { ArchiveBoxIcon, BellIcon, HeartIcon } from "@heroicons/react/24/outline";
@@ -37,7 +38,7 @@ export function Header() {
         <BellIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
       </div>
       <div className="h-9 w-16 bg-white border border-white rounded-2xl flex items-center justify-center"
-      ><text className="text-sm  text-black sm:text-base cursor-pointer">Login</text>
+      ><span className="text-sm  text-black sm:text-base cursor-pointer">Login</span>
         
       </div>
 
