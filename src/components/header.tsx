@@ -1,47 +1,124 @@
 "use client";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { FaSearch } from "react-icons/fa";
 import { ArchiveBoxIcon, BellIcon, HeartIcon } from "@heroicons/react/24/outline";
 
 export function Header() {
-  return (
-    <header className="bg-black text-white p-2 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-2">
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-      {/* Logo */}
-      <div className="text-lg sm:text-xl font-bold">
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <header className="bg-black text-white w-full flex justify-between items-center px-6 py-3">
+
+      {/* LEFT (Logo) */}
+      <div className="text-lg">
         <Link href="/">ETHIOPIAN RENT</Link>
       </div>
 
-   
-      <nav className="w-full flex  flex-col sm:flex-row sm:w-auto gap-65 sm:gap-6">
-        <ul className="flex flex-col sm:flex-row gap-2 sm:gap-6 text-xs sm:text-sm">
-          <li><Link href="/home">Home</Link></li>
-          <li><Link href="/Notification">Contact</Link></li>
-          <li><Link href="/about">About</Link></li>
-        </ul>
-      </nav>
+      {/* RIGHT (Everything together) */}
+      <div className="flex items-center gap-6">
 
-     
-      <div className="flex items-center w-full sm:w-64 md:w-80 bg-white rounded border border-white px-2 h-9 sm:h-10">
-        <input
-          type="text"
-          placeholder="Search..."
-          className="flex-1 bg-transparent text-black placeholder-gray-400 text-xs sm:text-sm md:text-base focus:outline-none"
-        />
-        <FaSearch className="text-gray-500 text-sm sm:text-base ml-2" />
-      </div>
+        {/* NAV */}
+        <nav>
+          <div className="flex gap-5 text-sm items-start relative">
 
-      
-      <div className="flex gap-7">
-        <HeartIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-        <ArchiveBoxIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-        <BellIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-      </div>
-      <div className="h-9 w-16 bg-white border border-white rounded-2xl flex items-center justify-center"
-      ><span className="text-sm  text-black sm:text-base cursor-pointer">Login</span>
-        
-      </div>
+            {/* Categories with Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setOpen(!open)}
+                className="flex items-center "
+              >
+                Categories
+                <ChevronDownIcon
+                  className={`w-4 h-4 transform transition-transform duration-200 ${
+                    open ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
 
+              {open && (
+                <div className="absolute top-full left-0 mt-1 bg-black text-white rounded shadow w-48 z-50">
+                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:border-white hover:bg-white/10 transition-all duration-200">
+                    Electronics
+                  </div>
+                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:border-white hover:bg-white/10 transition-all duration-200">
+                    Vehicles
+                  </div>
+                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:border-white hover:bg-white/10 transition-all duration-200">
+                    Clothing
+                  </div>
+                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:border-white hover:bg-white/10 transition-all duration-200">
+                    Office Equipment
+                  </div>
+                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:border-white hover:bg-white/10 transition-all duration-200">
+                    Tools
+                  </div>
+                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:border-white hover:bg-white/10 transition-all duration-200">
+                    House
+                  </div>
+                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:border-white hover:bg-white/10 transition-all duration-200">
+                    Event Supplies
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Other links */}
+            <div>
+              <Link href="/notification" className="">
+                Contact
+              </Link>
+            </div>
+
+            <div>
+              <Link href="/about" className="">
+                About
+              </Link>
+            </div>
+          </div>
+        </nav>
+
+        {/* SEARCH */}
+        <div className="flex rounded-3xl items-center bg-transparent px-3 h-10 w-[400px] gap-2 border focus-within:bg-white focus-within:ring-2 focus-within:ring-black">
+          <input
+            type="text"
+            placeholder="Search..."
+            className="flex-1 bg-transparent text-black placeholder-gray-400 focus:outline-none text-sm"
+          />
+          <Link href="/search">
+            <FaSearch className="text-gray-500 text-sm" />
+          </Link>
+        </div>
+
+        {/* ICONS */}
+        <div className="flex gap-4">
+          <HeartIcon className="w-5 h-5" />
+          <ArchiveBoxIcon className="w-5 h-5" />
+          <BellIcon className="w-5 h-5" />
+        </div>
+
+        {/* LOGIN */}
+        <button className="bg-white text-black w-20 h-10 rounded-3xl text-sm flex items-center justify-center border-2 hover:bg-gray-200 transition">
+          Login
+        </button>
+
+      </div>
     </header>
   );
 }
