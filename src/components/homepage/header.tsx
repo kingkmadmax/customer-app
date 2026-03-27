@@ -54,25 +54,25 @@ export function Header() {
 
               {open && (
                 <div className="absolute top-full left-0 mt-1 bg-black text-white rounded shadow w-48 z-50">
-                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:border-white hover:bg-white/10 transition-all duration-200">
+                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:bg-[linear-gradient(to_left,#005cff,#007afc,#008be5,#0096c7,#369dac,#2b9aaa,#1c96a8,#0093a6,#0083bf,#006fda,#0052e7,#040dd5)] hover:bg-[linear-gradient(to_left,#005cff,#007afc,#008be5,#0096c7,#369dac,#2b9aaa,#1c96a8,#0093a6,#0083bf,#006fda,#0052e7,#040dd5)] transition-all duration-200">
                     Electronics
                   </div>
-                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:border-white hover:bg-white/10 transition-all duration-200">
+                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:bg-[linear-gradient(to_left,#005cff,#007afc,#008be5,#0096c7,#369dac,#2b9aaa,#1c96a8,#0093a6,#0083bf,#006fda,#0052e7,#040dd5)]  hover:bg-white/10 transition-all duration-200">
                     Vehicles
                   </div>
-                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:border-white hover:bg-white/10 transition-all duration-200">
+                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:bg-[linear-gradient(to_left,#005cff,#007afc,#008be5,#0096c7,#369dac,#2b9aaa,#1c96a8,#0093a6,#0083bf,#006fda,#0052e7,#040dd5)] hover:bg-white/10 transition-all duration-200">
                     Clothing
                   </div>
-                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:border-white hover:bg-white/10 transition-all duration-200">
+                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:bg-[linear-gradient(to_left,#005cff,#007afc,#008be5,#0096c7,#369dac,#2b9aaa,#1c96a8,#0093a6,#0083bf,#006fda,#0052e7,#040dd5)] hover:bg-white/10 transition-all duration-200">
                     Office Equipment
                   </div>
-                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:border-white hover:bg-white/10 transition-all duration-200">
+                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:bg-[linear-gradient(to_left,#005cff,#007afc,#008be5,#0096c7,#369dac,#2b9aaa,#1c96a8,#0093a6,#0083bf,#006fda,#0052e7,#040dd5)] hover:bg-white/10 transition-all duration-200">
                     Tools
                   </div>
-                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:border-white hover:bg-white/10 transition-all duration-200">
+                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:bg-[linear-gradient(to_left,#005cff,#007afc,#008be5,#0096c7,#369dac,#2b9aaa,#1c96a8,#0093a6,#0083bf,#006fda,#0052e7,#040dd5)] hover:bg-white/10 transition-all duration-200">
                     House
                   </div>
-                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:border-white hover:bg-white/10 transition-all duration-200">
+                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:bg-[linear-gradient(to_left,#005cff,#007afc,#008be5,#0096c7,#369dac,#2b9aaa,#1c96a8,#0093a6,#0083bf,#006fda,#0052e7,#040dd5)] hover:bg-white/10 transition-all duration-200">
                     Event Supplies
                   </div>
                 </div>

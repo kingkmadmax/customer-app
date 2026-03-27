@@ -17,7 +17,7 @@ export default function Adds({ adds }: AddsProps) {
       {adds.map((add, i) => (
         <div
           key={i}
-          className="relative w-[1390px]  h-[150px] aspect-video  overflow-hidden shadow-lg bg-gray-900"
+          className="relative w-full  h-[150px] aspect-video  overflow-hidden shadow-lg bg-gray-900"
         >
           <video
             autoPlay

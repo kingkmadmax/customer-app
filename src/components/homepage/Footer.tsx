@@ -3,6 +3,8 @@ import { FaFacebook } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa"; 
 import { FaTwitter,FaInstagram,FaLinkedinIn } from "react-icons/fa";
 
+import SocialCard from  "@/components/homepage/socalCard"
+
 export default function Footer() {
   return (
     <footer className="bg-black text-gray-300 py-5 mt-0">
@@ -77,10 +79,7 @@ export default function Footer() {
         <div className="space-y-3">
           <h3 className="text-white font-semibold mb-3">Our socials</h3>
           <div className="flex gap-4 text-sm">
-            <a href="#" className="hover:text-white"><FaFacebook /></a>
-            <a href="#" className="hover:text-white"><FaTwitter /></a>
-            <a href="#" className="hover:text-white"><FaInstagram /></a>
-            <a href="#" className="hover:text-white"><FaLinkedinIn /></a>
+            <SocialCard/>
           </div>
         </div>
 
