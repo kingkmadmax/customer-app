@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+
+import { CartPopup } from "@/components/CartPopup";
 import { Header } from "@/components/homepage/header";
 import Footer from "@/components/homepage/Footer";
 
@@ -27,11 +29,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      ><Header/>
-        {children}
-        <Footer/>
+        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased min-h-screen flex flex-col overflow-x-hidden`}
+      >
+        <Header />
+        <CartPopup />
 
+        <main className="flex-1">
+          {children}
+        </main>
+
+        <Footer />
       </body>
     </html>
   );

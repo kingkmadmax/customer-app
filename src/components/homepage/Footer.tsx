@@ -7,7 +7,7 @@ import SocialCard from  "@/components/homepage/socalCard"
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-gray-300 py-5 mt-0">
+    <footer className="bg-black  h-100 text-gray-300 py-5 mt-16">
       <div className=" mx-auto px-3  grid grid-cols-1 md:grid-cols-5 gap-1">
         
 
@@ -86,7 +86,7 @@ export default function Footer() {
       </div>
 
       
-      <div className="border-t border-gray-700 mt-8 pt-4 text-center text-sm">
+      <div className="border-t border-gray-700 mt-38 pt-4 text-center text-sm">
       <p><a href="/contact" className="hover:text-white">terms and servise</a></p>
       </div>
     </footer>

@@ -1,124 +1,231 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+
+
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { TypeAnimation } from "react-type-animation";
 import Link from "next/link";
-import { ChevronDownIcon } from "@heroicons/react/24/solid";
+import { MapPinIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { FaSearch } from "react-icons/fa";
-import { ArchiveBoxIcon, BellIcon, HeartIcon } from "@heroicons/react/24/outline";
+import { ShoppingCart, Search, Menu, User, Package } from 'lucide-react';
 
-export function Header() {
-  const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+import {useLocationStore} from "@/components/store/location-store"
+import { useCartStore } from "@/components/store/cat-store"
 
-  return (
-    <header className="bg-black text-white w-full flex justify-between items-center px-6 py-3">
 
-      {/* LEFT (Logo) */}
-      <div className="text-lg">
-        <Link href="/">ETHIOPIAN RENT</Link>
-      </div>
+type Location = {
+  value: string;
+  label: string;
+};
+const locations: Location[] = [
+  { value: "addis-ababa", label: "Addis Ababa" },
+  { value: "bahir-dar", label: "Bahir Dar" },
+  { value: "dire-dawa", label: "Dire Dawa" },
+  { value: "mekelle", label: "Mekelle" },
+  { value: "gondar", label: "Gondar" },
+  { value: "hawassa", label: "Hawassa" },
+];
 
-      {/* RIGHT (Everything together) */}
-      <div className="flex items-center gap-6">
 
-        {/* NAV */}
-        <nav>
-          <div className="flex gap-5 text-sm items-start relative">
+export  function Header(){
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const [mobileMenuOpen,setMobileMenuOpen] =useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const selectedLocation = useLocationStore(
+  (state) => state.selectedLocation
+);
 
-            {/* Categories with Dropdown */}
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setOpen(!open)}
-                className="flex items-center "
-              >
-                Categories
-                <ChevronDownIcon
-                  className={`w-4 h-4 transform transition-transform duration-200 ${
-                    open ? "rotate-180" : ""
-                  }`}
+const setSelectedLocation = useLocationStore(
+  (state) => state.setSelectedLocation);
+  const cartItemCount = useCartStore(
+    (state) => state.cartItemCount
+  );
+
+   const currentLocation = locations.find((loc) => loc.value === selectedLocation) || locations[0];
+
+    const handleSelect = (value: string) => {
+     setSelectedLocation(value);
+    setIsOpen(false);
+  };
+  
+  const handleSearch = () => {
+  if (!inputValue.trim()) return;
+
+router.push(
+  `/search?query=${encodeURIComponent(inputValue)}&location=${selectedLocation}`
+);
+};
+
+  return(
+    <header className='sticky top-0 z-50 w-full border-gray-500 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+      <div className="container mx-auto px-4">
+        <div className="flex h-16 items-center justify-between">
+          <div  className="flex items-center gap-6">
+            <button
+              className="lg:hidden"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+               <Menu className="h-6 w-6" />
+            </button>
+
+             <div className="flex items-center gap-6">
+
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2">
+              <span className="text-4xl font-extrabold text-blue-600">Et</span>
+              <span className="text-4xl font-extrabold text-black">Rent</span>
+            </Link>
+
+            {/* Location + Search */}
+            <div className="flex items-center ">
+
+              {/* Location Dropdown */}
+              <div className="relative location-dropdown xl:min-w-[150px]">
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="w-full h-10 border border-gray-300 rounded-l-full flex items-center px-3 hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center gap-2 flex-1">
+                    <MapPinIcon className="w-4 h-4 text-gray-400" />
+                    <div className="text-left">
+                      <p className="text-xs text-gray-400">Location</p>
+                      <p className="text-[13px] font-medium text-black truncate">
+                        {currentLocation.label}
+                      </p>
+                    </div>
+                  </div>
+                  
+                </button>
+
+                {isOpen && (
+                  <div className="absolute top-[calc(100%+4px)] left-0 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 z-50 max-h-60 overflow-auto">
+                    {locations.map((location) => (
+                    <button
+                        key={location.value}
+                        onClick={() => handleSelect(location.value)}
+                        className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-100 flex items-center gap-2 ${
+                          selectedLocation === location.value ? "bg-gray-100 font-medium" : ""
+                        }`}
+                      >
+                        {location.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Search Bar */}
+              <div className="relative flex-1 min-w-[180px] md:min-w-[300px]">
+                <button
+                    onClick={handleSearch}
+                     className="absolute right-4 top-1/2  -translate-y-1/2 text-gray-500"
+                      >
+                   <FaSearch />
+                  </button>
+               <input
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  className="w-full h-10 pl-10 pr-4 rounded-r-full border border-gray-300 bg-gray-100 focus:outline-none"
                 />
-              </button>
 
-              {open && (
-                <div className="absolute top-full left-0 mt-1 bg-black text-white rounded shadow w-48 z-50">
-                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:bg-[linear-gradient(to_left,#005cff,#007afc,#008be5,#0096c7,#369dac,#2b9aaa,#1c96a8,#0093a6,#0083bf,#006fda,#0052e7,#040dd5)] hover:bg-[linear-gradient(to_left,#005cff,#007afc,#008be5,#0096c7,#369dac,#2b9aaa,#1c96a8,#0093a6,#0083bf,#006fda,#0052e7,#040dd5)] transition-all duration-200">
-                    Electronics
-                  </div>
-                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:bg-[linear-gradient(to_left,#005cff,#007afc,#008be5,#0096c7,#369dac,#2b9aaa,#1c96a8,#0093a6,#0083bf,#006fda,#0052e7,#040dd5)]  hover:bg-white/10 transition-all duration-200">
-                    Vehicles
-                  </div>
-                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:bg-[linear-gradient(to_left,#005cff,#007afc,#008be5,#0096c7,#369dac,#2b9aaa,#1c96a8,#0093a6,#0083bf,#006fda,#0052e7,#040dd5)] hover:bg-white/10 transition-all duration-200">
-                    Clothing
-                  </div>
-                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:bg-[linear-gradient(to_left,#005cff,#007afc,#008be5,#0096c7,#369dac,#2b9aaa,#1c96a8,#0093a6,#0083bf,#006fda,#0052e7,#040dd5)] hover:bg-white/10 transition-all duration-200">
-                    Office Equipment
-                  </div>
-                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:bg-[linear-gradient(to_left,#005cff,#007afc,#008be5,#0096c7,#369dac,#2b9aaa,#1c96a8,#0093a6,#0083bf,#006fda,#0052e7,#040dd5)] hover:bg-white/10 transition-all duration-200">
-                    Tools
-                  </div>
-                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:bg-[linear-gradient(to_left,#005cff,#007afc,#008be5,#0096c7,#369dac,#2b9aaa,#1c96a8,#0093a6,#0083bf,#006fda,#0052e7,#040dd5)] hover:bg-white/10 transition-all duration-200">
-                    House
-                  </div>
-                  <div className="px-4 py-2 cursor-pointer border-b-2 border-transparent hover:bg-[linear-gradient(to_left,#005cff,#007afc,#008be5,#0096c7,#369dac,#2b9aaa,#1c96a8,#0093a6,#0083bf,#006fda,#0052e7,#040dd5)] hover:bg-white/10 transition-all duration-200">
-                    Event Supplies
-                  </div>
-                </div>
-              )}
-            </div>
+                {inputValue === "" && (
+                  <TypeAnimation  
+                  className="lift-2"
+                    sequence={[
+                      "Search for Electronics...", 2000,
+                      "Search for Vehicles...", 2000,
+                      "Search for Clothing...", 2000,
+                    ]}
+                    wrapper="span"
+                    cursor
+                    repeat={Infinity}
+                    style={{
+                      position: "absolute",
+                      left: "2.5rem",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      color: "gray",
+                      pointerEvents: "none",
+                      fontSize: "0.875rem",
+                    }}
+                  />
+                )}
 
-            {/* Other links */}
-            <div>
-              <Link href="/notification" className="">
-                Contact
-              </Link>
-            </div>
-
-            <div>
-              <Link href="/about" className="">
-                About
-              </Link>
+               
+              </div>
             </div>
           </div>
-        </nav>
 
-        {/* SEARCH */}
-        <div className="flex rounded-3xl items-center bg-transparent px-3 h-10 w-[400px] gap-2 border focus-within:bg-white focus-within:ring-2 focus-within:ring-black">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="flex-1 bg-transparent text-black placeholder-gray-400 focus:outline-none text-sm"
-          />
-          <Link href="/search">
-            <FaSearch className="text-gray-500 text-sm" />
-          </Link>
+            <nav className="hidden lg:flex gap-6">
+                
+                <Link className="text-sm hover:text-primary transition-colors"  href="/">
+                      About
+                </Link>
+                <Link  className="text-sm hover:text-primary transition-colors" href="/">
+                      Conteact
+                </Link>
+                <Link className="text-sm hover:text-primary transition-colors" href="/">
+                      FAX
+                </Link>
+            </nav>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link href="/">
+              <button
+              
+                className="p-2 hover:bg-muted rounded-lg transition-colors hidden md:block"
+                title="My Account"
+              >
+              <User className="h-6 w-6" />
+              </button>
+            </Link>
+           
+
+            <Link href="/cart">
+              <button className="relative p-2 hover:bg-gray-100 rounded-lg">
+          
+          {/* CART ICON */}
+                  <ShoppingCart className="w-6 h-6" />
+
+          {/* BADGE */}
+                  {cartItemCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                  {cartItemCount}
+                      </span>
+                     )}
+                </button>
+            </Link>
+             
+             
+          </div>
         </div>
-
-        {/* ICONS */}
-        <div className="flex gap-4">
-          <HeartIcon className="w-5 h-5" />
-          <ArchiveBoxIcon className="w-5 h-5" />
-          <BellIcon className="w-5 h-5" />
-        </div>
-
-        {/* LOGIN */}
-        <button className="bg-white text-black w-20 h-10 rounded-3xl text-sm flex items-center justify-center border-2 hover:bg-gray-200 transition">
-          Login
-        </button>
+        {mobileMenuOpen&&(
+        <div className="lg:hidden border-t py-4">
+          <nav className="flex flex-col gap-3">
+             <Link href={"a"} className="text-sm hover:text-primary transition-colors">
+                     Track Order
+                </Link>
+                <Link className="text-sm hover:text-primary transition-colors"  href="/">
+                      About
+                </Link>
+                <Link  className="text-sm hover:text-primary transition-colors" href="/">
+                      Conteact
+                </Link>
+                <Link className="text-sm hover:text-primary transition-colors" href="/">
+                      FAX
+                </Link>
+             
+          </nav>
+          </div>
+        )}
 
       </div>
+
     </header>
-  );
+  )
 }

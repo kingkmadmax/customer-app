@@ -1,19 +1,46 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Image from "next/image";
+
 export default function Hero() {
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => setOffset(window.scrollY);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div className="flex flex-col pt-20  items-center justify-center text-white bg-[#2A2D34] w-full h-165 p-6 text-center space-y-4">
-        <p className="text-xl sm:text-xl font-semibold bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
-  YOUR  DIGITAL TECHNOLOGY AGENCY
-</p>
-    
-       <p className=" text-white text-3xl sm:text-5xl font-bold">
-        Your Product Renting Platform
-      </p>
-      
-      <p className="text-base sm:text-lg max-w-3xl">
-        We create seamless and user-friendly rental apps and property platforms, helping tenants
-        find their perfect home and landlords manage their properties efficiently. 
-        Empowering renters and property owners with smart solutions for a modern rental experience.
-      </p>
+    <div className="relative h-[500px] overflow-hidden flex items-center justify-center text-white">
+
+      {/* Parallax Image */}
+      <div
+        style={{ transform: `translateY(${offset * 0.4}px)` }}
+        className="absolute inset-0"
+      >
+        <Image
+          src="/hero.png"
+          alt="Hero"
+          fill
+          className="object-cover scale-110"
+        />
+      </div>
+
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/40" />
+
+      {/* Content */}
+      <div className="relative z-10 text-center space-y-4">
+        <h1 className="text-4xl font-bold">
+          Your Product Renting Platform
+        </h1>
+        <p className="max-w-2xl">
+          Seamless rental experience for modern users
+        </p>
+      </div>
+
     </div>
   );
 }

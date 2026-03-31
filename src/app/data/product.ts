@@ -1,0 +1,21 @@
+export const Add = [
+  {link: "/New-folder/(2).mp4", name: "Houses", description: "Comfortable athletic shoes" },
+] 
+export const products = [ 
+  { id: 1, reviews: 342, status:"available", location:"addis-ababa", name: "Vehicles ", conditon:"new"  , category: "Vehicles", description: "This is a high-performance laptop",          image: "/download2.jpg",  price: 999.99, rating: 3, total: "(34)" },
+  { id: 2, reviews: 342, status:"available", location:"addis-ababa", name: "Vehicles ", conditon:"new"  , category: "Houses", description: "Latest smartphone with advanced features",   image: "/download2.jpg", price: 999.99, rating: 5, total: "(34)" },
+  { id: 3, reviews: 342, status:"available", location:"addis-ababa", name: "Vehicles ", conditon:"new"  , category: "Vehicles", description: "Wireless noise-canceling headphones",        image: "/download3.jpg", price: 999.99, rating: 2, total: "(34)" },
+  { id: 4, reviews: 342, status:"available", location:"addis-ababa", name: "Vehicles ", conditon:"new"  , category: "Vehicles", description: "Smartwatch with fitness tracking",           image: "/download4.jpg", price: 999.99, rating: 1, total: "(34)" },
+  { id: 5, reviews: 342, status:"available", location:"addis-ababa", name: "Vehicles ", conditon:"used" , category: "Electronics", description: "Digital camera with high-resolution sensor", image: "/download.jpg",   price: 999.99, rating: 4, total: "(34)" },
+  { id: 6, reviews: 342, status:"available", location:"addis-ababa", name: "Vehicles",  conditon:"used" , category: "Vehicles", description: "Comfortable athletic shoes",                 image: "/download (1).jpg", price: 999.99, rating: 4, total: "(34)" },
+  { id: 7, reviews: 342, status:"available", location:"addis-ababa", name: "Vehicles",  conditon:"used" , category: "Electronics", description: "Comfortable athletic shoes",                 image: "/download (2).jpg", price: 999.99, rating: 4, total: "(34)" },
+  { id: 8, reviews: 342, status:"available", location:"addis-ababa", name: "Vehicles",  conditon:"new"  , category: "Electronics", description: "Comfortable athletic shoes",                 image: "/download (3).jpg", price: 999.99, rating: 3, total: "(34)" },
+  { id: 14,reviews: 342, status:"available", location:"addis-ababa", name: "Houses",    conditon:"new"  , category: "Houses", description: "Comfortable athletic shoes",                 image: "/download (4).jpg", price: 999.99, rating: 4, total: "(34)" },
+  { id: 9, reviews: 342, status:"available", location:"addis-ababa", name: "Houses",    conditon:"new"  , category: "Houses", description: "Comfortable athletic shoes",                 image: "/download (5).jpg", price: 999.99, rating: 4, total: "(34)" },
+  { id: 15,reviews: 342, status:"available", location:"addis-ababa", name: "Houses",    conditon:"new"  , category: "Houses", description: "Comfortable athletic shoes",                 image: "/download (6).jpg", price: 999.99, rating: 4, total: "(34)" },
+  { id: 10,reviews: 342, status:"available", location:"addis-ababa", name: "Vehicles",  conditon:"old"  , category: "Vehicles", description: "Comfortable athletic shoes",                 image: "/images (3).jpg", price: 999.99, rating: 4, total: "(34)" },
+  { id: 11,reviews: 342, status:"available", location:"addis-ababa", name: "Houses",    conditon:"old"  , category: "Vehicles", description: "Comfortable athletic shoes",                 image: "/images (2).jpg", price: 999.99, rating: 4, total: "(34)" },
+  { id: 12,reviews: 342, status:"available", location:"addis-ababa", name: "House",     conditon:"old"  , category: "Vehicles", description: "Comfortable athletic shoes",                 image: "/images (1).jpg", price: 999.99, rating: 4, total: "(34)" },
+  { id: 13,reviews: 342, status:"available", location:"addis-ababa", name: "Vehicles", conditon:"new"   , category: "Vehicles", description: "Comfortable athletic shoes",                 image: "/images.jpg",     price: 999.99, rating: 4, total: "(reviews: 342, 34)" },
+
+];
