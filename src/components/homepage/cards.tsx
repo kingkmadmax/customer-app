@@ -73,13 +73,13 @@ export default function Cards({ card = [] }: Cards) {
           <Link href={`/product/${product.id}`}>
             <div className="relative w-full h-40 bg-gray-50 flex items-center justify-center overflow-hidden">
               <Image
-                src={product.image}
+                src={product.image[0]}
                 alt={product.name}
                 width={200}
                 height={200}
                 sizes="240px"
-                quality={70}
-                className="object-contain p-6 group-hover:scale-110 transition-transform duration-500"
+                quality={75}
+                className="object-contain sm:p-2 lg:p-3 xl-4 p-6 group-hover:scale-110 transition-transform duration-500"
               />
             </div>
           </Link>

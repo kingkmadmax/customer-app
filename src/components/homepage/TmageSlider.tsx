@@ -134,7 +134,7 @@ export default function ImageSlider({
                   <div className="relative w-80 h-100 rounded-2xl  overflow-hidden shadow-xl">
                     <Link href={`/product/${product.id}`}>
                     <Image
-                      src={product.image}
+                      src={product.image[0]}
                       alt={product.name}
                       width={600}
                       height={375}
