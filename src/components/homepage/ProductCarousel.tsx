@@ -21,13 +21,28 @@ interface ContentProps {
 
 export default function Content({ card = [] }: ContentProps) {
   const [filter, setFilter] = useState<string>("All");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 9;
   const [visibleCount, setVisibleCount] = useState<number>(9);
 
-  const filteredProducts =
-    filter === "All"
-      ? card
-      : card.filter((product) => product.category === filter);
 
+    useEffect(() => {
+    window.scrollTo({ top: 1500, behavior: "smooth" });
+  }, [currentPage]);
+  const filteredProducts =
+  filter === "All"
+    ? card
+    : card.filter((product) => product.category === filter);
+
+const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+const startIndex = (currentPage - 1) * itemsPerPage;
+const paginatedProducts = filteredProducts.slice(
+  startIndex,
+  startIndex + itemsPerPage
+);
+
+ 
   const categories = ["All", "Condition", "Houses", "Vehicles", "Electronics"];
 
   const handleShowMore = () => {
@@ -94,19 +109,52 @@ export default function Content({ card = [] }: ContentProps) {
         </div>
 
         {/* PRODUCTS / CARDS AREA */}
-        <div className="flex-1">
-          <Cards card={filteredProducts.slice(0, visibleCount)} />
+        <div className="flex-1 transition-all duration-500 ease-in-out">
+           <div className="transition-all duration-500 ease-in-out opacity-100">
+              <Cards card={paginatedProducts} />
+           </div>
           
           {/* SHOW MORE BUTTON */}
               {visibleCount < filteredProducts.length && (
-      <div className="flex justify-center pt-10">
-        <button
-          onClick={handleShowMore}
-          className="px-6 py-2 bg-black text-white font-bold rounded-xl hover:bg-gray-800 transition"
-        >
-          Show More
-        </button>
-      </div>
+      <div className="flex justify-center items-center gap-3 pt-10">
+  {/* Previous */}
+  <button
+    disabled={currentPage === 1}
+    onClick={() => setCurrentPage((p) => p - 1)}
+    className="px-4 py-2 border rounded-lg disabled:opacity-50"
+  >
+    Prev
+  </button>
+
+  {/* Page Numbers (max 3 visible) */}
+  {Array.from({ length: totalPages }, (_, i) => i + 1)
+    .slice(
+      Math.max(0, currentPage - 2),
+      Math.max(3, currentPage + 1)
+    )
+    .map((page) => (
+      <button
+        key={page}
+        onClick={() => setCurrentPage(page)}
+        className={`px-4 py-2 rounded-lg border transition-all duration-300 ${
+          currentPage === page
+            ? "bg-black text-white scale-110 shadow-md"
+            : "bg-white text-black hover:scale-105"
+        }`}
+      >
+        {page}
+      </button>
+    ))}
+
+  {/* Next */}
+  <button
+    disabled={currentPage === totalPages}
+    onClick={() => setCurrentPage((p) => p + 1)}
+    className="px-4 py-2 border rounded-lg disabled:opacity-50"
+  >
+    Next
+  </button>
+</div>
     )}
         </div>
       </div>

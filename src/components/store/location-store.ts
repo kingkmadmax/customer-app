@@ -1,4 +1,4 @@
-
+    
 import { create } from "zustand";
 
 type LocationStore = {
@@ -7,7 +7,7 @@ type LocationStore = {
 };
 
 export const useLocationStore = create<LocationStore>((set) => ({
-  selectedLocation: "addis-ababa",
+  selectedLocation: "Addis Ababa",
   setSelectedLocation: (value) =>
     set({ selectedLocation: value }),
 }));

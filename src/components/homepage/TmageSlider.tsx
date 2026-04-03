@@ -10,7 +10,7 @@ interface Product {
   id: number;
   name: string;
   description: string;
-  image: string;
+  image: string[]; // allow multiple images like product data
   price: number;
   conditon:string
 }
