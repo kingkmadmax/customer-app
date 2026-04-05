@@ -4,7 +4,7 @@ export const Add = [
 
 // app/data/product.ts   (or wherever your data file is)
 
-export const products = [
+export   const products = [
   {
     id: 1,
     name: "Toyota Camry 2022",

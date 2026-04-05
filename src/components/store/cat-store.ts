@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
-
+/* =========================
+   🛒 CART STORE
+========================= */
 
 export type CartItem = {
   id: number;
@@ -8,7 +10,7 @@ export type CartItem = {
   name: string;
   price: number;
   quantity: number;
-  status?: "accepted" | "pending" | "declined";   // ← Add this line
+  status?: "accepted" | "pending" | "declined";
 };
 
 type CartStore = {
@@ -18,11 +20,10 @@ type CartStore = {
   message: string | null;
   showMessage: boolean;
 
-  increaseQuantity: (id: number) => void;   // ← add
-  decreaseQuantity: (id: number) => void;
-
   addToCart: (item: CartItem) => void;
   removeFromCart: (id: number) => void;
+  increaseQuantity: (id: number) => void;
+  decreaseQuantity: (id: number) => void;
   clearCart: () => void;
 
   hideMessage: () => void;
@@ -35,6 +36,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   message: null,
   showMessage: false,
 
+  /* 🔥 ADD TO CART */
   addToCart: (item) => {
     const items = get().cartItems;
 
@@ -42,7 +44,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
     if (existing) {
       set({
-        message: "Product already added to cart",
+        message: "Product already in cart",
         showMessage: true,
       });
 
@@ -53,14 +55,15 @@ export const useCartStore = create<CartStore>((set, get) => ({
       return;
     }
 
-    const updatedItems = [...items, item];
+    const updated = [...items, item];
 
     set({
-      cartItems: updatedItems,
-      cartItemCount: updatedItems.reduce((sum, i) => sum + i.quantity, 0),
+      cartItems: updated,
+      cartItemCount: updated.reduce((sum, i) => sum + i.quantity, 0),
     });
   },
 
+  /* 🗑 REMOVE */
   removeFromCart: (id) => {
     const filtered = get().cartItems.filter((i) => i.id !== id);
 
@@ -69,37 +72,123 @@ export const useCartStore = create<CartStore>((set, get) => ({
       cartItemCount: filtered.reduce((sum, i) => sum + i.quantity, 0),
     });
   },
-  increaseQuantity: (id: number) => {
-  set((state) => {
-    const updatedItems = state.cartItems.map((item) =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-    );
 
-    return {
-      cartItems: updatedItems,
-      cartItemCount: updatedItems.reduce((sum, i) => sum + i.quantity, 0),
-    };
-  });
-},
-
-decreaseQuantity: (id: number) => {
-  set((state) => {
-    const updatedItems = state.cartItems
-      .map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
+  /* ➕ INCREASE */
+  increaseQuantity: (id) => {
+    set((state) => {
+      const updated = state.cartItems.map((item) =>
+        item.id === id
+          ? { ...item, quantity: item.quantity + 1 }
           : item
-      )
-      .filter((item) => item.quantity > 0); // optional: remove if quantity reaches 0
+      );
 
-    return {
-      cartItems: updatedItems,
-      cartItemCount: updatedItems.reduce((sum, i) => sum + i.quantity, 0),
-    };
-  });
-},
+      return {
+        cartItems: updated,
+        cartItemCount: updated.reduce((s, i) => s + i.quantity, 0),
+      };
+    });
+  },
 
-  clearCart: () => set({ cartItems: [], cartItemCount: 0 }),
+  /* ➖ DECREASE */
+  decreaseQuantity: (id) => {
+    set((state) => {
+      const updated = state.cartItems
+        .map((item) =>
+          item.id === id && item.quantity > 1
+            ? { ...item, quantity: item.quantity - 1 }
+            : item
+        )
+        .filter((item) => item.quantity > 0);
 
-  hideMessage: () => set({ showMessage: false, message: null }),
+      return {
+        cartItems: updated,
+        cartItemCount: updated.reduce((s, i) => s + i.quantity, 0),
+      };
+    });
+  },
+
+  /* 🧹 CLEAR CART */
+  clearCart: () =>
+    set({
+      cartItems: [],
+      cartItemCount: 0,
+    }),
+
+  hideMessage: () =>
+    set({
+      showMessage: false,
+      message: null,
+    }),
+}));
+
+/* =========================
+   💳 CHECKOUT STORE
+========================= */
+
+type CheckoutState = {
+  product: {
+    id: number;
+    name: string;
+    price: number;
+    image: string;
+  } | null;
+
+  personal: {
+    name: string;
+    email: string;
+    phone: string;
+    fid: string;
+  };
+
+  rental: {
+    location: string;
+    receiveDate: string;
+    returnDate: string;
+  };
+
+  setProduct: (product: CheckoutState["product"]) => void;
+  setPersonal: (data: CheckoutState["personal"]) => void;
+  setRental: (data: CheckoutState["rental"]) => void;
+
+  /* 🔥 ADD THIS (VERY IMPORTANT) */
+  clearCheckout: () => void;
+};
+
+export const useCheckoutStore = create<CheckoutState>((set) => ({
+  product: null,
+
+  personal: {
+    name: "",
+    email: "",
+    phone: "",
+    fid: "",
+  },
+
+  rental: {
+    location: "",
+    receiveDate: "",
+    returnDate: "",
+  },
+
+  setProduct: (product) => set({ product }),
+
+  setPersonal: (data) => set({ personal: data }),
+  setRental: (data) => set({ rental: data }),
+
+  /* 🧹 RESET EVERYTHING AFTER PAYMENT */
+  clearCheckout: () =>
+    set({
+      product: null,
+      personal: {
+        name: "",
+        email: "",
+        phone: "",
+        fid: "",
+      },
+      rental: {
+        location: "",
+        receiveDate: "",
+        returnDate: "",
+      },
+    }),
 }));

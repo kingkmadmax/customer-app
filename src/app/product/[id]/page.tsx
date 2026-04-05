@@ -118,7 +118,7 @@ export default function ProductDetails() {
               Add to Cart
             </button>
             <button className="flex-1 bg-white border-2 border-black text-black py-4 rounded-2xl font-bold hover:bg-gray-50 transition active:scale-95">
-              Contact Host
+              Rent
             </button>
           </div>
         </div>

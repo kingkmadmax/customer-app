@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/components/store/cat-store";
 import { Plus, Minus, Trash2 } from "lucide-react";
+import Link from "next/link";
 
 export default function CartPage() {
   const router = useRouter();
@@ -142,8 +143,8 @@ export default function CartPage() {
       {/* Action Buttons */}
       <div className="flex flex-col justify-between sm:flex-row   mt-15">
         <button
-          onClick={() => router.push("/checkout")}
-          disabled={cartItems.length === 0}
+          onClick={() => router.push("Checkout/checkout")}
+          disabled={cartItems.length === 0  } 
           className="flex-1 sm:flex-none w-50 h-10 bg-black text-white rounded-xl font-bold text-sm hover:bg-white hover:border border-black hover:text-black transition disabled:bg-gray-400"
         >
           Go to Checkout

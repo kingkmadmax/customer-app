@@ -1,15 +1,16 @@
 "use client";
 
-import { useCartStore } from "@/components/store/cat-store";
+import { useCartStore, useCheckoutStore } from "@/components/store/cat-store";
 import { ShoppingCart, Star } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export interface Product {
   id: number;
   status: string;
-  image: string[]; // ✅ FIXED (was string)
+  image: string[];
   name: string;
   price: number;
   reviews: number;
@@ -23,7 +24,50 @@ interface CardsProps {
 }
 
 export default function Cards({ card = [] }: CardsProps) {
-  const addToCart = useCartStore((state) => state.addToCart);
+  const router = useRouter();
+
+  const setProduct = useCheckoutStore((state) => state.setProduct);
+  const { cartItems, addToCart, increaseQuantity } = useCartStore();
+
+  /* =========================
+     🚀 RENT NOW
+     - Save product to checkout state
+     - Do not add to cart
+  ========================= */
+  const handleRentNow = (product: Product) => {
+    setProduct({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image[0],
+    });
+
+    router.push("/Checkout/checkout");
+  };
+
+  /* =========================
+     🛒 ADD TO CART (FIXED)
+     - if exists → increase qty
+     - else → add new
+  ========================= */
+  const handleAddToCart = (product: Product) => {
+    const exists = cartItems.find((item) => item.id === product.id);
+
+    if (exists) {
+      increaseQuantity(product.id);
+      return;
+    }
+
+    addToCart({
+      id: product.id,
+      name: product.name,
+      image: product.image[0],
+      price: product.price,
+      quantity: 1,
+      status: "pending",
+    });
+  };
+
   const [visibleCount, setVisibleCount] = useState<number>(9);
 
   const handleShowMore = () => {
@@ -32,19 +76,15 @@ export default function Cards({ card = [] }: CardsProps) {
 
   const cardRefs = useRef<HTMLDivElement[]>([]);
 
-  // ✨ ANIMATION
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("animate-show");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("animate-show");
+          observer.unobserve(entry.target);
+        }
+      });
+    });
 
     cardRefs.current.forEach((card) => {
       if (card) observer.observe(card);
@@ -56,7 +96,7 @@ export default function Cards({ card = [] }: CardsProps) {
   return (
     <div>
       {/* GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {card.slice(0, visibleCount).map((product, index) => (
           <div
             key={product.id}
@@ -64,17 +104,15 @@ export default function Cards({ card = [] }: CardsProps) {
               if (el) cardRefs.current[index] = el;
             }}
             className="bg-white w-full border border-gray-300 max-w-[280px] mx-auto rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group opacity-0 translate-y-10"
-            style={{ transitionDelay: `${index * 80}ms` }}
           >
             {/* IMAGE */}
             <Link href={`/product/${product.id}`}>
               <div className="relative w-full h-40 bg-gray-50 flex items-center justify-center overflow-hidden">
                 <Image
-                  src={product.image[0]} // ✅ now valid
+                  src={product.image[0]}
                   alt={product.name}
                   width={200}
                   height={200}
-                  sizes="240px"
                   className="object-contain p-4 group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
@@ -113,31 +151,31 @@ export default function Cards({ card = [] }: CardsProps) {
               <div className="flex text-xs font-bold items-baseline">
                 <span>$</span>
                 {product.price.toFixed(2)}
-                <span className="text-[10px] text-gray-500 ml-1">/wk</span>
+                <span className="text-[10px] text-gray-500 ml-1">
+                  /week
+                </span>
               </div>
 
               {/* BUTTONS */}
               <div className="flex gap-2 mt-1">
+
+                {/* ADD TO CART (FIXED LOGIC) */}
                 <button
-                  onClick={() =>
-                    addToCart({
-                      id: product.id,
-                      name: product.name,
-                      image: product.image[0], // ✅ FIX for store (expects string)
-                      price: product.price,
-                      quantity: 1,
-                      status: "pending",
-                    })
-                  }
+                  onClick={() => handleAddToCart(product)}
                   className="flex-1 bg-black text-white py-1 rounded-lg text-[11px] flex items-center justify-center gap-1 hover:bg-gray-800 transition"
                 >
                   <ShoppingCart className="h-3 w-3" />
                   Add
                 </button>
 
-                <button className="flex-1 bg-green-600 text-white py-1 rounded-lg text-[11px] hover:bg-green-700 transition">
+                {/* RENT NOW */}
+                <button
+                  onClick={() => handleRentNow(product)}
+                  className="flex-1 bg-green-600 text-white py-1 rounded-lg text-[11px] hover:bg-green-700 transition"
+                >
                   Rent
                 </button>
+
               </div>
             </div>
           </div>
@@ -156,7 +194,7 @@ export default function Cards({ card = [] }: CardsProps) {
         </div>
       )}
 
-      {/* ANIMATION STYLE */}
+      {/* ANIMATION */}
       <style jsx>{`
         .animate-show {
           opacity: 1 !important;
