@@ -1,23 +1,18 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { TypeAnimation } from "react-type-animation";
 import Link from "next/link";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import { FaSearch } from "react-icons/fa";
-import { ShoppingCart, Menu, User } from 'lucide-react';
+import { ShoppingCart, Menu, User } from "lucide-react";
 
-import { usePathname } from "next/navigation";
 import { useLocationStore } from "@/components/store/location-store";
 import { useCartStore } from "@/components/store/cat-store";
-
 import SearchHeader from "@/app/search/SearchHeader";
 
-type Location = {
-  value: string;
-  label: string;
-};
+type Location = { value: string; label: string; };
 
 const locations: Location[] = [
   { value: "Addis Ababa", label: "Addis Ababa" },
@@ -31,180 +26,152 @@ const locations: Location[] = [
 export function Header() {
   const pathname = usePathname();
   const isSearchPage = pathname.startsWith("/search");
-
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);           // Location dropdown
+
+  // 1. Create unique refs for each dropdown/menu
+  const userDropdownRef = useRef<HTMLDivElement>(null);
+  const locationDropdownRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null); // New ref for mobile nav
+
+  const [isOpen, setIsOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Account dropdown
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const selectedLocation = useLocationStore((state) => state.selectedLocation);
   const setSelectedLocation = useLocationStore((state) => state.setSelectedLocation);
   const cartItemCount = useCartStore((state) => state.cartItemCount);
 
+  // 2. Updated click-outside logic
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      // Close User Dropdown
+      if (userDropdownRef.current && !userDropdownRef.current.contains(target)) {
+        setIsDropdownOpen(false);
+      }
+      // Close Location Dropdown
+      if (locationDropdownRef.current && !locationDropdownRef.current.contains(target)) {
+        setIsOpen(false);
+      }
+      // Close Mobile Menu
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(target)) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const currentLocation = locations.find((loc) => loc.value === selectedLocation) || locations[0];
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
   const menuItems = [
-    { label: 'Profile', action: () => alert('Go to Profile') },
-    { label: 'Settings', action: () => alert('Go to Settings') },
-    { label: 'Logout', action: () => alert('Logged out') },
+    { label: "Profile", action: () => router.push("/profile") },
+    { label: "Settings", action: () => router.push("/settings") },
+    { label: "Logout", action: () => router.push("/logout") },
   ];
-
-  const handleSelect = (value: string) => {
-    setSelectedLocation(value);
-    setIsOpen(false);
-  };
 
   const handleSearch = () => {
     if (!inputValue.trim()) return;
-    router.push(
-      `/search?query=${encodeURIComponent(inputValue)}&location=${selectedLocation}`
-    );
+    router.push(`/search?query=${encodeURIComponent(inputValue)}&location=${selectedLocation}`);
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-background/95 backdrop-blur">
       {isSearchPage ? (
         <SearchHeader />
       ) : (
-        <div className="container mx-auto px-4">
-          <div className="flex h-16 items-center justify-between">
+        <div className="w-full px-2 sm:px-4">
+          <div className="flex items-center justify-between gap-2 py-2 max-w-[1400px] mx-auto">
             
-            {/* Left Side: Logo + Location + Search */}
-            <div className="flex items-center gap-6">
-              <button
-                className="lg:hidden"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              >
-                <Menu className="h-6 w-6" />
-              </button>
+            {/* LEFT: Menu + Logo */}
+            <div className="flex items-center gap-2 shrink-0">
+              {/* Attach ref to mobile button container if you want clicking the button to behave correctly */}
+              <div ref={mobileMenuRef} className="lg:hidden">
+                <button className="p-1" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                  <Menu className="h-6 w-6" />
+                </button>
+              </div>
 
-              <div className="flex items-center gap-6">
-                {/* Logo */}
-                <Link href="/" className="flex items-center gap-2">
-                  <span className="text-4xl font-extrabold text-blue-600">Et</span>
-                  <span className="text-4xl font-extrabold text-black">Rent</span>
-                </Link>
+              <Link href="/" className="flex items-center gap-1">
+                <span className="text-2xl sm:text-3xl font-extrabold text-blue-600">Et</span>
+                <span className="hidden xs:block text-2xl sm:text-3xl font-extrabold text-black">Rent</span>
+              </Link>
+            </div>
 
-                {/* Location + Search Bar */}
-                <div className="flex items-center">
-                  {/* Location Dropdown */}
-                  <div className="relative xl:min-w-[150px]">
-                    <button
-                      type="button"
-                      onClick={() => setIsOpen(!isOpen)}
-                      className="w-full h-10 border border-gray-300 rounded-l-full flex items-center px-3 hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="flex items-center gap-2 flex-1">
-                        <MapPinIcon className="w-4 h-4 text-gray-400" />
-                        <div className="text-left">
-                          <p className="text-xs text-gray-400">Location</p>
-                          <p className="text-[13px] font-medium text-black truncate">
-                            {currentLocation.label}
-                          </p>
-                        </div>
-                      </div>
-                    </button>
-
-                    {isOpen && (
-                      <div className="absolute top-[calc(100%+4px)] left-0 w-full bg-white border border-gray-200 rounded-xl shadow-lg py-1 z-50 max-h-60 overflow-auto">
-                        {locations.map((location) => (
-                          <button
-                            key={location.value}
-                            onClick={() => handleSelect(location.value)}
-                            className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-100 flex items-center gap-2 ${
-                              selectedLocation === location.value ? "bg-gray-100 font-medium" : ""
-                            }`}
-                          >
-                            {location.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
+            {/* CENTER: SEARCH + LOCATION */}
+            <div className="flex flex-1 items-center min-w-0 max-w-2xl mx-1 sm:mx-4">
+              <div ref={locationDropdownRef} className="relative shrink-0 hidden sm:block">
+                <button
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="h-9 border border-gray-300 rounded-l-full flex items-center px-3 bg-white hover:bg-gray-50 border-r-0 w-[100px] md:w-[130px]"
+                >
+                  <MapPinIcon className="w-4 h-4 text-gray-400 shrink-0 mr-1" />
+                  <span className="text-xs truncate">{currentLocation.label}</span>
+                </button>
+                {isOpen && (
+                  <div className="absolute top-full left-0 w-40 bg-white border rounded-xl shadow-lg mt-1 z-50">
+                    {locations.map((loc) => (
+                      <button
+                        key={loc.value}
+                        onClick={() => { setSelectedLocation(loc.value); setIsOpen(false); }}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-xs"
+                      >
+                        {loc.label}
+                      </button>
+                    ))}
                   </div>
+                )}
+              </div>
 
-                  {/* Search Bar */}
-                  <div className="relative flex-1 min-w-[180px] md:min-w-[300px]">
-                    <button
-                      onClick={handleSearch}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                    >
-                      <FaSearch />
-                    </button>
-                    <input
-                      type="text"
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      className="w-full h-10 pl-10 pr-4 rounded-r-full border border-gray-300 bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      
+              <div className="relative flex-1 min-w-0">
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  className="w-full h-9 pl-9 pr-9 border border-gray-300 rounded-full sm:rounded-l-none sm:rounded-r-full bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
+                />
+                <button onClick={handleSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <FaSearch className="w-3.5 h-3.5" />
+                </button>
+                {inputValue === "" && (
+                  <div className="absolute inset-0 flex items-center pointer-events-none pl-9 pr-9 overflow-hidden">
+                    <TypeAnimation
+                      sequence={["Search Electronics...", 2000, "Search Vehicles...", 2000]}
+                      wrapper="span"
+                      repeat={Infinity}
+                      className="text-gray-400 text-xs sm:text-sm whitespace-nowrap"
                     />
-
-                    {inputValue === "" && (
-                      <TypeAnimation
-                        sequence={[
-                          "Search for Electronics...", 2000,
-                          "Search for Vehicles...", 2000,
-                          "Search for Clothing...", 2000,
-                        ]}
-                        wrapper="span"
-                        cursor
-                        repeat={Infinity}
-                        style={{
-                          position: "absolute",
-                          left: "2.5rem",
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          color: "gray",
-                          pointerEvents: "none",
-                          fontSize: "0.875rem",
-                        }}
-                      />
-                    )}
                   </div>
-                </div>
+                )}
               </div>
             </div>
 
-            {/* Right Side: Navigation + Account + Cart */}
-            <div className="flex items-center gap-6">
-              {/* Desktop Navigation */}
-              <nav className="hidden lg:flex gap-6">
-                <Link href="/HeaderEliment/about" className="text-sm hover:text-primary transition-colors">
-                  About
-                </Link>
-                <Link href="/HeaderEliment/contact" className="text-sm hover:text-primary transition-colors">
-                  Contact
-                </Link>
-                <Link href="/HeaderEliment/Fax" className="text-sm hover:text-primary transition-colors">
-                  FAX
-                </Link>
+            {/* RIGHT: Nav + Account + Cart */}
+            <div className="flex items-center gap-1 sm:gap-3 shrink-0">
+              <nav className="hidden xl:flex gap-4 mr-2">
+                <Link href="/about" className="text-xs font-medium hover:text-blue-600">About</Link>
+                <Link href="/how-it-works" className="text-xs font-medium hover:text-blue-600">Merchant</Link>
+                <Link href="/HeaderEliment/Fax" className="text-xs font-medium hover:text-blue-600">FAQs</Link>
+                <Link href="/HeaderEliment/contact" className="text-xs font-medium hover:text-blue-600">Contact</Link>
               </nav>
 
-              {/* Account Dropdown */}
-              <div className="relative">
+              <div ref={userDropdownRef} className="relative">
                 <button
-                  onClick={toggleDropdown}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors hidden md:block"
-                  title="My Account"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="p-1.5 hover:bg-gray-100 rounded-full"
                 >
-                  <User className="h-6 w-6" />
+                  <User className="h-5 w-5 sm:h-6 sm:w-6 text-gray-700" />
                 </button>
-
-                {/* Account Dropdown Menu */}
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-[60]">
-                    {menuItems.map((item, index) => (
+                  <div className="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg border py-2 z-50">
+                    {menuItems.map((item, i) => (
                       <button
-                        key={index}
-                        onClick={() => {
-                          item.action();
-                          setIsDropdownOpen(false);
-                        }}
-                        className="w-full text-left px-6 py-3 hover:bg-gray-100 text-gray-700 hover:text-blue-600 transition"
+                        key={i}
+                        onClick={() => { item.action(); setIsDropdownOpen(false); }}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-xs"
                       >
                         {item.label}
                       </button>
@@ -213,33 +180,28 @@ export function Header() {
                 )}
               </div>
 
-              {/* Cart */}
               <Link href="/cart">
-                <button className="relative p-2 hover:bg-gray-100 rounded-lg">
-                  <ShoppingCart className="w-6 h-6" />
+                <div className="relative p-1.5 hover:bg-gray-100 rounded-full">
+                  <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 text-gray-700" />
                   {cartItemCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                    <span className="absolute top-0 right-0 bg-blue-500 text-white text-[9px] w-3.5 h-3.5 flex items-center justify-center rounded-full">
                       {cartItemCount}
                     </span>
                   )}
-                </button>
+                </div>
               </Link>
             </div>
           </div>
 
-          {/* Mobile Menu */}
+          {/* MOBILE MENU */}
           {mobileMenuOpen && (
-            <div className="lg:hidden border-t py-4">
-              <nav className="flex flex-col gap-3 px-4">
-                <Link href="/HeaderEliment/about" className="text-sm hover:text-primary transition-colors">
-                  About
-                </Link>
-                <Link href="/HeaderEliment/contact" className="text-sm hover:text-primary transition-colors">
-                  Contact
-                </Link>
-                <Link href="/HeaderEliment/Fax" className="text-sm hover:text-primary transition-colors">
-                  FAX
-                </Link>
+            <div className="lg:hidden border-t py-2 bg-white">
+              {/* Note: I removed the extra refs from here and moved mobileMenuRef to the button wrapper above */}
+              <nav className="flex flex-col px-4 text-sm">
+                <Link href="/about" className="py-2 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>About</Link>
+                <Link href="/how-it-works" className="py-2 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>Merchant</Link>
+                <Link href="/HeaderEliment/Fax" className="py-2 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>FAQs</Link>
+                <Link href="/HeaderEliment/contact" className="py-2 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
               </nav>
             </div>
           )}
