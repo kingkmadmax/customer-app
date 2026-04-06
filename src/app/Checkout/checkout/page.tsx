@@ -32,7 +32,7 @@ export default function CheckoutStep1() {
   ========================= */
   const handleNext = () => {
     // ❌ prevent empty form bug
-    if (!form.name || !form.email || !form.phone) {
+    if (!form.name || !form.email || !form.phone ||!form.fid) {
       alert("Please fill all required fields");
       return;
     }
@@ -41,17 +41,13 @@ export default function CheckoutStep1() {
     setPersonal(form);
 
     // 🔥 correct route (make sure it's consistent)
-    router.push("/Checkout/checkout/step-3");
+    router.push("/Checkout/checkout/orderC");
   };
 
   return (
     <div className="max-w-6xl mx-auto p-6">
       {/* Debug info */}
-      <div className="mb-4 p-4 bg-yellow-100 border border-yellow-300 rounded">
-        <h3 className="font-bold">Debug Info:</h3>
-        <p>Cart items: {cartItems.length}</p>
-        <p>Checkout product: {useCheckoutStore.getState().product ? 'Yes' : 'No'}</p>
-      </div>
+
 
       <CheckoutStepper step={1} />
 
@@ -72,43 +68,47 @@ export default function CheckoutStep1() {
           <div className="space-y-4">
 
             {/* NAME */}
+            <p className="text-bold">Name*</p>
             <input
               type="text"
               name="name"
-              placeholder="Full Name *"
+              placeholder="Full Name "
               value={form.name}
               onChange={handleChange}
-              className="w-full p-3 border rounded-lg"
+              className="w-full p-3  border border-gray-300 rounded-lg"
             />
 
             {/* EMAIL */}
+            <p className="text-bold">Email*</p>
             <input
               type="email"
               name="email"
-              placeholder="Email *"
+              placeholder="Email "
               value={form.email}
               onChange={handleChange}
-              className="w-full p-3 border rounded-lg"
+              className="w-full p-3  border border-gray-300 rounded-lg"
             />
 
             {/* PHONE */}
+            <p className="text-bold">Phone*</p>
             <input
               type="tel"
               name="phone"
-              placeholder="Phone Number *"
+              placeholder="Phone Number "
               value={form.phone}
               onChange={handleChange}
-              className="w-full p-3 border rounded-lg"
+              className="w-full p-3  border border-gray-300 rounded-lg"
             />
 
             {/* FID */}
+            <p className="text-bold">Fid*</p>
             <input
               type="text"
               name="fid"
-              placeholder="Fida ID (optional)"
+              placeholder="Fida ID "
               value={form.fid}
               onChange={handleChange}
-              className="w-full p-3 border rounded-lg"
+              className="w-full p-3  border border-gray-300 rounded-lg"
             />
           </div>
         </div>
