@@ -142,19 +142,19 @@ export default function Cards({ card = [] }: CardsProps) {
             <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
               <button
                 onClick={() => openQuickView(product)}
-                className="bg-white shadow-md hover:bg-blue-50 w-9 h-9 rounded-full flex items-center justify-center border border-gray-200 transition-all active:scale-95"
+                className="bg-white shadow-md hover:bg-blue-50 w-7 h-7 rounded-full flex items-center justify-center border border-gray-200 transition-all active:scale-120"
                 title="Quick View"
               >
-                <Eye className="w-5 h-5 text-blue-600" />
+                <Eye className="w-4 h-4 text-blue-600" />
               </button>
 
               <button
                 onClick={() => toggleFavorite(product.id)}
-                className="bg-white shadow-md hover:bg-red-50 w-9 h-9 rounded-full flex items-center justify-center border border-gray-200 transition-all active:scale-95"
+                className="bg-white shadow-md hover:bg-red-50 w-7 h-7 rounded-full flex items-center justify-center border border-gray-200 transition-all active:scale-95"
                 title="Add to Favorites"
               >
                 <Heart
-                  className={`w-5 h-5 transition-colors ${
+                  className={`w-4 h-4 transition-colors ${
                     favorites.includes(product.id)
                       ? "fill-red-500 text-red-500"
                       : "text-gray-600 hover:text-red-500"
