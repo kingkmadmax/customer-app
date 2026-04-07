@@ -16,8 +16,9 @@ export default function CheckoutStepper({
     { id: 1, label: "Personal Info" },
     { id: 2, label: "Verification" },
     { id: 3, label: "Schedule" },
-    { id: 4, label: "Terms" },
-    { id: 5, label: "Complete" },
+    { id: 4, label: "Payment" },
+    { id: 5, label: "Terms" },
+    { id: 6, label: "Complete" },
   ].slice(0, totalSteps || 5);
 
   return (

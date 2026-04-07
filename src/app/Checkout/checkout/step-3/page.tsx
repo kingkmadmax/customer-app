@@ -39,7 +39,7 @@ export default function CheckoutStep3() {
       alert("Please fill in all rental details");
       return;
     }
-    router.push("/checkout/step-4");
+    router.push("/Checkout/checkout/payment");
   };
 
   return (

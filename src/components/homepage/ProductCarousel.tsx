@@ -10,6 +10,7 @@ export interface Product {
   name: string;
   price: number;
   reviews: number;
+  deposite: number;
   rating: number;
   category: string;
   conditon: string;

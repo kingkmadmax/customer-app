@@ -109,6 +109,7 @@ export default function ProductDetails() {
                 id: product.id,
                 name: product.name,
                 image: product.image[0],
+                deposite: product.deposite,
                 price: product.price,
                 quantity: 1,
                 status: "pending", 

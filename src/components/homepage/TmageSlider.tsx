@@ -10,6 +10,7 @@ interface Product {
   name: string;
   description: string;
   image: string[];
+  deposite: number;
   price: number;
   conditon: string;
 }
