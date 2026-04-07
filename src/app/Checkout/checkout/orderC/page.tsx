@@ -6,10 +6,23 @@ import { useRouter } from "next/navigation";
 import CartSummary from "@/components/CartSummary";
 import { BiometricKYCStep } from "@/components/BiometricKYCStep";
 import { ArrowRight, ChevronLeft, ShieldCheck } from "lucide-react";
+import { useCheckoutStore } from "@/components/store/cat-store";  
 
 export default function Step2Page() {
   const router = useRouter();
   const [isValid, setIsValid] = useState(false);
+  
+  const { setBiometric } = useCheckoutStore(); // Pull the function from store
+
+// Update your BiometricKYCStep component call:
+<BiometricKYCStep
+        onDataChange={(data) => {
+          // data contains { faceImage, idImage }
+          // ✅ THIS IS THE MISSING LINK: It saves images to the global store
+          setBiometric(data); 
+        }}
+        isValid={setIsValid}
+      />
 
   return (
     <div className="max-w-5xl mx-auto p-6 min-h-screen bg-gray-50 text-gray-900">

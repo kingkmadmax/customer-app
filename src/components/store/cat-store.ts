@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 /* =========================
-    🛒 CART STORE (UPDATED)
+    🛒 CART STORE
 ========================= */
 
 export type CartItem = {
@@ -9,7 +9,7 @@ export type CartItem = {
   image: string;
   name: string;
   price: number;
-  deposite: number; // 🔥 Added this
+  deposite: number; 
   quantity: number;
   status?: "accepted" | "pending" | "declined";
 };
@@ -91,7 +91,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
 }));
 
 /* =========================
-    💳 CHECKOUT STORE (UPDATED)
+    💳 CHECKOUT STORE
 ========================= */
 
 type RentalDates = {
@@ -100,20 +100,28 @@ type RentalDates = {
   returnDate: string;
 };
 
+// Added this type for your images
+type BiometricData = {
+  faceImage: string | null;
+  idImage: string | null;
+};
+
 type CheckoutState = {
   product: {
     id: number;
     name: string;
     price: number;
-    deposite: number; // 🔥 Added this
+    deposite: number;
     image: string;
   } | null;
   personal: { name: string; email: string; phone: string; fid: string };
   rental: RentalDates;
+  biometric: BiometricData; // 🔥 Added for images
   rentalDays: number;
   setProduct: (product: CheckoutState["product"]) => void;
   setPersonal: (data: CheckoutState["personal"]) => void;
   setRental: (data: RentalDates) => void;
+  setBiometric: (data: BiometricData) => void; // 🔥 Added for images
   calculateRentalDays: () => number;
   clearCheckout: () => void;
 };
@@ -122,10 +130,12 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
   product: null,
   personal: { name: "", email: "", phone: "", fid: "" },
   rental: { location: "", receiveDate: "", returnDate: "" },
+  biometric: { faceImage: null, idImage: null }, // 🔥 Initial State
   rentalDays: 1,
 
   setProduct: (product) => set({ product }),
   setPersonal: (data) => set({ personal: data }),
+  setBiometric: (data) => set({ biometric: data }), // 🔥 Function to save images
 
   setRental: (data) => {
     const start = new Date(data.receiveDate);
@@ -155,6 +165,7 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
     product: null,
     personal: { name: "", email: "", phone: "", fid: "" },
     rental: { location: "", receiveDate: "", returnDate: "" },
+    biometric: { faceImage: null, idImage: null },
     rentalDays: 1,
   }),
 }));

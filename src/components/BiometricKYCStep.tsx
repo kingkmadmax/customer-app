@@ -53,30 +53,29 @@ export function BiometricKYCStep({
   };
 
   // --- CAPTURE LOGIC ---
-  const handleCapture = (setImage: (img: string) => void, nextStepTrigger: () => void) => {
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    
-    if (!video || !canvas) return;
+const handleCapture = (setImage: (img: string) => void, nextStepTrigger: () => void) => {
+  const video = videoRef.current;
+  const canvas = canvasRef.current;
+  if (!video || !canvas) return;
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+  const ctx = canvas.getContext("2d");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  ctx?.drawImage(video, 0, 0);
 
-    // Set canvas to match video resolution
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-    // Save image data
-    const imageData = canvas.toDataURL("image/png");
-    setImage(imageData);
+  const imageData = canvas.toDataURL("image/png");
+  setImage(imageData); // Sets local state
+  
+  // ✅ This triggers onDataChange in Step2Page, which then calls setBiometric
+  // Make sure your useEffect in this component calls onDataChange!
+};
 
-    // ✅ CRITICAL: Turn off camera hardware immediately
-    stopCamera();
-    
-    // Move to next step
-    nextStepTrigger();
-  };
+// Add/Update this useEffect inside BiometricKYCStep.tsx:
+useEffect(() => {
+  // Every time a photo is taken, we push the latest images to the parent
+  onDataChange({ faceImage, idImage });
+  isValid(!!faceImage && !!idImage);
+}, [faceImage, idImage]);
 
   // Clean up camera on component unmount
   useEffect(() => {
