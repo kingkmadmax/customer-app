@@ -92,13 +92,13 @@ export default function CheckoutStep5() {
               <section>
                 <div className="flex items-center gap-2 mb-3">
                   <Scan className="w-4 h-4 text-blue-600" />
-                  <h3 className="text-[11px] font-black uppercase tracking-widest text-gray-400">Identity Verification Photos</h3>
+                  <h3 className="text-[11px]">Identity Verification Photos</h3>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   {/* FACE IMAGE */}
                   <div className="space-y-2">
-                    <p className="text-[9px] font-black text-gray-400 uppercase ml-1">Face Scan</p>
+                    <p className="text-[9px] font-black text-gray-400 ml-1">Face Scan</p>
                     <div className="aspect-square bg-gray-100 rounded-2xl border-2 border-white shadow-sm overflow-hidden relative group">
                       {biometric?.faceImage ? (
                         <img src={biometric.faceImage} alt="Face" className="w-full h-full object-cover" />

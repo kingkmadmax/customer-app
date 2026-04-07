@@ -16,9 +16,7 @@ export default function CartSummary() {
   // Type-casting as any to avoid 'deposite' missing errors if interfaces aren't updated yet
   const summaryItems = [...cartItems, ...checkoutItem] as any[];
 
-  // ==========================================
-  // CALCULATIONS (NO DIVISION BY 30)
-  // ==========================================
+  
   
   // Subtotal = Price * Quantity * Days
   const subtotal = summaryItems.reduce((acc, item) => {
@@ -73,13 +71,10 @@ export default function CartSummary() {
                     </span>
                   </div>
 
-                  {/* DEPOSIT DISPLAY */}
                   {(item.deposite ?? 0) > 0 && (
                     <div className="flex justify-between items-center bg-orange-50 px-3 py-1 rounded-lg">
-                      <span className="text-[10px] text-orange-700 font-bold uppercase">Security Deposit</span>
-                      <span className="text-[11px] text-orange-700 font-bold">
-                        +${(Number(item.deposite) * item.quantity).toFixed(2)}
-                      </span>
+                     
+                    
                     </div>
                   )}
                 </div>

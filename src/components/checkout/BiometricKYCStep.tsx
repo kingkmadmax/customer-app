@@ -92,7 +92,7 @@ useEffect(() => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Scan className="w-5 h-5 text-blue-600" />
-          <h2 className="font-black text-lg italic tracking-tight">Identity Verification</h2>
+          <h2 className="">Identity Verification</h2>
         </div>
         <div className="px-3 py-1 bg-gray-100 rounded-full text-[9px] font-black text-gray-500 uppercase tracking-widest">
           {step === "face" ? "Step 1/2" : step === "id" ? "Step 2/2" : "Complete"}

@@ -97,7 +97,7 @@ export function Header() {
 
               <Link href="/" className="flex items-center gap-1">
                 <span className="text-2xl sm:text-3xl font-extrabold text-blue-600">Et</span>
-                <span className="hidden xs:block text-2xl sm:text-3xl font-extrabold text-black">Rent</span>
+                <span className=" xs:block text-2xl sm:text-3xl font-extrabold text-black">Rent</span>
               </Link>
             </div>
 
@@ -199,7 +199,7 @@ export function Header() {
               {/* Note: I removed the extra refs from here and moved mobileMenuRef to the button wrapper above */}
               <nav className="flex flex-col px-4 text-sm">
                 <Link href="/about" className="py-2 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>About</Link>
-                <Link href="/how-it-works" className="py-2 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>Merchant</Link>
+                <Link href="/HeaderEliment/renter" className="py-2 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>Merchant</Link>
                 <Link href="/HeaderEliment/Fax" className="py-2 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>FAQs</Link>
                 <Link href="/HeaderEliment/contact" className="py-2 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
               </nav>
