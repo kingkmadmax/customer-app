@@ -38,7 +38,7 @@ export default function TermsPage() {
     <div className="max-w-6xl mx-auto p-6">
 
       {/* 🔥 CHECKOUT STEPPER */}
-      <CheckoutStepper step={4} totalSteps={5} />
+      <CheckoutStepper step={5}  />
 
       {/* TITLE */}
       <h1 className="text-2xl font-bold mt-6 mb-6">

@@ -37,7 +37,7 @@ export default function CheckoutStep5() {
     <div className="max-w-6xl mx-auto p-6">
 
       {/* STEP */}
-      <CheckoutStepper step={5} totalSteps={5} />
+      <CheckoutStepper step={6}  />
 
       <h1 className="text-2xl font-bold mt-6 mb-6">
         Review & Finish Order

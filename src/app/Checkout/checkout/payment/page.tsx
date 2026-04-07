@@ -2,217 +2,177 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CreditCard, Wallet, Building2, Check } from "lucide-react";
+import { CreditCard, Smartphone, Building2, CheckCircle2, Search, ArrowRight, Upload, Copy, ShieldCheck } from "lucide-react";
 import CheckoutStepper from "@/components/CheckoutStepper";
 import CartSummary from "@/components/CartSummary";
 
-type PaymentMethod = "card" | "wallet" | "bank";
+type PaymentMethod = "card" | "telebirr" | "bank";
 
 export default function PaymentPage() {
   const router = useRouter();
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>("card");
+  
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
 
-  const [selectedMethod, setSelectedMethod] =
-    useState<PaymentMethod>("card");
-
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardHolder, setCardHolder] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
-  const [cvv, setCvv] = useState("");
-
-  const [isValid, setIsValid] = useState(false);
-
-  // ✅ VALIDATION
-  useEffect(() => {
-    if (selectedMethod === "card") {
-      const valid =
-        cardNumber.replace(/\s/g, "").length === 16 &&
-        cardHolder.trim().length >= 3 &&
-        expiryDate.length === 5 &&
-        cvv.length === 3;
-
-      setIsValid(valid);
-    } else {
-      setIsValid(true);
-    }
-  }, [selectedMethod, cardNumber, cardHolder, expiryDate, cvv]);
-
-  // FORMATTERS
-  const formatCardNumber = (value: string) => {
-    const cleaned = value.replace(/\D/g, "");
-    return cleaned.replace(/(.{4})/g, "$1 ").trim().slice(0, 19);
-  };
-
-  const formatExpiryDate = (value: string) => {
-    const cleaned = value.replace(/\D/g, "").slice(0, 4);
-    if (cleaned.length >= 3) {
-      return cleaned.slice(0, 2) + "/" + cleaned.slice(2);
-    }
-    return cleaned;
-  };
-
-  // ✅ SAVE + NEXT
-  const handleNext = () => {
-    const paymentData = {
-      method: selectedMethod,
-      cardNumber,
-      cardHolder,
-      expiryDate,
-      cvv,
-    };
-
-    localStorage.setItem("payment-data", JSON.stringify(paymentData));
-
-    router.push("/Checkout/checkout/step-5");
-  };
-
-  const methods = [
-    { id: "card", name: "Card", icon: CreditCard },
-    { id: "wallet", name: "Wallet", icon: Wallet },
-    { id: "bank", name: "Bank", icon: Building2 },
+  const bankAccounts = [
+    { bank: "CBE", acc: "1000123456789", name: "Rental Co. PLC" },
+    { bank: "Dashen", acc: "009988776655", name: "Rental Co. PLC" },
+   
+  ];
+   const teleAccounts = [
+    { bank: "TeleBIRR", acc: "0911223344", name: "Rental Co. PLC" },
+   
   ];
 
-  return (
-    <div className="max-w-6xl mx-auto p-6">
+  const handleVerification = () => {
+    setIsVerifying(true);
+    setTimeout(() => {
+      setIsVerifying(false);
+      setIsSubmitted(true);
+    }, 1500);
+  };
 
-      {/* ================= STEP BAR ================= */}
+  return (
+    <div className="max-w-5xl mx-auto p-6 min-h-screen bg-gray-50 text-gray-900">
       <CheckoutStepper step={4} />
 
-      <div className="grid md:grid-cols-2 gap-8 mt-6">
-
-        {/* ================= LEFT SIDE ================= */}
-        <div className="space-y-6">
-
-          {/* PAYMENT METHOD CARD */}
-          <div className="p-6 border rounded-xl shadow-xl">
-            <h2 className="text-xl font-bold mb-4">
-              Payment Method
-            </h2>
-
-            <div className="grid grid-cols-3 gap-4">
-              {methods.map((m) => {
-                const Icon = m.icon;
-                const active = selectedMethod === m.id;
-
-                return (
-                  <div
-                    key={m.id}
-                    onClick={() => setSelectedMethod(m.id as PaymentMethod)}
-                    className={`p-4 border rounded-xl cursor-pointer text-center relative ${
-                      active
-                        ? "border-blue-600 bg-blue-50"
-                        : "border-gray-300"
-                    }`}
-                  >
-                    <Icon className="mx-auto mb-2" />
-                    <p className="font-semibold">{m.name}</p>
-
-                    {active && (
-                      <div className="absolute top-2 right-2 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
-                        <Check className="w-3 h-3 text-white" />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* CARD DETAILS */}
-          {selectedMethod === "card" && (
-            <div className="p-6 border rounded-xl shadow-xl">
-              <h2 className="text-xl font-bold mb-4">
-                Card Details
-              </h2>
-
-              <div className="space-y-4">
-
-                <input
-                  value={cardNumber}
-                  onChange={(e) =>
-                    setCardNumber(formatCardNumber(e.target.value))
-                  }
-                  placeholder="Card Number"
-                  className="w-full p-3 border rounded-lg"
-                />
-
-                <input
-                  value={cardHolder}
-                  onChange={(e) =>
-                    setCardHolder(e.target.value.toUpperCase())
-                  }
-                  placeholder="Card Holder"
-                  className="w-full p-3 border rounded-lg"
-                />
-
-                <div className="grid grid-cols-2 gap-4">
-                  <input
-                    value={expiryDate}
-                    onChange={(e) =>
-                      setExpiryDate(formatExpiryDate(e.target.value))
-                    }
-                    placeholder="MM/YY"
-                    className="p-3 border rounded-lg"
-                  />
-
-                  <input
-                    type="password"
-                    value={cvv}
-                    onChange={(e) =>
-                      setCvv(
-                        e.target.value.replace(/\D/g, "").slice(0, 3)
-                      )
-                    }
-                    placeholder="CVV"
-                    className="p-3 border rounded-lg"
-                  />
-                </div>
-              </div>
+      {/* ✅ Adjusted Grid: 1.5fr for payment, 1fr for summary for a "smaller" look */}
+      <div className="grid md:grid-cols-[1.5fr_1fr] gap-6 mt-6 items-stretch">
+        
+        {/* ================= LEFT SIDE: SMALLER PAYMENT CONTENT ================= */}
+        <div className="space-y-4 flex flex-col">
+          
+          {!isSubmitted && (
+            <div className="p-3 bg-white border border-gray-200 rounded-2xl shadow-sm flex gap-2">
+              {[
+                { id: "card", name: "Card", icon: CreditCard },
+                { id: "telebirr", name: "telebirr", icon: Smartphone },
+                { id: "bank", name: "Bank", icon: Building2 },
+              ].map((m) => (
+                <button
+                  key={m.id}
+                  onClick={() => setSelectedMethod(m.id as PaymentMethod)}
+                  className={`flex-1 py-3 rounded-xl flex flex-col items-center gap-1 transition-all border-2 ${
+                    selectedMethod === m.id ? "border-blue-600 bg-blue-50 text-blue-600" : "border-transparent text-gray-400 hover:bg-gray-50"
+                  }`}
+                >
+                  <m.icon className="w-4 h-4" />
+                  <span className="text-[9px] font-black uppercase tracking-tighter">{m.name}</span>
+                </button>
+              ))}
             </div>
           )}
 
-          {/* OPTIONAL SECTION */}
-          <div className="p-6 border rounded-xl shadow-xl">
-            <h2 className="text-xl font-bold mb-4">
-              Additional Options
-            </h2>
+          {/* MAIN ACTION CARD - Reduced padding (p-6) and min-height (min-h-[350px]) */}
+          <div className="p-6 bg-white border border-gray-200 rounded-[1.5rem] shadow-md flex-1 flex flex-col justify-center relative overflow-hidden min-h-[380px]">
+            
+            {isSubmitted ? (
+              <div className="flex flex-col items-center justify-center animate-in zoom-in duration-500 text-center">
+                <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-6">
+                  <CheckCircle2 className="w-12 h-12 text-emerald-500" />
+                </div>
+                <h2 className="text-2xl font-black mb-1">Done!</h2>
+                <p className="text-xs text-gray-500 max-w-[200px]">Payment details received successfully.</p>
+                <button 
+                  onClick={() => router.push("/Checkout/checkout/step-4")}
+                  className="mt-6 px-8 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm flex items-center gap-2"
+                >
+                  NEXT <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-6 animate-in fade-in duration-300">
+                
+                {/* 🏦 BANK TRANSFER VIEW */}
+                {selectedMethod === "bank" && (
+                  <div className="space-y-4">
+                    <h3 className="text-md font-bold">Bank Transfer</h3>
+                    <div className="space-y-2">
+                      {bankAccounts.map((acc, i) => (
+                        <div key={i} className="p-3 bg-gray-50 rounded-xl flex justify-between items-center border border-gray-100">
+                          <div className="text-sm">
+                            <p className="text-[9px] font-bold text-blue-600 uppercase">{acc.bank}</p>
+                            <p className="font-mono font-bold">{acc.acc}</p>
+                          </div>
+                          <button className="p-1.5 hover:bg-white rounded-full"><Copy className="w-3.5 h-3.5 text-gray-400" /></button>
+                        </div>
+                      ))}
+                    </div>
+                    <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 cursor-pointer">
+                      <div className="text-center">
+                         <Upload className="w-5 h-5 text-gray-400 mx-auto mb-1" />
+                         <p className="text-[10px] text-gray-500">{receiptFile ? receiptFile.name : "Upload proof"}</p>
+                      </div>
+                      <input type="file" className="hidden" onChange={(e) => setReceiptFile(e.target.files?.[0] || null)} />
+                    </label>
+                    <button onClick={handleVerification} disabled={!receiptFile} className="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold text-sm">CHECK RECEIPT</button>
+                  </div>
+                )}
 
-            <input
-              type="text"
-              placeholder="Notes or preferences"
-              className="w-full p-3 border rounded-lg"
-            />
+                {/* 📱 TELEBIRR VIEW */}
+                {selectedMethod === "telebirr" && (
+                  <div className="space-y-4">
+                    <div className="w-14 h-14 bg-blue-600 rounded-2xl mx-auto flex items-center justify-center">
+                      <Smartphone className="text-white w-7 h-7" />
+                    </div>
+                    <h3 className="text-md font-bold">TeleBIRR</h3>
+                    <div className="space-y-2">
+                      {teleAccounts.map((acc, i) => (
+                        <div key={i} className="p-3 bg-gray-50 rounded-xl flex justify-between items-center border border-gray-100">
+                          <div className="text-sm">
+                            <p className="text-[9px] font-bold text-blue-600 uppercase">{acc.bank}</p>
+                            <p className="font-mono font-bold">{acc.acc}</p>
+                          </div>
+                          <button className="p-1.5 hover:bg-white rounded-full"><Copy className="w-3.5 h-3.5 text-gray-400" /></button>
+                        </div>
+                      ))}
+                    </div>
+                    <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 cursor-pointer">
+                      <div className="text-center">
+                         <Upload className="w-5 h-5 text-gray-400 mx-auto mb-1" />
+                         <p className="text-[10px] text-gray-500">{receiptFile ? receiptFile.name : "Upload proof"}</p>
+                      </div>
+                      <input type="file" className="hidden" onChange={(e) => setReceiptFile(e.target.files?.[0] || null)} />
+                    </label>
+                    <button onClick={handleVerification} disabled={!receiptFile} className="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold text-sm">CHECK RECEIPT</button>
+                  </div>
+                )}
+
+                {/* 💳 CARD VIEW */}
+                {selectedMethod === "card" && (
+                   <div className="space-y-3">
+                     <h3 className="text-md font-bold">Card Payment</h3>
+                     <input placeholder="Card Number" className="w-full p-3 border rounded-xl bg-gray-50 text-sm" />
+                     <div className="grid grid-cols-2 gap-3">
+                        <input placeholder="MM/YY" className="p-3 border rounded-xl bg-gray-50 text-sm" />
+                        <input placeholder="CVV" className="p-3 border rounded-xl bg-gray-50 text-sm" />
+                     </div>
+                     <button onClick={handleVerification} className="w-full py-4 bg-gray-900 text-white rounded-xl font-bold text-sm">SUBMIT CARD</button>
+                   </div>
+                )}
+              </div>
+            )}
           </div>
-
         </div>
 
-        {/* ================= RIGHT SIDE ================= */}
-        <div className="p-6 border rounded-xl shadow-xl">
-          <CartSummary />
+        {/* ================= RIGHT SIDE: SUMMARY ================= */}
+        <div className="flex flex-col">
+          <div className="sticky top-6 flex-1 flex flex-col gap-3">
+            <div className="flex-1 overflow-hidden">
+               {/* Make sure CartSummary is flexible */}
+              <CartSummary />
+            </div>
+            <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100 flex gap-2">
+               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+               <p className="text-[9px] text-emerald-800 leading-tight">
+                 Secure 256-bit payment. Deposits are refundable.
+               </p>
+            </div>
+          </div>
         </div>
-
-      </div>
-
-      {/* ================= NAV BUTTONS ================= */}
-      <div className="flex justify-between mt-10">
-
-        <button
-          onClick={() => router.back()}
-          className="px-6 py-2 bg-gray-300 rounded-lg"
-        >
-          Back
-        </button>
-
-        <button
-          onClick={handleNext}
-          disabled={!isValid}
-          className={`px-6 py-2 rounded-lg text-white ${
-            isValid
-              ? "bg-blue-600"
-              : "bg-gray-400 cursor-not-allowed"
-          }`}
-        >
-          Next
-        </button>
 
       </div>
     </div>
