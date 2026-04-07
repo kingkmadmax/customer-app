@@ -19,7 +19,7 @@ export default function Step2Page() {
       <div className="grid md:grid-cols-2 gap-8">
         
         {/* LEFT */}
-        <div className="p-6 border rounded-xl">
+        <div className="p-6 border  border-gray-300 rounded-xl">
           <BiometricKYCStep
             onDataChange={() => {}}
             isValid={setIsValid}

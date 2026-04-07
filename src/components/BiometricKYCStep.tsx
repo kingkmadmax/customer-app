@@ -87,7 +87,7 @@ export function BiometricKYCStep({
 
       {/* ================= FACE ================= */}
       {step === "face" && (
-        <div className="border p-6 rounded-lg space-y-4 text-center">
+        <div className="border border-gray-400 p-6 rounded-lg space-y-4 text-center">
 
           {/* STATUS */}
           {idImage && (
@@ -143,7 +143,7 @@ export function BiometricKYCStep({
           {faceImage && (
             <img
               src={faceImage}
-              className="w-32 h-32 mx-auto object-cover rounded-lg border mt-3"
+              className="w-32 h-32 mx-auto object-cover rounded-lg border border-gray-400 mt-3"
             />
           )}
         </div>
@@ -151,7 +151,7 @@ export function BiometricKYCStep({
 
       {/* ================= ID ================= */}
       {step === "id" && (
-        <div className="border p-6 rounded-lg space-y-4 text-center">
+        <div className="border  border-gray-400 p-6 rounded-lg space-y-4 text-center">
 
           {/* STATUS */}
           {faceImage && (
@@ -207,7 +207,7 @@ export function BiometricKYCStep({
           {idImage && (
             <img
               src={idImage}
-              className="w-40 h-28 mx-auto object-cover rounded-lg border mt-3"
+              className="w-40 h-28 mx-auto object-cover rounded-lg border  border-gray-400 mt-3"
             />
           )}
         </div>
@@ -215,7 +215,7 @@ export function BiometricKYCStep({
 
       {/* ================= DONE ================= */}
       {step === "done" && (
-        <div className="text-center p-6 border rounded-lg">
+        <div className="text-center p-6 border  border-gray-400 rounded-lg">
           <p className="text-green-600 font-bold text-lg">
             ✔ Verification Completed
           </p>
