@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import CheckoutStepper from "@/components/CheckoutStepper";
-import CartSummary from "@/components/CartSummary";
+import CheckoutStepper from "@/components/checkout/CheckoutStepper";
+import CartSummary from "@/components/checkout/CartSummary";
 import { useCartStore, useCheckoutStore } from "@/components/store/cat-store";
 import { 
   CheckCircle2, 

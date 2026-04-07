@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import { CartPopup } from "@/components/CartPopup";
+import { CartPopup } from "@/components/checkout/CartPopup";
 import { Header } from "@/components/homepage/header";
 import Footer from "@/components/homepage/Footer";
 

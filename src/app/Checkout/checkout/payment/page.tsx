@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CreditCard, Smartphone, Building2, CheckCircle2, Search, ArrowRight, Upload, Copy, ShieldCheck } from "lucide-react";
-import CheckoutStepper from "@/components/CheckoutStepper";
-import CartSummary from "@/components/CartSummary";
+import CheckoutStepper from "@/components/checkout/CheckoutStepper";
+import CartSummary from "@/components/checkout/CartSummary";
 
 type PaymentMethod = "card" | "telebirr" | "bank";
 

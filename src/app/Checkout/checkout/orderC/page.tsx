@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import CheckoutStepper from "@/components/CheckoutStepper";
+import CheckoutStepper from "@/components/checkout/CheckoutStepper";
 import { useRouter } from "next/navigation";
-import CartSummary from "@/components/CartSummary";
-import { BiometricKYCStep } from "@/components/BiometricKYCStep";
+import CartSummary from "@/components/checkout/CartSummary";
+import { BiometricKYCStep } from "@/components/checkout/BiometricKYCStep";
 import { ArrowRight, ChevronLeft, ShieldCheck } from "lucide-react";
 import { useCheckoutStore } from "@/components/store/cat-store";  
 

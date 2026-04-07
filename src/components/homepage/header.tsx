@@ -153,9 +153,9 @@ export function Header() {
             <div className="flex items-center gap-1 sm:gap-3 shrink-0">
               <nav className="hidden xl:flex gap-4 mr-2">
                 <Link href="/about" className="text-xs font-medium hover:text-blue-600">About</Link>
-                <Link href="/how-it-works" className="text-xs font-medium hover:text-blue-600">Merchant</Link>
                 <Link href="/HeaderEliment/Fax" className="text-xs font-medium hover:text-blue-600">FAQs</Link>
                 <Link href="/HeaderEliment/contact" className="text-xs font-medium hover:text-blue-600">Contact</Link>
+                 <Link href="/HeaderEliment/renter" className="text-xs font-medium hover:text-blue-600">whant to be renter</Link>
               </nav>
 
               <div ref={userDropdownRef} className="relative">

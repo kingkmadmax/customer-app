@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCartStore, useCheckoutStore } from "./store/cat-store";
+import { useCartStore, useCheckoutStore } from "../store/cat-store";
 
 export default function CartSummary() {
   const { cartItems } = useCartStore();

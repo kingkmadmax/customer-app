@@ -117,7 +117,7 @@ export default function Cards({ card = [] }: CardsProps) {
         name: product.name,
         image: product.image[0],
         price: product.price,
-        deposite: product.deposite, // 🔥 Critical fix
+        deposite: product.deposite, 
         quantity: 1,
         status: "pending",
       });
@@ -176,7 +176,7 @@ export default function Cards({ card = [] }: CardsProps) {
 
               <div className="flex items-baseline font-bold text-lg mb-4">
                 ${product.price.toFixed(2)}
-                <span className="text-xs text-gray-500 font-normal ml-1">/day</span>
+                <span className="text-xs text-gray-500 font-normal ml-1">/month</span>
               </div>
 
               <div className="flex gap-2">
@@ -232,7 +232,7 @@ export default function Cards({ card = [] }: CardsProps) {
                     <p className="text-blue-600 text-sm font-bold">Rental Price</p>
                     <div className="flex items-baseline gap-1">
                       <span className="text-4xl font-black text-gray-900">${selectedProduct.price}</span>
-                      <span className="text-gray-500 font-medium">/per day</span>
+                      <span className="text-gray-500 font-medium">/per Month</span>
                     </div>
                   </div>
                 </div>

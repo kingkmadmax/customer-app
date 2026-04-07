@@ -24,7 +24,7 @@ export default function Home() {
  
 
   return (<div 
-  className="px-4 sm:px-8 lg:px-5 pb-16">
+  className="px-4  bg-gray-100 sm:px-8 lg:px-5 pb-16">
      <ScrollReveal className="pt-1">
        <Hero/>
     </ScrollReveal>

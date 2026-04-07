@@ -67,10 +67,10 @@ export default function ImageSlider({
   }, [autoPlay, interval, direction, canGoNext, canGoPrev]);
 
   return (
-    <div className="relative w-full overflow-hidden bg-black"> {/* Added bg-black to hide any potential light leaks */}
+    <div className="relative w-full overflow-hidden bg-white">
       <div className="relative">
         
-        {/* Buttons - Made them slightly more transparent until hover */}
+        {/* Buttons */}
         <button
           onClick={prevSlide}
           disabled={!canGoPrev}
@@ -79,25 +79,26 @@ export default function ImageSlider({
           <ChevronLeftIcon className="w-6 h-6" />
         </button>
 
-        <div className="overflow-hidden">
+        {/* --- CONTAINER --- */}
+        {/* Added -mx-2 here to counteract the padding on the items so the edges align with the container */}
+        <div className="overflow-hidden mx-2"> 
           <div
             className="flex transition-transform duration-700 ease-in-out"
             style={{
-              // This creates a smooth slide without gaps
               transform: `translateX(-${index * (100 / itemsPerView)}%)`,
             }}
           >
             {products.map((product) => (
               <div
                 key={product.id}
-                className="flex-shrink-0 w-full" 
+                // 🔥 Added px-2 here to create the "gap" between images
+                className="flex-shrink-0 w-full px-2" 
                 style={{
-                  // Dynamic width based on screen size
                   width: `${100 / itemsPerView}%`,
                 }}
               >
-                {/* Removed scale and opacity changes to stop the "white thing" */}
-                <div className="relative aspect-[4/5] sm:aspect-video lg:aspect-[4/5] w-full overflow-hidden">
+                {/* --- IMAGE CARD --- */}
+                <div className="relative aspect-[4/5] sm:aspect-video lg:aspect-[4/5] w-full overflow-hidden rounded-xl"> {/* Added rounded-xl for cleaner look */}
                   <Link href={`/product/${product.id}`}>
                     <Image
                       src={product.image[0]}
@@ -110,12 +111,12 @@ export default function ImageSlider({
                   </Link>
 
                   {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent pointer-events-none" />
 
                   <div className="absolute bottom-0 left-0 right-0 p-6">
                     <h2 className="text-white text-xl font-bold">{product.name}</h2>
-                    <p className="text-gray-200 text-sm line-clamp-1">{product.description}</p>
-                    <p className="text-green-400 text-lg font-bold mt-2">${product.price}</p>
+                    <p className="text-gray-200 text-xs line-clamp-1 opacity-80">{product.description}</p>
+                    <p className="text-green-400 text-lg font-black mt-1">${product.price}</p>
                   </div>
                 </div>
               </div>

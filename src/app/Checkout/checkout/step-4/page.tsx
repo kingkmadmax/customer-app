@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import CheckoutStepper from "@/components/CheckoutStepper";
-import CartSummary from "@/components/CartSummary";
+import CheckoutStepper from "@/components/checkout/CheckoutStepper";
+import CartSummary from "@/components/checkout/CartSummary";
 import { FileText, CheckCircle2, ChevronLeft, ArrowRight, ShieldCheck, Scale } from "lucide-react";
 
 export default function TermsPage() {

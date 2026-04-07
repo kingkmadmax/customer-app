@@ -4,6 +4,7 @@ import { ArrowLeft, Heart, Shield, Truck, Users, Star, Award, Clock, MapPin } fr
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState } from "react";
+import Counter from "@/components/comp/requestAnimationFrame";
 
 const features = [
   {
@@ -33,10 +34,10 @@ const features = [
 ];
 
 const stats = [
-  { number: "10,000+", label: "Happy Customers" },
-  { number: "50,000+", label: "Products Rented" },
-  { number: "98%", label: "Satisfaction Rate" },
-  { number: "24/7", label: "Customer Support" },
+  { number: <Counter target={10000} />, suffix: "+", label: "Happy Customers" },
+  { number: <Counter target={50000} />, suffix: "+", label: "Products Rented" },
+  { number: <Counter target={98} />, suffix: "%", label: "Satisfaction Rate" },
+  { number: "24/7", suffix: "", label: "Customer Support" },
 ];
 
 const team = [
@@ -98,6 +99,7 @@ export default function AboutPage() {
               <div key={index} className="text-center">
                 <div className="text-3xl font-bold text-blue-600 mb-2">
                   {stat.number}
+                  {stat.suffix}
                 </div>
                 <div className="text-gray-600">{stat.label}</div>
               </div>

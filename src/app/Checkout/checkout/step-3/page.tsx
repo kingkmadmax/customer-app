@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import CheckoutStepper from "@/components/CheckoutStepper";
+import CheckoutStepper from "@/components/checkout/CheckoutStepper";
 import { useRouter } from "next/navigation";
-import CartSummary from "@/components/CartSummary";
+import CartSummary from "@/components/checkout/CartSummary";
 import { useCheckoutStore } from "@/components/store/cat-store";
 import { MapPin, Calendar, ArrowRight, Info } from "lucide-react";
 
