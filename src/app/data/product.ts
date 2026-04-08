@@ -1,3 +1,6 @@
+import { desc, em, image } from "framer-motion/m";
+import { features } from "process";
+
 export const Add = [
   {link: "/New-folder/(2).mp4", name: "Houses", description: "Comfortable athletic shoes" },
 ] 
@@ -13,11 +16,23 @@ export   const products = [
     conditon: "new",           // fixed spelling: "condition"
     location: "Addis Ababa",
     price: 899.99,
-    rating: 4.5,
+    rating: 3,
     reviews: 342,
     status: "available",
-    description: "Well-maintained Toyota Camry in excellent condition. Perfect for daily commute.",
-    image: ["/download2.jpg"]
+    details: {
+      description: "Well-maintained Toyota Camry in excellent condition. Perfect for daily commute.",
+      features: "Eco-mode enabled, lane assist, and premium sound system.",
+      package: "Includes full tank of gas, spare tire, and phone mount.",
+      warranty: "Comprehensive insurance included for the rental period."
+    },
+    specifications: [
+      { label: "Brand", value: "Toyota" },
+      { label: "Model", value: "Camry" },
+      { label: "Year", value: "2022" },
+      { label: "Fuel Type", value: "Hybrid" },
+      { label: "Transmission", value: "Automatic" }
+    ],
+    image: ["/download2.jpg", "/download3.jpg", "/download4.jpg"]
   },
   {
     id: 2,
@@ -30,7 +45,19 @@ export   const products = [
     rating: 4.8,
     reviews: 189,
     status: "available",
-    description: "Spacious and modern 2 bedroom apartment in the heart of the city.",
+    details: {
+      description: "Well-maintained Toyota Camry in excellent condition. Perfect for daily commute.",
+      features: "Eco-mode enabled, lane assist, and premium sound system.",
+      package: "Includes full tank of gas, spare tire, and phone mount.",
+      warranty: "Comprehensive insurance included for the rental period."
+    },
+    specifications: [
+      { label: "Brand", value: "Toyota" },
+      { label: "Model", value: "Camry" },
+      { label: "Year", value: "2022" },
+      { label: "Fuel Type", value: "Hybrid" },
+      { label: "Transmission", value: "Automatic" }
+    ],
     image: ["/download2.jpg"]
   },
   {
@@ -44,7 +71,19 @@ export   const products = [
     rating: 4.2,
     reviews: 756,
     status: "available",
-    description: "iPhone 14 Pro Max 256GB in great condition with original accessories.",
+   details: {
+      description: "Well-maintained Toyota Camry in excellent condition. Perfect for daily commute.",
+      features: "Eco-mode enabled, lane assist, and premium sound system.",
+      package: "Includes full tank of gas, spare tire, and phone mount.",
+      warranty: "Comprehensive insurance included for the rental period."
+    },
+    specifications: [
+      { label: "Brand", value: "Toyota" },
+      { label: "Model", value: "Camry" },
+      { label: "Year", value: "2022" },
+      { label: "Fuel Type", value: "Hybrid" },
+      { label: "Transmission", value: "Automatic" }
+    ],
     image: ["/download3.jpg"]
   },
   {
@@ -58,7 +97,19 @@ export   const products = [
     rating: 4.6,
     reviews: 124,
     status: "available",
-    description: "Brand new Honda CBR 150R - powerful and fuel efficient.",
+    details: {
+      description: "Well-maintained Toyota Camry in excellent condition. Perfect for daily commute.",
+      features: "Eco-mode enabled, lane assist, and premium sound system.",
+      package: "Includes full tank of gas, spare tire, and phone mount.",
+      warranty: "Comprehensive insurance included for the rental period."
+    },
+    specifications: [
+      { label: "Brand", value: "Toyota" },
+      { label: "Model", value: "Camry" },
+      { label: "Year", value: "2022" },
+      { label: "Fuel Type", value: "Hybrid" },
+      { label: "Transmission", value: "Automatic" }
+    ],
     image: ["/download4.jpg"]
   },
   {
@@ -72,7 +123,19 @@ export   const products = [
     rating: 4.9,
     reviews: 203,
     status: "available",
-    description: "Professional mirrorless camera in excellent condition.",
+  details: {
+      description: "Well-maintained Toyota Camry in excellent condition. Perfect for daily commute.",
+      features: "Eco-mode enabled, lane assist, and premium sound system.",
+      package: "Includes full tank of gas, spare tire, and phone mount.",
+      warranty: "Comprehensive insurance included for the rental period."
+    },
+    specifications: [
+      { label: "Brand", value: "Toyota" },
+      { label: "Model", value: "Camry" },
+      { label: "Year", value: "2022" },
+      { label: "Fuel Type", value: "Hybrid" },
+      { label: "Transmission", value: "Automatic" }
+    ],
     image: ["/download.jpg"]
   },
   {
@@ -86,7 +149,19 @@ export   const products = [
     rating: 4.7,
     reviews: 87,
     status: "available",
-    description: "Beautiful luxury villa with private garden and swimming pool.",
+details: {
+      description: "Well-maintained Toyota Camry in excellent condition. Perfect for daily commute.",
+      features: "Eco-mode enabled, lane assist, and premium sound system.",
+      package: "Includes full tank of gas, spare tire, and phone mount.",
+      warranty: "Comprehensive insurance included for the rental period."
+    },
+    specifications: [
+      { label: "Brand", value: "Toyota" },
+      { label: "Model", value: "Camry" },
+      { label: "Year", value: "2022" },
+      { label: "Fuel Type", value: "Hybrid" },
+      { label: "Transmission", value: "Automatic" }
+    ],
     image: ["/download (1).jpg"]
   },
   {
@@ -100,7 +175,19 @@ export   const products = [
     rating: 4.4,
     reviews: 312,
     status: "available",
-    description: "MacBook Pro 16-inch M2 Max - powerful performance for professionals.",
+    details: {
+      description: "Well-maintained Toyota Camry in excellent condition. Perfect for daily commute.",
+      features: "Eco-mode enabled, lane assist, and premium sound system.",
+      package: "Includes full tank of gas, spare tire, and phone mount.",
+      warranty: "Comprehensive insurance included for the rental period."
+    },
+    specifications: [
+      { label: "Brand", value: "Toyota" },
+      { label: "Model", value: "Camry" },
+      { label: "Year", value: "2022" },
+      { label: "Fuel Type", value: "Hybrid" },
+      { label: "Transmission", value: "Automatic" }
+    ],
     image: ["/download (2).jpg"]
   },
   {
@@ -114,7 +201,19 @@ export   const products = [
     rating: 4.3,
     reviews: 521,
     status: "available",
-    description: "Classic Nike Air Force 1 in white - brand new with box.",
+    details: {
+      description: "Well-maintained Toyota Camry in excellent condition. Perfect for daily commute.",
+      features: "Eco-mode enabled, lane assist, and premium sound system.",
+      package: "Includes full tank of gas, spare tire, and phone mount.",
+      warranty: "Comprehensive insurance included for the rental period."
+    },
+    specifications: [
+      { label: "Brand", value: "Toyota" },
+      { label: "Model", value: "Camry" },
+      { label: "Year", value: "2022" },
+      { label: "Fuel Type", value: "Hybrid" },
+      { label: "Transmission", value: "Automatic" }
+    ],
     image: ["/download (3).jpg"]
   },
   {
@@ -128,7 +227,19 @@ export   const products = [
     rating: 4.1,
     reviews: 156,
     status: "available",
-    description: "Spacious 3 bedroom house suitable for a growing family.",
+    details: {
+      description: "Well-maintained Toyota Camry in excellent condition. Perfect for daily commute.",
+      features: "Eco-mode enabled, lane assist, and premium sound system.",
+      package: "Includes full tank of gas, spare tire, and phone mount.",
+      warranty: "Comprehensive insurance included for the rental period."
+    },
+    specifications: [
+      { label: "Brand", value: "Toyota" },
+      { label: "Model", value: "Camry" },
+      { label: "Year", value: "2022" },
+      { label: "Fuel Type", value: "Hybrid" },
+      { label: "Transmission", value: "Automatic" }
+    ],
     image: ["/download (4).jpg"]
   },
   {
@@ -142,7 +253,19 @@ export   const products = [
     rating: 4.5,
     reviews: 98,
     status: "available",
-    description: "Brand new Suzuki Alto - economical and easy to drive.",
+    details: {
+      description: "Well-maintained Toyota Camry in excellent condition. Perfect for daily commute.",
+      features: "Eco-mode enabled, lane assist, and premium sound system.",
+      package: "Includes full tank of gas, spare tire, and phone mount.",
+      warranty: "Comprehensive insurance included for the rental period."
+    },
+    specifications: [
+      { label: "Brand", value: "Toyota" },
+      { label: "Model", value: "Camry" },
+      { label: "Year", value: "2022" },
+      { label: "Fuel Type", value: "Hybrid" },
+      { label: "Transmission", value: "Automatic" }
+    ],
     image: ["/download (5).jpg"]
   },
   {
@@ -156,7 +279,19 @@ export   const products = [
     rating: 4.6,
     reviews: 234,
     status: "available",
-    description: "Dell XPS 15 with stunning 4K display and powerful specs.",
+   details: {
+      description: "Well-maintained Toyota Camry in excellent condition. Perfect for daily commute.",
+      features: "Eco-mode enabled, lane assist, and premium sound system.",
+      package: "Includes full tank of gas, spare tire, and phone mount.",
+      warranty: "Comprehensive insurance included for the rental period."
+    },
+    specifications: [
+      { label: "Brand", value: "Toyota" },
+      { label: "Model", value: "Camry" },
+      { label: "Year", value: "2022" },
+      { label: "Fuel Type", value: "Hybrid" },
+      { label: "Transmission", value: "Automatic" }
+    ],
     image: ["/download (6).jpg"]
   },
   {
@@ -170,7 +305,19 @@ export   const products = [
     rating: 4.0,
     reviews: 67,
     status: "available",
-    description: "Cozy studio apartment perfect for singles or young professionals.",
+    details: {
+      description: "Well-maintained Toyota Camry in excellent condition. Perfect for daily commute.",
+      features: "Eco-mode enabled, lane assist, and premium sound system.",
+      package: "Includes full tank of gas, spare tire, and phone mount.",
+      warranty: "Comprehensive insurance included for the rental period."
+    },
+    specifications: [
+      { label: "Brand", value: "Toyota" },
+      { label: "Model", value: "Camry" },
+      { label: "Year", value: "2022" },
+      { label: "Fuel Type", value: "Hybrid" },
+      { label: "Transmission", value: "Automatic" }
+    ],
     image: ["/images (3).jpg"]
   },
   {
@@ -184,7 +331,19 @@ export   const products = [
     rating: 4.7,
     reviews: 145,
     status: "available",
-    description: "Sporty Yamaha R15 in excellent running condition.",
+    details: {
+      description: "Well-maintained Toyota Camry in excellent condition. Perfect for daily commute.",
+      features: "Eco-mode enabled, lane assist, and premium sound system.",
+      package: "Includes full tank of gas, spare tire, and phone mount.",
+      warranty: "Comprehensive insurance included for the rental period."
+    },
+    specifications: [
+      { label: "Brand", value: "Toyota" },
+      { label: "Model", value: "Camry" },
+      { label: "Year", value: "2022" },
+      { label: "Fuel Type", value: "Hybrid" },
+      { label: "Transmission", value: "Automatic" }
+    ],
     image: ["/images (2).jpg"]
   },
   {
@@ -198,7 +357,19 @@ export   const products = [
     rating: 4.2,
     reviews: 89,
     status: "available",
-    description: "Premium quality men's leather jacket - stylish and warm.",
+    details: {
+      description: "Well-maintained Toyota Camry in excellent condition. Perfect for daily commute.",
+      features: "Eco-mode enabled, lane assist, and premium sound system.",
+      package: "Includes full tank of gas, spare tire, and phone mount.",
+      warranty: "Comprehensive insurance included for the rental period."
+    },
+    specifications: [
+      { label: "Brand", value: "Toyota" },
+      { label: "Model", value: "Camry" },
+      { label: "Year", value: "2022" },
+      { label: "Fuel Type", value: "Hybrid" },
+      { label: "Transmission", value: "Automatic" }
+    ],
     image: ["/images (1).jpg"]
   },
   {
@@ -212,7 +383,42 @@ export   const products = [
     rating: 4.9,
     reviews: 176,
     status: "available",
-    description: "Canon EOS R6 full-frame mirrorless camera - professional grade.",
+    details: {
+      description: "Well-maintained Toyota Camry in excellent condition. Perfect for daily commute.",
+      features: "Eco-mode enabled, lane assist, and premium sound system.",
+      package: "Includes full tank of gas, spare tire, and phone mount.",
+      warranty: "Comprehensive insurance included for the rental period."
+    },
+    specifications: [
+      { label: "Brand", value: "Toyota" },
+      { label: "Model", value: "Camry" },
+      { label: "Year", value: "2022" },
+      { label: "Fuel Type", value: "Hybrid" },
+      { label: "Transmission", value: "Automatic" }
+    ],
     image: ["/images.jpg"]
   },
-];
+]; 
+
+ export const  reviews = [
+  {  id: 1, name: "John Doe",
+  rating: 4, image: "/download (7).jpg",
+  comment: "Great product, highly recommend!",},
+ {id: 2, name: "Jane Smith",
+  rating: 5, image: "/download (8).jpg",
+  comment: "Excellent quality and fast delivery.",},
+  {id: 3, name: "Alice Johnson",
+  rating: 4, image: "/download (9).jpg",
+  comment: "Good value for money.",}
+]
+export const user=[
+  {
+    id: 1,
+    name: "John Doe",
+    email: "john.doe@example.com"
+
+  },
+  {    id: 2, name: "Jane Smith",
+    email: "jane.smith@example.com"},
+    {    id: 3, name: "Alice Johnson",email: "alice.johnson@example.com"}
+]

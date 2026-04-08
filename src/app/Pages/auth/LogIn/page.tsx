@@ -18,7 +18,7 @@ export default function Login() {
       <main className="flex flex-row items-stretch justify-center min-h-screen w-full max-w-7xl py-32 px-16 bg-white dark:bg-black gap-10">
 
         {/* Text/Form */}
-        <div className="border-2 border-black p-4 rounded flex-1 flex flex-col justify-center max-w-md w-full space-y-20">
+        <div className="border-2 border-gray-300 shadow-lg p-4 rounded flex-1 flex flex-col justify-center max-w-md w-full space-y-20">
           <h1 className="text-3xl font-semibold text-center text-black dark:text-zinc-50">
             Login into Exclusive
           </h1>
@@ -27,11 +27,11 @@ export default function Login() {
           <div className="space-y-6">
             <input
               type="text"
-              placeholder="Email or Phone Number"
+              placeholder="Email"
               className="w-full border-b border-gray-400 p-2 outline-none focus:border-black"
             />
             <input
-              type="password"
+              type="Password"
               placeholder="Enter your password"
               className="w-full border-b border-gray-400 p-2 outline-none focus:border-black"
             />

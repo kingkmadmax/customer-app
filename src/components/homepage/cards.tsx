@@ -1,5 +1,4 @@
 "use client";
-
 import { useCartStore, useCheckoutStore } from "@/components/store/cat-store";
 import { ShoppingCart, Star, Heart, Eye, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
@@ -7,14 +6,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-// ✅ Updated Interface to include 'deposite'
+
 export interface Product {
   id: number;
   status: string;
   image: string[];
   name: string;
   price: number;
-  deposite: number; // 🔥 Added this
+  deposite: number; 
   reviews: number;
   rating: number;
   category: string;
@@ -94,7 +93,6 @@ export default function Cards({ card = [] }: CardsProps) {
     }
   };
 
-  // ✅ Fixed: Now passing deposite to Checkout Store
   const handleRentNow = (product: Product) => {
     setProduct({
       id: product.id,
@@ -106,7 +104,7 @@ export default function Cards({ card = [] }: CardsProps) {
     router.push("/Checkout/checkout");
   };
 
-  // ✅ Fixed: Now passing deposite to Cart Store
+
   const handleAddToCart = (product: Product) => {
     const exists = cartItems.find((item) => item.id === product.id);
     if (exists) {

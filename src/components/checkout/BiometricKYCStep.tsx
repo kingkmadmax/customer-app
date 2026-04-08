@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Camera, CheckCircle2, User, CreditCard, RotateCcw, Scan, Zap } from "lucide-react";
+import { Camera, CheckCircle2, User, CreditCard, RotateCcw, Scan } from "lucide-react";
 
 export function BiometricKYCStep({
   onDataChange,
@@ -21,7 +21,6 @@ export function BiometricKYCStep({
   // --- CAMERA CONTROL ---
   const startCamera = async (mode: "user" | "environment") => {
     try {
-      // Stop any existing stream before starting a new one
       if (stream) {
         stream.getTracks().forEach((track) => track.stop());
       }
@@ -34,7 +33,10 @@ export function BiometricKYCStep({
       
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
-        videoRef.current.play().catch((err) => console.error("Video play error:", err));
+        // Ensure video plays after source is set
+        videoRef.current.onloadedmetadata = () => {
+          videoRef.current?.play().catch((err) => console.error("Video play error:", err));
+        };
       }
     } catch (err) {
       console.error("Camera access denied:", err);
@@ -53,46 +55,41 @@ export function BiometricKYCStep({
   };
 
   // --- CAPTURE LOGIC ---
-const handleCapture = (setImage: (img: string) => void, nextStepTrigger: () => void) => {
-  const video = videoRef.current;
-  const canvas = canvasRef.current;
-  if (!video || !canvas) return;
+  const handleCapture = (setImage: (img: string) => void, nextStepTrigger: () => void) => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return;
 
-  const ctx = canvas.getContext("2d");
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  ctx?.drawImage(video, 0, 0);
+    const ctx = canvas.getContext("2d");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx?.drawImage(video, 0, 0);
 
-  const imageData = canvas.toDataURL("image/png");
-  setImage(imageData); // Sets local state
-  
-  // ✅ This triggers onDataChange in Step2Page, which then calls setBiometric
-  // Make sure your useEffect in this component calls onDataChange!
-};
-
-// Add/Update this useEffect inside BiometricKYCStep.tsx:
-useEffect(() => {
-  // Every time a photo is taken, we push the latest images to the parent
-  onDataChange({ faceImage, idImage });
-  isValid(!!faceImage && !!idImage);
-}, [faceImage, idImage]);
+    const imageData = canvas.toDataURL("image/png");
+    setImage(imageData); 
+    
+    // STOP camera and MOVE to next step
+    stopCamera();
+    nextStepTrigger(); 
+  };
 
   // Clean up camera on component unmount
   useEffect(() => {
     return () => stopCamera();
   }, []);
 
+  // Sync data with parent component
   useEffect(() => {
     onDataChange({ faceImage, idImage });
     isValid(!!faceImage && !!idImage);
-  }, [faceImage, idImage]);
+  }, [faceImage, idImage, onDataChange, isValid]);
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Scan className="w-5 h-5 text-blue-600" />
-          <h2 className="">Identity Verification</h2>
+          <h2 className="font-bold text-gray-800">Identity Verification</h2>
         </div>
         <div className="px-3 py-1 bg-gray-100 rounded-full text-[9px] font-black text-gray-500 uppercase tracking-widest">
           {step === "face" ? "Step 1/2" : step === "id" ? "Step 2/2" : "Complete"}
@@ -126,18 +123,20 @@ useEffect(() => {
             <div className="absolute bottom-4 inset-x-0 flex justify-center">
               {!stream ? (
                 <button
+                  type="button"
                   onClick={() => startCamera(step === "face" ? "user" : "environment")}
-                  className="bg-white text-black px-6 py-2.5 rounded-full font-bold text-xs shadow-2xl flex items-center gap-2 hover:bg-blue-50"
+                  className="bg-white text-black px-6 py-2.5 rounded-full font-bold text-xs shadow-2xl flex items-center gap-2 hover:bg-blue-50 transition-colors"
                 >
                   <Camera className="w-4 h-4" /> ACTIVATE CAMERA
                 </button>
               ) : (
                 <button
+                  type="button"
                   onClick={() => handleCapture(
                     step === "face" ? setFaceImage : setIdImage, 
                     () => setStep(step === "face" ? "id" : "done")
                   )}
-                  className="bg-blue-600 text-white px-8 py-2.5 rounded-full font-bold text-xs shadow-2xl animate-pulse"
+                  className="bg-blue-600 text-white px-8 py-2.5 rounded-full font-bold text-xs shadow-2xl animate-pulse hover:bg-blue-700 transition-colors"
                 >
                   CAPTURE {step === "face" ? "FACE" : "DOCUMENT"}
                 </button>
@@ -155,7 +154,7 @@ useEffect(() => {
                   {step === "face" ? "Center your Face" : "Scan ID Document"}
                 </p>
                 <p className="text-[10px] text-gray-500 leading-tight">
-                  Camera will turn off automatically after successful capture.
+                  Position the {step === "face" ? "face" : "ID card"} clearly within the frame and tap capture.
                 </p>
              </div>
           </div>
@@ -170,8 +169,9 @@ useEffect(() => {
           <p className="text-[11px] text-gray-400 mt-1 uppercase">Hardware released. Images saved.</p>
           
           <button 
+            type="button"
             onClick={() => { setStep("face"); setFaceImage(null); setIdImage(null); }}
-            className="mt-6 flex items-center gap-2 text-[9px] font-black text-blue-600 uppercase tracking-widest"
+            className="mt-6 flex items-center gap-2 text-[9px] font-black text-blue-600 uppercase tracking-widest hover:underline"
           >
             <RotateCcw className="w-3 h-3" /> Reset & Retake
           </button>
@@ -180,6 +180,3 @@ useEffect(() => {
     </div>
   );
 }
-
-
-

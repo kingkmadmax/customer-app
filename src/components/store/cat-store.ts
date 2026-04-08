@@ -9,7 +9,7 @@ export type CartItem = {
   image: string;
   name: string;
   price: number;
-  deposite: number; 
+  deposite: number;
   quantity: number;
   status?: "accepted" | "pending" | "declined";
 };
@@ -100,7 +100,6 @@ type RentalDates = {
   returnDate: string;
 };
 
-// Added this type for your images
 type BiometricData = {
   faceImage: string | null;
   idImage: string | null;
@@ -116,12 +115,12 @@ type CheckoutState = {
   } | null;
   personal: { name: string; email: string; phone: string; fid: string };
   rental: RentalDates;
-  biometric: BiometricData; // 🔥 Added for images
+  biometric: BiometricData;
   rentalDays: number;
   setProduct: (product: CheckoutState["product"]) => void;
   setPersonal: (data: CheckoutState["personal"]) => void;
   setRental: (data: RentalDates) => void;
-  setBiometric: (data: BiometricData) => void; // 🔥 Added for images
+  setBiometric: (data: BiometricData) => void;
   calculateRentalDays: () => number;
   clearCheckout: () => void;
 };
@@ -130,12 +129,12 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
   product: null,
   personal: { name: "", email: "", phone: "", fid: "" },
   rental: { location: "", receiveDate: "", returnDate: "" },
-  biometric: { faceImage: null, idImage: null }, // 🔥 Initial State
+  biometric: { faceImage: null, idImage: null },
   rentalDays: 1,
 
   setProduct: (product) => set({ product }),
   setPersonal: (data) => set({ personal: data }),
-  setBiometric: (data) => set({ biometric: data }), // 🔥 Function to save images
+  setBiometric: (data) => set({ biometric: data }),
 
   setRental: (data) => {
     const start = new Date(data.receiveDate);
@@ -168,4 +167,54 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
     biometric: { faceImage: null, idImage: null },
     rentalDays: 1,
   }),
+}));
+
+/* =========================
+    ⭐ REVIEW STORE (New)
+========================= */
+
+export interface Review {
+  id: number;
+  author: string;
+  rating: number;
+  date: string;
+  comment: string;
+}
+
+type ReviewStore = {
+  reviews: Review[];
+  addReview: (review: Omit<Review, "id" | "date">) => void;
+  resetReviews: () => void;
+  // Optional: Get reviews for a specific product (for future scalability)
+  getReviewsForProduct: (productId: number) => Review[];
+};
+
+export const useReviewStore = create<ReviewStore>((set, get) => ({
+  reviews: [], // You can initialize with default reviews here if needed
+
+  addReview: (newReviewData) =>
+    set((state) => {
+      const review: Review = {
+        id: Date.now(),
+        date: new Date().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+        ...newReviewData,
+      };
+
+      return {
+        reviews: [review, ...state.reviews],
+      };
+    }),
+
+  resetReviews: () => set({ reviews: [] }),
+
+  // For future use when you want per-product reviews
+  getReviewsForProduct: (productId: number) => {
+    // Currently returns all reviews.
+    // You can modify this later when you add productId to Review interface.
+    return get().reviews;
+  },
 }));

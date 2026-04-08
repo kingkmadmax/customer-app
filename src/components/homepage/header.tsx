@@ -25,6 +25,13 @@ const locations: Location[] = [
 
 export function Header() {
   const pathname = usePathname();
+  const hideHeaderRoutes = [
+    "/Pages/auth/SignUp", 
+  "/Pages/auth/LogIn", 
+  "/Pages/auth/PaswordRest"];
+  if (hideHeaderRoutes.includes(pathname)) {
+    return null;
+  }
   const isSearchPage = pathname.startsWith("/search");
   const router = useRouter();
 
@@ -42,6 +49,7 @@ export function Header() {
   const setSelectedLocation = useLocationStore((state) => state.setSelectedLocation);
   const cartItemCount = useCartStore((state) => state.cartItemCount);
 
+  
   // 2. Updated click-outside logic
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
