@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
+import { useFavoriteStore } from "@/components/store/favorite-store";
 
 export interface Product {
   id: number;
@@ -13,11 +13,11 @@ export interface Product {
   image: string[];
   name: string;
   price: number;
-  deposite: number; 
+  deposite: number;
   reviews: number;
   rating: number;
   category: string;
-  conditon: string;
+  conditon: string; // Keeping your spelling to match your data
 }
 
 interface CardsProps {
@@ -28,8 +28,10 @@ export default function Cards({ card = [] }: CardsProps) {
   const router = useRouter();
   const setProduct = useCheckoutStore((state) => state.setProduct);
   const { cartItems, addToCart, increaseQuantity } = useCartStore();
+  
+  // Zustand Global Store for Favorites
+  const { favorites, toggleFavorite } = useFavoriteStore();
 
-  const [favorites, setFavorites] = useState<number[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(8);
@@ -63,10 +65,9 @@ export default function Cards({ card = [] }: CardsProps) {
     return () => observer.disconnect();
   }, [visibleCount, card]);
 
-  const toggleFavorite = (id: number) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id]
-    );
+  // FIXED: Corrected syntax by adding the missing closing brace
+  const handleFavoriteClick = (product: Product) => {
+    toggleFavorite(product);
   };
 
   const openQuickView = (product: Product) => {
@@ -98,12 +99,11 @@ export default function Cards({ card = [] }: CardsProps) {
       id: product.id,
       name: product.name,
       price: product.price,
-      deposite: product.deposite, // 🔥 Critical fix
+      deposite: product.deposite,
       image: product.image[0],
     });
     router.push("/Checkout/checkout");
   };
-
 
   const handleAddToCart = (product: Product) => {
     const exists = cartItems.find((item) => item.id === product.id);
@@ -115,7 +115,7 @@ export default function Cards({ card = [] }: CardsProps) {
         name: product.name,
         image: product.image[0],
         price: product.price,
-        deposite: product.deposite, 
+        deposite: product.deposite,
         quantity: 1,
         status: "pending",
       });
@@ -150,10 +150,11 @@ export default function Cards({ card = [] }: CardsProps) {
                   <Eye className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => toggleFavorite(product.id)}
+                  onClick={() => handleFavoriteClick(product)}
                   className="bg-white p-2 rounded-full shadow-lg transition-colors"
                 >
-                  <Heart className={`w-4 h-4 ${favorites.includes(product.id) ? "fill-red-500 text-red-500" : "text-gray-600"}`} />
+                  {/* FIXED: Check if product exists in favorites array to toggle color */}
+                  <Heart className={`w-4 h-4 ${favorites.some(f => f.id === product.id) ? "fill-red-500 text-red-500" : "text-gray-600"}`} />
                 </button>
               </div>
             </div>
@@ -187,7 +188,7 @@ export default function Cards({ card = [] }: CardsProps) {
 
                 <button
                   onClick={() => handleRentNow(product)}
-                  className="flex-1 h-9 bg-blue-600 text-white rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
+                  className="flex-1 h-9 bg-blue-900 text-white rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
                 >
                   Rent Now
                 </button>
@@ -227,7 +228,7 @@ export default function Cards({ card = [] }: CardsProps) {
                   <span className="text-blue-600 text-xs font-bold uppercase tracking-widest">{selectedProduct.category}</span>
                   <h2 className="text-3xl font-black text-gray-900 mt-2 mb-4 leading-tight">{selectedProduct.name}</h2>
                   <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100 mb-8">
-                    <p className="text-blue-600 text-sm font-bold">Rental Price</p>
+                    <p className="text-blue-900 text-sm font-bold">Rental Price</p>
                     <div className="flex items-baseline gap-1">
                       <span className="text-4xl font-black text-gray-900">${selectedProduct.price}</span>
                       <span className="text-gray-500 font-medium">/per Month</span>
@@ -257,4 +258,4 @@ export default function Cards({ card = [] }: CardsProps) {
       `}</style>
     </div>
   );
-}
+} 

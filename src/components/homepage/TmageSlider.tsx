@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -24,7 +24,7 @@ interface ImageSliderProps {
 export default function ImageSlider({
   products,
   autoPlay = true,
-  interval = 4000,
+  interval = 5000,
 }: ImageSliderProps) {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
@@ -67,23 +67,24 @@ export default function ImageSlider({
   }, [autoPlay, interval, direction, canGoNext, canGoPrev]);
 
   return (
-    <div className="relative w-full overflow-hidden bg-white">
-      <div className="relative">
+    <div className="group relative w-full px-4 py-8 bg-gray-50">
+      <div className="relative max-w-7xl mx-auto">
         
-        {/* Buttons */}
+        {/* Navigation Buttons - More modern glass effect */}
         <button
           onClick={prevSlide}
           disabled={!canGoPrev}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/80 text-white rounded-full p-3 transition-all disabled:opacity-0"
+          className="absolute -left-2 lg:-left-6 top-1/2 -translate-y-1/2 z-40 
+                     bg-white/80 backdrop-blur-md border border-gray-200 shadow-xl 
+                     hover:bg-white text-gray-800 rounded-full p-3 transition-all 
+                     disabled:opacity-0 group-hover:translate-x-2 lg:group-hover:translate-x-0"
         >
-          <ChevronLeftIcon className="w-6 h-6" />
+          <ChevronLeftIcon className="w-5 h-5" />
         </button>
 
-        {/* --- CONTAINER --- */}
-        {/* Added -mx-2 here to counteract the padding on the items so the edges align with the container */}
-        <div className="overflow-hidden mx-2"> 
+        <div className="overflow-hidden">
           <div
-            className="flex transition-transform duration-700 ease-in-out"
+            className="flex transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1)"
             style={{
               transform: `translateX(-${index * (100 / itemsPerView)}%)`,
             }}
@@ -91,33 +92,56 @@ export default function ImageSlider({
             {products.map((product) => (
               <div
                 key={product.id}
-                // 🔥 Added px-2 here to create the "gap" between images
-                className="flex-shrink-0 w-full px-2" 
-                style={{
-                  width: `${100 / itemsPerView}%`,
-                }}
+                className="flex-shrink-0 px-3 transition-all duration-500"
+                style={{ width: `${100 / itemsPerView}%` }}
               >
                 {/* --- IMAGE CARD --- */}
-                <div className="relative aspect-[4/5] sm:aspect-video lg:aspect-[4/5] w-full overflow-hidden rounded-xl"> {/* Added rounded-xl for cleaner look */}
-                  <Link href={`/product/${product.id}`}>
+                <div className="group/card relative aspect-[4/5] overflow-hidden rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 bg-white">
+                  
+                  <Link href={`/product/${product.id}`} className="block h-full w-full">
                     <Image
                       src={product.image[0]}
                       alt={product.name}
                       fill
-                      className="object-cover"
+                      className="object-cover transition-transform duration-700 group-hover/card:scale-110"
                       sizes="(max-width: 768px) 100vw, 25vw"
-                      priority
                     />
+                    
+                    {/* Floating Badge */}
+                    <div className="absolute top-4 left-4 z-20">
+                      <span className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-gray-900 shadow-sm">
+                        {product.conditon}
+                      </span>
+                    </div>
+
+                    {/* Sophisticated Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover/card:opacity-90 transition-opacity duration-500" />
+
+                    <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-2 group-hover/card:translate-y-0 transition-transform duration-500">
+                      <p className="text-blue-400 text-xs font-bold uppercase tracking-wider mb-1">
+                        New Arrival
+                      </p>
+                      <h2 className="text-white text-xl font-semibold leading-tight mb-2">
+                        {product.name}
+                      </h2>
+                      
+                      <div className="flex items-end justify-between">
+                        <div>
+                           <p className="text-gray-300 text-xs line-clamp-1 mb-2 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500">
+                            {product.description}
+                          </p>
+                          <p className="text-white text-2xl font-light">
+                            <span className="text-sm mr-1">$</span>
+                            {product.price.toLocaleString()}
+                          </p>
+                        </div>
+                        
+                        <div className="bg-blue-600 p-2 rounded-lg text-white opacity-0 group-hover/card:opacity-100 transition-all duration-500 transform translate-x-4 group-hover/card:translate-x-0">
+                           <ChevronRightIcon className="w-5 h-5" />
+                        </div>
+                      </div>
+                    </div>
                   </Link>
-
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent pointer-events-none" />
-
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h2 className="text-white text-xl font-bold">{product.name}</h2>
-                    <p className="text-gray-200 text-xs line-clamp-1 opacity-80">{product.description}</p>
-                    <p className="text-green-400 text-lg font-black mt-1">${product.price}</p>
-                  </div>
                 </div>
               </div>
             ))}
@@ -127,10 +151,25 @@ export default function ImageSlider({
         <button
           onClick={nextSlide}
           disabled={!canGoNext}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/80 text-white rounded-full p-3 transition-all disabled:opacity-0"
+          className="absolute -right-2 lg:-right-6 top-1/2 -translate-y-1/2 z-40 
+                     bg-white/80 backdrop-blur-md border border-gray-200 shadow-xl 
+                     hover:bg-white text-gray-800 rounded-full p-3 transition-all 
+                     disabled:opacity-0 group-hover:-translate-x-2 lg:group-hover:translate-x-0"
         >
-          <ChevronRightIcon className="w-6 h-6" />
+          <ChevronRightIcon className="w-5 h-5" />
         </button>
+      </div>
+
+      {/* Progress Indicators */}
+      <div className="flex justify-center gap-1.5 mt-8">
+        {Array.from({ length: products.length - itemsPerView + 1 }).map((_, i) => (
+          <div
+            key={i}
+            className={`h-1 transition-all duration-300 rounded-full ${
+              index === i ? "w-8 bg-blue-600" : "w-2 bg-gray-300"
+            }`}
+          />
+        ))}
       </div>
     </div>
   );

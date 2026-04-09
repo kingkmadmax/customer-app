@@ -129,7 +129,7 @@ export default function ProductDetails() {
   };
 
   return (
-    <div className="mt-6">
+    <div className="mt-6 h-full w-full  mb-10 bg-gray-100">
       {/* Main Product Section - unchanged */}
       <div className="flex gap-12 justify-center mt-20">
         {/* Image Section */}
@@ -278,7 +278,7 @@ export default function ProductDetails() {
                 </p>
               </div>
 
-              <div  flex-col>
+              <div  >
                 <h3 className="text-sm font-bold ">Warranty & Insurance</h3>
                 <p className="text-gray-600 ">
                   {product.details?.warranty || "No warranty information."}

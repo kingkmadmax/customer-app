@@ -56,9 +56,9 @@ export default function Footer() {
              <div className="space-y-3">
           <h3 className="text-xl font-bold text-white">Accounts</h3>
 
-          <ul>
-            <li><a href="/" className="text-sm hover:text-white">Login/Register</a></li>
-            <li><a href="/about" className="text-sm hover:text-white">Cart</a></li>
+          <ul  className="space-y-2">
+            <li><a href="Pages/auth/LogIn" className="text-sm hover:text-white">Login/Register</a></li>
+            <li><a href="/cart" className="text-sm hover:text-white">Cart</a></li>
           </ul>
 
           
@@ -69,8 +69,8 @@ export default function Footer() {
           <h3 className="text-white font-semibold mb-3">Quick Links</h3>
           <ul className="space-y-2 text-sm">
             <li><a href="/"         className=" text-sm hover:text-white">Primery Polices</a></li>
-            <li><a href="/about"    className=" text-sm hover:text-white">Term of use</a></li>
-            <li><a href="/services" className=" text-sm hover:text-white">FAQ</a></li>
+            <li><a href="/about"    className=" text-sm hover:text-white">About</a></li>
+            <li><a href="/faq" className=" text-sm hover:text-white">FAQ</a></li>
             <li><a href="/contact"  className=" text-sm hover:text-white">Contact</a></li>
           </ul>
         </div>

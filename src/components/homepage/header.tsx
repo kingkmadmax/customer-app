@@ -78,7 +78,7 @@ export function Header() {
   const menuItems = [
     { label: "Profile", action: () => router.push("/profile") },
     { label: "Settings", action: () => router.push("/settings") },
-    { label: "Logout", action: () => router.push("/logout") },
+    { label: "Logout", action: () => router.push("/Pages/auth/LogIn") },
   ];
 
   const handleSearch = () => {
@@ -159,12 +159,30 @@ export function Header() {
 
             {/* RIGHT: Nav + Account + Cart */}
             <div className="flex items-center gap-1 sm:gap-3 shrink-0">
-              <nav className="hidden xl:flex gap-4 mr-2">
-                <Link href="/about" className="text-xs font-medium hover:text-blue-600">About</Link>
-                <Link href="/HeaderEliment/Fax" className="text-xs font-medium hover:text-blue-600">FAQs</Link>
-                <Link href="/HeaderEliment/contact" className="text-xs font-medium hover:text-blue-600">Contact</Link>
-                 <Link href="/HeaderEliment/renter" className="text-xs font-medium hover:text-blue-600">whant to be renter</Link>
-              </nav>
+                  <div className="flex items-center gap-1 sm:gap-3 shrink-0">
+  {/* Added items-center to the nav to keep the button and text on one line */}
+                    <nav className="hidden xl:flex items-center gap-6 mr-2">
+                      <Link href="/about" className="text-xs font-medium hover:text-blue-600">
+                        About
+                      </Link>
+                      <Link href="/HeaderEliment/Fax" className="text-xs font-medium hover:text-blue-600">
+                        FAQs
+                      </Link>
+                      <Link href="/HeaderEliment/contact" className="text-xs font-medium hover:text-blue-600">
+                        Contact
+                      </Link>
+                      
+                      {/* The Button */}
+                      <div className=" px-4 py-1 rounded-full flex hover:bg-gray-200 items-center justify-center ml-2">
+                        <Link 
+                          href="/HeaderEliment/renter" 
+                          className="text-sm font-semibold   transition-colors whitespace-nowrap"
+                        >
+                          How to be a Renter
+                        </Link>
+                      </div>
+                    </nav>
+                  </div>
 
               <div ref={userDropdownRef} className="relative">
                 <button
@@ -179,7 +197,7 @@ export function Header() {
                       <button
                         key={i}
                         onClick={() => { item.action(); setIsDropdownOpen(false); }}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-xs"
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-xs text-gray-700"
                       >
                         {item.label}
                       </button>
