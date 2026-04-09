@@ -5,16 +5,27 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
 
-interface Product {
+export interface Product {
   id: number;
   name: string;
-  description: string;
-  image: string[];
+  category: string;
   deposite: number;
+  conditon: string; // Note: You have a typo here ("conditon"), check your data!
+  location: string;
   price: number;
-  conditon: string;
+  rating: number;
+  reviews: number;
+  status: string;
+  image: string[];
+  // Move description into a nested object
+  details: {
+    description: string;
+    features: string;
+    package: string;
+    warranty: string;
+  };
+  specifications: { label: string; value: string }[];
 }
-
 interface ImageSliderProps {
   products: Product[];
   autoPlay?: boolean;
@@ -128,7 +139,7 @@ export default function ImageSlider({
                       <div className="flex items-end justify-between">
                         <div>
                            <p className="text-gray-300 text-xs line-clamp-1 mb-2 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500">
-                            {product.description}
+                            {product.details.description}
                           </p>
                           <p className="text-white text-2xl font-light">
                             <span className="text-sm mr-1">$</span>

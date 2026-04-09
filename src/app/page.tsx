@@ -5,7 +5,7 @@ import { FaEye, FaHeart } from "react-icons/fa";
 import { useEffect, useState } from "react";
 
 import ScrollReveal from "@/components/homepage/scrool";
-import ImageSlider from "@/components/homepage/TmageSlider";
+import ImageSlider from "@/components/homepage/ImageSlider";
 import Adds from "@/components/homepage/Adds";
 import Contente from "@/components/homepage/ProductCarousel";
 import Hero from "@/components/homepage/HeroSection";
