@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CreditCard, Smartphone, Building2, CheckCircle2, Search, ArrowRight, Upload, Copy, ShieldCheck } from "lucide-react";
+import { CreditCard, Smartphone, Building2, CheckCircle2,  ArrowRight, Upload, Copy, ShieldCheck } from "lucide-react";
 import CheckoutStepper from "@/components/checkout/CheckoutStepper";
 import CartSummary from "@/components/checkout/CartSummary";
 
@@ -70,7 +70,7 @@ export default function PaymentPage() {
           <div className="p-6 bg-white border border-gray-200 rounded-[1.5rem] shadow-md flex-1 flex flex-col justify-center relative overflow-hidden min-h-[380px]">
             
             {isSubmitted ? (
-              <div className="flex flex-col items-center justify-center animate-in zoom-in duration-500 text-center">
+              <div className="flex flex-col items-center justify-center animate-in zoom-in duration-500 text-black text-center">
                 <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-6">
                   <CheckCircle2 className="w-12 h-12 text-emerald-500" />
                 </div>
@@ -78,7 +78,7 @@ export default function PaymentPage() {
                 <p className="text-xs text-gray-500 max-w-[200px]">Payment details received successfully.</p>
                 <button 
                   onClick={() => router.push("/Checkout/checkout/step-5")}
-                  className="mt-6 px-8 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm flex items-center gap-2"
+                  className="mt-6 px-8 py-3 bg-blue-600 text-black rounded-xl font-bold text-sm flex items-center gap-2"
                 >
                   NEXT <ArrowRight className="w-4 h-4" />
                 </button>

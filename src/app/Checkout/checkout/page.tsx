@@ -45,18 +45,18 @@ export default function CheckoutStep1() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="max-w-6xl  text-balck mx-auto p-6">
       {/* Debug info */}
 
 
       <CheckoutStepper step={1} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 text-balck md:grid-cols-2 gap-8">
 
         {/* =========================
             LEFT: PERSONAL INFO
         ========================= */}
-        <div className="p-6 border border-gray-300 rounded-xl shadow-xl">
+        <div className="p-6 border text-balck border-gray-300 rounded-xl shadow-xl">
           <h2 className="text-xl font-bold mb-2">
             Personal Information
           </h2>
