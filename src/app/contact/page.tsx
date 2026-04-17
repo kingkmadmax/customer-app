@@ -84,7 +84,7 @@ export default function ContactPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <Toaster position="top-center" richColors />
 
       {/* Top Bar */}

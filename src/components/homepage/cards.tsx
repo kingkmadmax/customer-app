@@ -123,7 +123,7 @@ export default function Cards({ card = [] }: CardsProps) {
   };
 
   return (
-    <div className="w-full px-4 py-8">
+    <div className="w-full  px-4 py-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {card.slice(0, visibleCount).map((product, index) => (
           <div
@@ -160,40 +160,48 @@ export default function Cards({ card = [] }: CardsProps) {
             </div>
 
             <div className="p-4">
-              <h3 className="font-semibold text-sm line-clamp-2 mb-1">{product.name}</h3>
-              <p className="text-xs text-gray-500 mb-2">{product.category} • {product.conditon}</p>
+  <h3 className="font-semibold text-sm line-clamp-2 mb-1 text-gray-900">
+    {product.name}
+  </h3>
+  
+  <p className="text-xs text-gray-500 mb-2">
+    {product.category} • {product.conditon}
+  </p>
 
-              <div className="flex items-center gap-1 mb-3">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`w-3.5 h-3.5 ${i < Math.floor(product.rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
-                  />
-                ))}
-                <span className="text-xs text-gray-500">({product.reviews})</span>
-              </div>
+  <div className="flex items-center gap-1 mb-3">
+    {Array.from({ length: 5 }).map((_, i) => (
+      <Star
+        key={i}
+        className={`w-3.5 h-3.5 ${i < Math.floor(product.rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
+      />
+    ))}
+    <span className="text-xs text-gray-500">({product.reviews})</span>
+  </div>
 
-              <div className="flex items-baseline font-bold text-lg mb-4">
-                ${product.price.toFixed(2)}
-                <span className="text-xs text-gray-500 font-normal ml-1">/month</span>
-              </div>
+  {/* ONLY THE PRICE IS BLACK - Bigger and clearer */}
+  <div className="flex items-baseline font-bold text-2xl mb-4">
+    <span className="text-black">
+      ${product.price.toFixed(2)}
+    </span>
+    <span className="text-base text-gray-600 font-normal ml-1">/month</span>
+  </div>
 
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleAddToCart(product)}
-                  className="flex-1 h-9 bg-black text-white rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
-                >
-                  <ShoppingCart className="w-3.5 h-3.5" /> Add
-                </button>
+  <div className="flex gap-2">
+    <button
+      onClick={() => handleAddToCart(product)}
+      className="flex-1 h-9 bg-black text-white rounded-sm text-sm flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
+    >
+      <ShoppingCart className="w-3.5 h-3.5" /> Add
+    </button>
 
-                <button
-                  onClick={() => handleRentNow(product)}
-                  className="flex-1 h-9 bg-blue-900 text-white rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
-                >
-                  Rent Now
-                </button>
-              </div>
-            </div>
+    <button
+      onClick={() => handleRentNow(product)}
+      className="flex-1 h-9 bg-blue-900 text-white rounded-sm text-sm flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
+    >
+      Rent Now
+    </button>
+  </div>
+</div>
           </div>
         ))}
       </div>

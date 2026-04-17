@@ -21,7 +21,7 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("profile");
 
   return (
-    <div className="min-h-screen bg-gray-50/50 pb-20">
+    <div className="min-h-screen bg-white pb-20">
       {/* HEADER SECTION */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-4 pt-12 pb-8">

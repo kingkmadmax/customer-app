@@ -3,15 +3,13 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCartStore } from "@/components/store/cat-store";
+import { useCartStore } from "@/components/store/cat-store"; // Note: ensure 'cat-store' isn't a typo for 'cart-store'
 import { Plus, Minus, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 export default function CartPage() {
   const router = useRouter();
-
   const { cartItems, removeFromCart, increaseQuantity, decreaseQuantity } = useCartStore();
-
   const [isEditing, setIsEditing] = useState(false);
 
   // Status color function
@@ -29,16 +27,14 @@ export default function CartPage() {
   const finalTotal = subtotal + serviceFee;
 
   return (
-    <div className="max-w-6xl mx-auto px-6 md:px-12 py-12">
+    <div className="max-w-6xl mx-auto px-6 md:px-12 py-12 text-gray-900">
       
-      
-
       {/* Cart Table */}
       <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
         <table className="w-full min-w-[750px] font-medium">
           <thead>
-            <tr className="border-b bg-gray-50">
-              <th className=" py-5 px-10 w-130 text-left font-semibold text-sm text-gray-600 w-64">Product Name</th>
+            <tr className="border-b bg-white">
+              <th className="py-5 px-6 text-left font-semibold text-sm text-gray-600">Product Name</th>
               <th className="py-5 px-6 text-center font-semibold text-gray-600 w-32">Quantity</th>
               <th className="py-5 px-6 text-right font-semibold text-gray-600">Price</th>
               <th className="py-5 px-6 text-center font-semibold text-gray-600 w-40">Status</th>
@@ -50,18 +46,18 @@ export default function CartPage() {
           <tbody>
             {cartItems.length === 0 ? (
               <tr>
-                <td colSpan={isEditing ? 5 : 4} className="py-20 pr-20 text-center text-gray-500 text-sm">
+                <td colSpan={isEditing ? 5 : 4} className="py-20 text-center text-gray-500 text-sm">
                   Your cart is empty
                 </td>
               </tr>
             ) : (
               cartItems.map((item) => (
-                <tr key={item.id} className="border-b last:border-none hover:bg-gray-50 transition-colors">
+                <tr key={item.id} className="border-b last:border-none hover:bg-gray-50/20 transition-colors">
                   
-                  {/* 1. Image + Name (Aligned on same line) */}
+                  {/* 1. Image + Name */}
                   <td className="py-6 px-6">
                     <div className="flex items-center gap-4">
-                      <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-gray-100 flex-shrink-0">
+                      <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-gray-100 flex-shrink-0 bg-white">
                         <Image
                           src={item.image}
                           alt={item.name}
@@ -81,16 +77,16 @@ export default function CartPage() {
                     </div>
                   </td>
 
-                  {/* 2. Quantity */}
+                  {/* 2. Quantity - Removed bg-black to show the icons */}
                   <td className="py-6 px-6">
                     <div className="flex items-center justify-center gap-3">
                       {isEditing ? (
                         <>
                           <button
                             onClick={() => decreaseQuantity(item.id)}
-                            className="w-9 h-9 flex items-center justify-center border border-gray-300 rounded-xl hover:bg-gray-100 active:scale-95 transition"
+                            className="w-9 h-9 flex items-center justify-center border border-gray-300 rounded-xl bg-white hover:bg-gray-100 active:scale-95 transition"
                           >
-                            <Minus className="h-4 w-4" />
+                            <Minus className="h-4 w-4 text-gray-600" />
                           </button>
 
                           <div className="font-semibold text-lg min-w-[32px] text-center">
@@ -99,9 +95,9 @@ export default function CartPage() {
 
                           <button
                             onClick={() => increaseQuantity(item.id)}
-                            className="w-9 h-9 flex items-center justify-center border border-gray-300 rounded-xl hover:bg-gray-100 active:scale-95 transition"
+                            className="w-9 h-9 flex items-center justify-center border border-gray-300 rounded-xl bg-white hover:bg-gray-100 active:scale-95 transition"
                           >
-                            <Plus className="h-4 w-4" />
+                            <Plus className="h-4 w-4 text-gray-600" />
                           </button>
                         </>
                       ) : (
@@ -141,52 +137,50 @@ export default function CartPage() {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-col justify-between sm:flex-row   mt-15">
+      <div className="flex flex-col sm:flex-row justify-between gap-4 mt-12">
         <button
-          onClick={() => router.push("Checkout/checkout")}
-          disabled={cartItems.length === 0  } 
-          className="flex-1 sm:flex-none w-50 h-10 bg-black text-white rounded-xl font-bold text-sm hover:bg-white hover:border border-black hover:text-black transition disabled:bg-gray-400"
+          onClick={() => setIsEditing(!isEditing)}
+          className="order-2 sm:order-1 px-8 h-12 border-2 border-gray-300 rounded-full font-bold text-sm hover:bg-gray-50 transition"
         >
-          Go to Checkout
+          {isEditing ? "Done Editing" : "Update Cart"}
         </button>
 
         <button
-          onClick={() => setIsEditing(!isEditing)}
-          className="flex-1 sm:flex-none w-50 h-10 border-2 border-gray-300 rounded-3xl font-bold text-sm hover:bg-gray-50 transition"
+          onClick={() => router.push("/Checkout/checkout")}
+          disabled={cartItems.length === 0}
+          className="order-1 sm:order-2 px-8 h-12 bg-black text-white rounded-xl font-bold text-sm hover:bg-gray-800 transition disabled:bg-gray-400"
         >
-          {isEditing ? "Done Editing" : "Update Cart"}
+          Go to Checkout
         </button>
       </div>
 
       {/* Summary Box */}
       {cartItems.length > 0 && (
-        <div className="mt-10 flex justify-center">
-          <div className="bg-white border border-gray-500 rounded-xl p-8 w-[500px] shadow-md">
+        <div className="mt-16 flex justify-center">
+          <div className="bg-white border border-gray-200 rounded-2xl p-8 w-full max-w-md shadow-lg">
             <h3 className="text-2xl font-bold text-center mb-8">Order Summary</h3>
-  
 
             <div className="space-y-4 text-lg">
               <div className="flex justify-between">
-                <span className="text-gray-900">Subtotal</span>
+                <span className="text-gray-600">Subtotal</span>
                 <span className="font-semibold">${subtotal.toFixed(2)}</span>
               </div>
 
-              <div className="flex justify-between   border-t border-gray-200 pt-4 mt-2">
-                <span className="text-gray-900">Service Fee (10%)</span>
-                <span className="font-semibold text-green-600">+${serviceFee.toFixed(2)}</span>
+              <div className="flex justify-between border-t border-gray-100 pt-4">
+                <span className="text-gray-600">Service Fee (10%)</span>
+                <span className="font-semibold text-emerald-600">+${serviceFee.toFixed(2)}</span>
               </div>
 
-              <div className="border-t border-gray-200 pt-4 mt-2">
+              <div className="border-t-2 border-gray-900 pt-4 mt-2">
                 <div className="flex justify-between text-2xl font-bold">
                   <span>Total</span>
                   <span>${finalTotal.toFixed(2)}</span>
                 </div>
               </div>
             </div>
-            <div className="border border-gray-400"> </div>
 
-            <p className="text-center text-sm text-gray-800 mt-8">
-              payment well not be refundee after payment
+            <p className="text-center text-xs text-gray-500 mt-8 italic">
+              Payments are non-refundable once processed.
             </p>
           </div>
         </div>

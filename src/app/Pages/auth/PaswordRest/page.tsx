@@ -44,8 +44,8 @@ export default function SignUP() {
                        !formData.Confirm_Password.trim();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black font-sans">
-      <main className="relative w-full max-w-4xl py-16 px-8 bg-white dark:bg-black rounded-lg shadow-md">
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans">
+      <main className="relative w-full max-w-4xl py-16 px-8 bg-white rounded-lg shadow-md">
         
         {/* Background Image */}
         <div className="absolute inset-0 h-[550px] bg-[#D0E6EB] rounded-lg overflow-hidden">

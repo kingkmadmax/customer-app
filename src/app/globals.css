@@ -1,26 +1,33 @@
 @import "tailwindcss";
 
+/* Font variables from next/font */
 :root {
+  color-scheme: light;
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #000000;
+  --font-source-serif: var(--font-source-serif);
+  /* This must stay */
 }
 
+/* Tailwind v4 Theme - Use @theme inline for variables from Next.js */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* This is the key fix for Source Serif Pro */
+  --font-serif: var(--font-source-serif), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+
+html, body {
+  background-color: white !important;
+  color: black !important;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  background: white;
+  color: black;
 }

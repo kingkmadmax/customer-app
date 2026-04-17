@@ -1,111 +1,195 @@
-"use client";
+'use client';
+
 import Image from "next/image";
-import { FaGoogle } from "react-icons/fa";  
+import { FaGoogle } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-// 1. REMOVE THIS LINE: import { error } from "console";
+import { registerUser } from "@/app/Pages/auth/SignUp/actions";
 
-export default function SignUP() {
-   const router = useRouter();
-   const [formDate, setFormData] = useState({
+export default function RegisterPage() {
+   const router = useRouter(); 
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
     firstName: "",
     lastName: "",
-    emailOrPhone: ""
-   });
-   const [error, setError] = useState("");
+  });
 
-   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target; // This requires the 'name' attribute below!
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (error) setError(""); 
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Handle input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (message) setMessage("");
   };
 
-  const handleSignUp = (e: React.FormEvent) => {
+  // Validate required fields
+  const isFormInvalid =
+    !formData.username.trim() ||
+    !formData.email.trim() ||
+    !formData.password.trim() ||
+    !formData.firstName.trim() ||
+    !formData.lastName.trim();
+
+  // Handle submit
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formDate.firstName || !formDate.lastName || !formDate.emailOrPhone) {
-      setError("Please fill in all fields.");
-      return;
-    }
-    router.push("/Pages/auth/PaswordRest");
-  };
 
-  const isFormInvalid = !formDate.firstName.trim() || 
-                       !formDate.lastName.trim() || 
-                       !formDate.emailOrPhone.trim();
+    if (isFormInvalid) {
+      setMessage("❌ Please fill in all fields.");
+      
+      return;
+      
+    }
+
+    try {
+      setLoading(true);
+      setMessage("");
+
+      const data = new FormData();
+      data.append("username", formData.username);
+      data.append("email", formData.email);
+      data.append("password", formData.password);
+      data.append("firstName", formData.firstName);
+      data.append("lastName", formData.lastName);
+
+      const result = await registerUser(data);
+
+      if (result.success) {
+        setMessage("✅ Account created successfully!");
+         router.push("/Pages/auth/LogIn")
+
+        setFormData({
+          username: "",
+          email: "",
+          password: "",
+          firstName: "",
+          lastName: "",
+        });
+      } else {
+        setMessage(`❌ ${result.error}`);
+      }
+    } catch (error) {
+      setMessage("❌ Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-row items-stretch justify-center min-h-screen w-full max-w-7xl py-32 px-16 bg-white dark:bg-black gap-10">
+    <div className="flex min-h-screen  items-center justify-center  text-black ">
+      <main className="flex flex-row items-stretch justify-center min-h-screen w-full max-w-7xl py-20 px-10 bg-white gap-10">
 
-        <div className="bg-[#D0E6EB] rounded flex-1 flex items-center justify-center">
+        {/* Left Side */}
+        <div className=" rounded-xl flex-1 flex items-center justify-center overflow-hidden">
           <Image
-            className="dark:invert object-contain h-full"
             src="/PhoneImage.png"
-            alt="PhoneImage.png"
-            width={750}
-            height={701}
+            alt="Phone"
+            width={700}
+            height={700}
             priority
+            className="object-contain"
           />
         </div>
 
-        <div className="border-2 border-gray-300 p-4 rounded flex-1 flex flex-col justify-center max-w-md w-full space-y-6 shadow-lg">
-          <h1 className="text-3xl font-semibold text-center text-black dark:text-zinc-50">
+        {/* Right Side */}
+        <div className="border border-gray-300 p-8 rounded-xl flex-1 flex flex-col justify-center max-w-md w-full shadow-lg bg-white">
+
+          <h1 className="text-3xl font-bold text-center text-black mb-2">
             Create an Account
           </h1>
-          <p className="text-center">Enter your details below</p>
 
-          <div className="space-y-6">
-            {/* 2. ADDED 'name' ATTRIBUTES TO ALL INPUTS BELOW */}
+          <p className="text-center text-gray-500 mb-6">
+            Enter your details below
+          </p>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+
             <input
+              name="username"
               type="text"
-              name="firstName" 
+              placeholder="Username"
+              value={formData.username}
+              onChange={handleInputChange}
+              className="w-full p-3 border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:outline-none"
+            />
+
+            <input
+              name="email"
+              type="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleInputChange}
+              className="w-full p-3 border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:outline-none"
+            />
+
+            <input
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleInputChange}
+              className="w-full p-3 border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:outline-none"
+            />
+
+            <input
+              name="firstName"
+              type="text"
               placeholder="First Name"
-              className="w-full border-b border-gray-400 p-2 outline-none focus:border-black"
-              value={formDate.firstName}
+              value={formData.firstName}
               onChange={handleInputChange}
+              className="w-full p-3 border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:outline-none"
             />
 
             <input
-              type="text"
               name="lastName"
-              placeholder="Last Name"
-              className="w-full border-b border-gray-400 p-2 outline-none focus:border-black"
-              value={formDate.lastName}
-              onChange={handleInputChange}
-            />
-
-            <input
               type="text"
-              name="emailOrPhone"
-              placeholder="Email or Phone Number"
-              className="w-full border-b border-gray-400 p-2 outline-none focus:border-black"
-              value={formDate.emailOrPhone}
+              placeholder="Last Name"
+              value={formData.lastName}
               onChange={handleInputChange}
+              className="w-full p-3 border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:outline-none"
             />
-          </div>
 
-          <div className="flex flex-col w-full gap-4">
+            {/* Submit */}
             <button
-              disabled={isFormInvalid}
-              className={`h-10 w-full rounded-md font-medium transition-all ${
-                isFormInvalid 
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+              type="submit"
+              disabled={loading || isFormInvalid}
+              className={`w-full h-11 rounded-lg font-semibold transition-all ${
+                loading || isFormInvalid
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : "bg-blue-500 hover:bg-blue-600 text-white active:scale-95"
               }`}
-              onClick={handleSignUp}
             >
-              Sign up
+              {loading ? "Creating Account..." : "Sign Up"}
             </button>
 
-            <div className="flex items-center justify-center gap-3 border rounded-md h-10 w-full cursor-pointer hover:bg-gray-50">
+            {/* Google */}
+            <div className="flex items-center justify-center gap-3 border border-gray-500 rounded-lg h-11 cursor-pointer hover:bg-gray-50 transition-all">
               <FaGoogle />
               <span>Sign up with Google</span>
             </div>
-          </div>
 
-          <p className="text-center">
-            Already have an account? <a href="/Pages/auth/LogIn" className="text-blue-500">Login</a>
-          </p>
+            {/* Message */}
+            {message && (
+              <p
+                className={`text-center mt-2 text-sm ${
+                  message.includes("✅")
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
+              >
+                {message}
+              </p>
+            )}
+          </form>
         </div>
       </main>
     </div>
