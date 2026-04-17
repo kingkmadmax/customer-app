@@ -31,7 +31,7 @@ export default function Best({ card = [] }: ContentProps) {
   }, [card]);
 
   return (
-       <div className="mt-40">
+       <div className="mt-10">
       {/* HEADER */}
       <h1 className="text-xl sm:text-2xl font-bold ">New Prodict</h1>
 
@@ -41,11 +41,13 @@ export default function Best({ card = [] }: ContentProps) {
   
 
         {/* PRODUCTS / CARDS AREA */}
-        <div className="flex-1 ml-5 pb-40 pl-55  transition-all item-center duration-500">
-           <div className="transition-all duration-500 ease-in-out opacity-100">
-              <Cards card={displayProducts} />
-           </div>
-        </div>
+        <div className="flex-1 ml-5 pb-40 pl-55 transition-all item-center duration-500">
+  <div className="transition-all duration-500 ease-in-out opacity-100">
+    <div className="sm:pl-1">
+      <Cards card={displayProducts} />
+    </div>
+  </div>
+</div>
       </div>
     </div>
   );

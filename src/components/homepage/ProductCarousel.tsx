@@ -124,7 +124,7 @@ const paginatedProducts = filteredProducts.slice(
   <button
     disabled={currentPage === 1}
     onClick={() => setCurrentPage((p) => p - 1)}
-    className="px-4 py-2 border rounded-lg disabled:opacity-50"
+    className="px-4 py-2 border border-gray-500 rounded-lg disabled:opacity-50"
   >
     Prev
   </button>
@@ -139,7 +139,7 @@ const paginatedProducts = filteredProducts.slice(
       <button
         key={page}
         onClick={() => setCurrentPage(page)}
-        className={`px-4 py-2 rounded-lg border transition-all duration-300 ${
+        className={`px-4 py-2 rounded-lg border border-gray-500   transition-all duration-300 ${
           currentPage === page
             ? "bg-black text-white scale-110 shadow-md"
             : "bg-white text-black hover:scale-105"
@@ -153,7 +153,7 @@ const paginatedProducts = filteredProducts.slice(
   <button
     disabled={currentPage === totalPages}
     onClick={() => setCurrentPage((p) => p + 1)}
-    className="px-4 py-2 border rounded-lg disabled:opacity-50"
+    className="px-4 py-2 border border-gray-500  rounded-lg disabled:opacity-50"
   >
     Next
   </button>

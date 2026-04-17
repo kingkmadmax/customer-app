@@ -266,7 +266,7 @@ export default function Cards({ card = [] }: CardsProps) {
             onClick={() => setCurrentImageIndex(i)}
             className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${
               currentImageIndex === i
-                ? "border-blue-600 scale-105 shadow-md"
+                ? "border-gray-900 scale-105 shadow-md"
                 : "border-gray-200 opacity-70 hover:opacity-100"
             }`}
           >
