@@ -207,57 +207,81 @@ export default function Cards({ card = [] }: CardsProps) {
         ))}
       </div>
 
-      {/* QUICK VIEW MODAL */}
-      {selectedProduct && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div ref={modalRef} className="bg-white w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
-            <div className="flex flex-col md:flex-row max-h-[90vh] overflow-y-auto md:overflow-hidden">
-              <div className="w-full md:w-1/2 bg-gray-50 p-6 flex flex-col items-center justify-center relative">
-                <div className="relative aspect-square w-full max-w-[300px] flex items-center justify-center bg-white rounded-2xl shadow-inner border border-gray-100 overflow-hidden">
-                  <Image src={selectedProduct.image[currentImageIndex]} alt="preview" fill className="object-contain p-4" />
-                  {selectedProduct.image.length > 1 && (
-                    <>
-                      <button onClick={prevImage} className="absolute left-2 bg-white/80 p-1.5 rounded-full shadow"><ChevronLeft className="w-5 h-5" /></button>
-                      <button onClick={nextImage} className="absolute right-2 bg-white/80 p-1.5 rounded-full shadow"><ChevronRight className="w-5 h-5" /></button>
-                    </>
-                  )}
-                </div>
-                <div className="flex gap-2 mt-6 overflow-x-auto w-full justify-center px-2">
-                  {selectedProduct.image.map((img, i) => (
-                    <button key={i} onClick={() => setCurrentImageIndex(i)} className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 transition-all ${currentImageIndex === i ? "border-blue-600 scale-105" : "border-transparent opacity-50"}`}>
-                      <Image src={img} alt="thumb" fill className="object-cover" />
-                    </button>
-                  ))}
-                </div>
-              </div>
+     {/* QUICK VIEW MODAL */}
+{selectedProduct && (
+  <div
+    onClick={closeQuickView}
+    className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+  >
+    {/* Locked Modal Container */}
+    <div
+      ref={modalRef}
+      onClick={(e) => e.stopPropagation()}
+      className="relative w-full md:w-[78%] max-w-6xl h-[88vh] bg-gray-50 rounded-2xl shadow-2xl p-5 flex flex-col overflow-hidden"
+    >
+      {/* Close Button */}
+      <button
+        onClick={closeQuickView}
+        className="absolute top-4 right-4 z-20 bg-white rounded-full p-2 shadow-md hover:scale-105 transition"
+      >
+        <X className="w-5 h-5" />
+      </button>
 
-              <div className="w-full md:w-1/2 p-8 flex flex-col justify-between relative">
-                <button onClick={closeQuickView} className="absolute top-4 right-4 text-gray-400 hover:text-black"><X className="w-8 h-8" /></button>
-                <div>
-                  <span className="text-blue-600 text-xs font-bold uppercase tracking-widest">{selectedProduct.category}</span>
-                  <h2 className="text-3xl font-black text-gray-900 mt-2 mb-4 leading-tight">{selectedProduct.name}</h2>
-                  <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100 mb-8">
-                    <p className="text-blue-900 text-sm font-bold">Rental Price</p>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-sm font-black text-gray-900">${selectedProduct.price}</span>
-                      <span className="text-gray-500 font-medium">/per Month</span>
-                    </div>
-                  </div>
-                </div>
+      {/* Main Image */}
+      <div className="relative w-full flex-1 bg-white rounded-xl border border-gray-200 overflow-hidden flex items-center justify-center">
+        <Image
+          src={selectedProduct.image[currentImageIndex]}
+          alt="preview"
+          fill
+          priority
+          className="object-contain p-4"
+        />
 
-                <div className="flex flex-col gap-3">
-                  <button onClick={() => { handleAddToCart(selectedProduct); closeQuickView(); }} className="w-full bg-black text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-gray-800 transition transform active:scale-95">
-                    <ShoppingCart className="w-5 h-5" /> Add to Shopping Cart
-                  </button>
-                  <button onClick={() => { handleRentNow(selectedProduct); closeQuickView(); }} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 transition transform active:scale-95 shadow-lg shadow-blue-200">
-                    Reserve Now
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+        {selectedProduct.image.length > 1 && (
+          <>
+            {/* Left Arrow */}
+            <button
+              onClick={prevImage}
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-3 hover:scale-105 transition"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+
+            {/* Right Arrow */}
+            <button
+              onClick={nextImage}
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full p-3 hover:scale-105 transition"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Thumbnail Row */}
+      <div className="flex justify-center gap-3 mt-4 overflow-x-auto py-1">
+        {selectedProduct.image.map((img, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentImageIndex(i)}
+            className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${
+              currentImageIndex === i
+                ? "border-blue-600 scale-105 shadow-md"
+                : "border-gray-200 opacity-70 hover:opacity-100"
+            }`}
+          >
+            <Image
+              src={img}
+              alt="thumb"
+              fill
+              className="object-cover"
+            />
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
 
       <style jsx global>{`
         .animate-show {
