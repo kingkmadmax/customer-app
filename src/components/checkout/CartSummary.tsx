@@ -67,7 +67,7 @@ export default function CartSummary() {
                       </div>
                     </div>
                     <span className="font-bold text-sm text-gray-900">
-                      ${itemRentalTotal.toFixed(2)}
+                      ${itemRentalTotal.toFixed(1)}
                     </span>
                   </div>
 
@@ -105,7 +105,7 @@ export default function CartSummary() {
             </div>
 
             <div className="flex flex-col pt-4 border-t-2 border-gray-900 mt-2">
-              <div className="flex justify-between font-black text-2xl text-blue-900">
+              <div className="flex justify-between  text-2xl ">
                 <span>Total</span>
                 <span>${finalTotal.toFixed(2)}</span>
               </div>

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Cards from "./cards";
+import Best from "./BestSection";
 
 export interface Product {
   id: number;
@@ -10,6 +11,7 @@ export interface Product {
   name: string;
   price: number;
   reviews: number;
+  dateAdded:string;
   deposite: number;
   rating: number;
   category: string;
@@ -51,18 +53,18 @@ const paginatedProducts = filteredProducts.slice(
   };
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 pb-10 sm:pb-14">
+    <div className="">
       {/* HEADER */}
-      <h1 className="text-xl sm:text-2xl font-bold my-6">Featured Properties</h1>
+      <h1 className="text-xl sm:text-2xl font-bold my-">Featured Properties</h1>
 
       {/* MAIN LAYOUT: Column on mobile, Row on Desktop */}
-      <div className="flex flex-col lg:flex-row lg:gap-12">
+      <div className="flex flex-col lg:flex-row lg:gap-5">
         
         {/* CATEGORIES SECTION */}
-        <div className="w-full lg:w-64 flex-shrink-0 mb-8 lg:mb-0">
+        <div className="w-full lg:w-50 pb-40   flex-shrink-0 mb-8 lg:mb-0">
           {/* Mobile: Horizontal Scroll Row */}
           <div className="lg:hidden">
-            <div className="flex overflow-x-auto pb-2 gap-2 no-scrollbar">
+            <div className="flex overflow-x-auto  no-scrollbar">
               {categories.map((cat) => (
                 <button
                   key={cat}
@@ -70,7 +72,7 @@ const paginatedProducts = filteredProducts.slice(
                     setFilter(cat);
                     setVisibleCount(9);
                   }}
-                  className={`whitespace-nowrap px-5 py-2 rounded-full text-sm border transition-all ${
+                  className={`whitespace-nowrap  rounded-sm text-sm border transition-all ${
                     filter === cat
                       ? "bg-black text-white border-black"
                       : "bg-white text-gray-600 border-gray-200 hover:border-gray-400"
@@ -110,7 +112,7 @@ const paginatedProducts = filteredProducts.slice(
         </div>
 
         {/* PRODUCTS / CARDS AREA */}
-        <div className="flex-1 transition-all duration-500 ease-in-out">
+        <div className="flex-1  transition-all duration-500 ease-in-out">
            <div className="transition-all duration-500 ease-in-out opacity-100">
               <Cards card={paginatedProducts} />
            </div>
@@ -159,6 +161,7 @@ const paginatedProducts = filteredProducts.slice(
     )}
         </div>
       </div>
+      <Best card={paginatedProducts}/>
     </div>
   );
 }

@@ -78,7 +78,7 @@ export default function PaymentPage() {
                 <p className="text-xs text-gray-500 max-w-[200px]">Payment details received successfully.</p>
                 <button 
                   onClick={() => router.push("/Checkout/checkout/step-5")}
-                  className="mt-6 px-8 py-3 bg-blue-600 text-black rounded-xl font-bold text-sm flex items-center gap-2"
+                  className="mt-6 px-8 py-3 text-white bg-gray-900 text-black rounded-xl font-bold text-sm flex items-center gap-2"
                 >
                   NEXT <ArrowRight className="w-4 h-4" />
                 </button>

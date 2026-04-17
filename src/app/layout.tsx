@@ -1,6 +1,7 @@
 import { Source_Serif_4 } from 'next/font/google';
 import './globals.css';
 import {Header} from '@/components/homepage/header';
+import Footer from '@/components/homepage/Footer';
 
 // Configure the font
 const sourceSerif = Source_Serif_4({

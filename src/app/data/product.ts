@@ -17,6 +17,7 @@ export   const products = [
     location: "Addis Ababa",
     price: 899.99,
     rating: 3,
+    dateAdded: "2026-04-17",
     reviews: 342,
     status: "available",
     details: {
@@ -32,7 +33,7 @@ export   const products = [
       { label: "Fuel Type", value: "Hybrid" },
       { label: "Transmission", value: "Automatic" }
     ],
-    image: ["/download2.jpg", "/download3.jpg", "/download4.jpg"]
+    image: ["/download2.jpg", "/download3.jpg", "/download4.jpg" ,"/download2.jpg", "/download3.jpg", "/download4.jpg"]
   },
   {
     id: 2,
@@ -41,6 +42,7 @@ export   const products = [
     deposite: 500.00,
     conditon: "new",
     location: "Addis Ababa",
+    dateAdded: "2026-04-16",
     price: 450.00,
     rating: 4.8,
     reviews: 189,
@@ -68,6 +70,7 @@ export   const products = [
     conditon: "used",
     location: "Addis Ababa",
     price: 599.99,
+    dateAdded: "2026-04-13",
     rating: 4.2,
     reviews: 756,
     status: "available",
@@ -95,6 +98,8 @@ export   const products = [
     location: "Addis Ababa",
     price: 299.99,
     rating: 4.6,
+    dateAdded: "2026-04-17",
+
     reviews: 124,
     status: "available",
     details: {
@@ -120,6 +125,7 @@ export   const products = [
     conditon: "used",
     location: "Addis Ababa",
     price: 1249.99,
+    dateAdded: "2026-04-30",
     rating: 4.9,
     reviews: 203,
     status: "available",
@@ -146,6 +152,7 @@ export   const products = [
     conditon: "new",
     location: "Addis Ababa",
     price: 1200.00,
+    dateAdded: "2026-04-23",
     rating: 4.7,
     reviews: 87,
     status: "available",
@@ -173,6 +180,7 @@ details: {
     location: "Addis Ababa",
     price: 1499.99,
     rating: 4.4,
+    dateAdded: "2026-04-27",
     reviews: 312,
     status: "available",
     details: {
@@ -199,6 +207,7 @@ details: {
     location: "Addis Ababa",
     price: 89.99,
     rating: 4.3,
+    dateAdded: "2026-04-1",
     reviews: 521,
     status: "available",
     details: {
@@ -221,7 +230,7 @@ details: {
     name: "3 Bedroom Family House",
     category: "Real Estate",
     deposite: 500.00,
-    conditon: "used",
+    conditon: "used",dateAdded: "2026-03-17",
     location: "Addis Ababa",
     price: 650.00,
     rating: 4.1,
@@ -381,6 +390,7 @@ details: {
     location: "Addis Ababa",
     price: 1799.99,
     rating: 4.9,
+    dateAdded: "2026-03-17",
     reviews: 176,
     status: "available",
     details: {

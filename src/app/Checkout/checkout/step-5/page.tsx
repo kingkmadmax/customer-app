@@ -153,10 +153,10 @@ export default function CheckoutStep5() {
               onClick={handleFinish}
               disabled={loading}
               className={`mt-10 w-full py-5 rounded-2xl font-black text-base flex items-center justify-center gap-3 transition-all shadow-xl ${
-                loading ? "bg-gray-100 text-gray-400 cursor-not-allowed shadow-none" : "bg-black text-white hover:bg-gray-900"
+                loading ? "bg-gray-100 text-gray-900 cursor-not-allowed shadow-none" : "bg-gray-900 text-white hover:bg-gray-900"
               }`}
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "FINISH ORDER & PAY"}
+              {loading ? <Loader2 className="w-5 h-5 animate-spin text-gray-900" /> : "FINISH ORDER & PAY"}
             </button>
           </div>
 

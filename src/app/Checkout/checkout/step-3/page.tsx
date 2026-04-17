@@ -113,7 +113,7 @@ export default function CheckoutStep3() {
             {/* ACTION BUTTON */}
             <button 
               onClick={handleNext} 
-              className="mt-8 w-full py-4 bg-blue-600 text-white rounded-xl font-black text-sm flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-100"
+              className="mt-8 w-full py-4 bg-gray-900 text-white rounded-xl font-black text-sm flex items-center justify-center gap-2  transition-all shadow-lg shadow-blue-100"
             >
               CONTINUE TO PAYMENT <ArrowRight className="w-4 h-4" />
             </button>

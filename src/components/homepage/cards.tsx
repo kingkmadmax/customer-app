@@ -14,6 +14,7 @@ export interface Product {
   name: string;
   price: number;
   deposite: number;
+  
   reviews: number;
   rating: number;
   category: string;
@@ -124,7 +125,7 @@ export default function Cards({ card = [] }: CardsProps) {
 
   return (
     <div className="w-full  px-4 py-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
         {card.slice(0, visibleCount).map((product, index) => (
           <div
             key={product.id}
@@ -180,8 +181,8 @@ export default function Cards({ card = [] }: CardsProps) {
 
   {/* ONLY THE PRICE IS BLACK - Bigger and clearer */}
   <div className="flex items-baseline font-bold text-2xl mb-4">
-    <span className="text-black">
-      ${product.price.toFixed(2)}
+    <span className=" text-lg">
+      ${product.price.toFixed(1)}
     </span>
     <span className="text-base text-gray-600 font-normal ml-1">/month</span>
   </div>
@@ -189,14 +190,14 @@ export default function Cards({ card = [] }: CardsProps) {
   <div className="flex gap-2">
     <button
       onClick={() => handleAddToCart(product)}
-      className="flex-1 h-9 bg-black text-white rounded-sm text-sm flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
+      className="flex-1  h-7 bg-black text-white rounded-sm text-sm flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
     >
       <ShoppingCart className="w-3.5 h-3.5" /> Add
     </button>
 
     <button
       onClick={() => handleRentNow(product)}
-      className="flex-1 h-9 bg-blue-900 text-white rounded-sm text-sm flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
+      className="flex-1 h-7 bg-blue-900 text-white rounded-sm text-sm flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
     >
       Rent Now
     </button>
@@ -238,7 +239,7 @@ export default function Cards({ card = [] }: CardsProps) {
                   <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100 mb-8">
                     <p className="text-blue-900 text-sm font-bold">Rental Price</p>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-4xl font-black text-gray-900">${selectedProduct.price}</span>
+                      <span className="text-sm font-black text-gray-900">${selectedProduct.price}</span>
                       <span className="text-gray-500 font-medium">/per Month</span>
                     </div>
                   </div>
