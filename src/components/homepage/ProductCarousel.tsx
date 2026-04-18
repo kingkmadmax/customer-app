@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useState, useRef, useEffect } from "react";
-import Cards from "./cards";
+import Cards from "./Card";
 import Best from "./BestSection";
 
 export interface Product {

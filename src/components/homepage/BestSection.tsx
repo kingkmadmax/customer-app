@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import Cards from "./cards";
+import Cards from "./Card";
 
 export interface Product {
   id: number;
