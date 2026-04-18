@@ -2,6 +2,7 @@ import  {PaperAirplaneIcon}  from "@heroicons/react/24/outline";
 import { FaFacebook } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa"; 
 import { FaTwitter,FaInstagram,FaLinkedinIn } from "react-icons/fa";
+import Link from "next/link"
 
 import SocialCard from  "@/components/homepage/socalCard"
 
@@ -73,6 +74,15 @@ export default function Footer() {
             <li><a href="/faq" className=" text-sm hover:text-white">FAQ</a></li>
             <li><a href="/contact"  className=" text-sm hover:text-white">Contact</a></li>
           </ul>
+          <Link href="/about" className="text-xs font-medium hover:text-blue-600">
+                                  About
+                                </Link>
+                                <Link href="/HeaderEliment/Fax" className="text-xs font-medium hover:text-blue-600">
+                                  FAQs
+                                </Link>
+                                <Link href="/HeaderEliment/contact" className="text-xs font-medium hover:text-blue-600">
+                                  Contact
+                                </Link>
         </div>
 
   

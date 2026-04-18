@@ -163,15 +163,7 @@ export function Header() {
                   <div className="flex items-center gap-1 sm:gap-3 shrink-0">
   {/* Added items-center to the nav to keep the button and text on one line */}
                     <nav className="hidden xl:flex items-center gap-6 mr-2">
-                      <Link href="/about" className="text-xs font-medium hover:text-blue-600">
-                        About
-                      </Link>
-                      <Link href="/HeaderEliment/Fax" className="text-xs font-medium hover:text-blue-600">
-                        FAQs
-                      </Link>
-                      <Link href="/HeaderEliment/contact" className="text-xs font-medium hover:text-blue-600">
-                        Contact
-                      </Link>
+                      
                       
                       {/* The Button */}
                       <div className=" px-4 py-1 rounded-full flex hover:bg-gray-200 items-center justify-center ml-2">
