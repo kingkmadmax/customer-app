@@ -42,10 +42,7 @@ export default function Home() {
       <ImageSlider products={products} />
     </ScrollReveal>
 
-    {/* Adds reveals on scroll */}
-    <ScrollReveal>
-      <Adds adds={Add} />
-    </ScrollReveal>
+    
 
     {/* Contente reveals on scroll */}
     <ScrollReveal>

@@ -77,8 +77,9 @@ export function Header() {
 
   const menuItems = [
     { label: "Profile", action: () => router.push("/profile") },
-    { label: "Settings", action: () => router.push("/settings") },
+   
     { label: "Logout", action: () => router.push("/Pages/auth/LogIn") },
+    { label: "Notification", action: () => router.push("/Pages/Navigations/Notification") },
   ];
 
   const handleSearch = () => {
@@ -221,7 +222,7 @@ export function Header() {
 
           {/* MOBILE MENU */}
           {mobileMenuOpen && (
-            <div className="lg:hidden border-t py-2 bg-white">
+            <div className="absolute left-0 mt-2 w-40 bg-white rounded-xl shadow-lg border py-2 z-50">
               {/* Note: I removed the extra refs from here and moved mobileMenuRef to the button wrapper above */}
               <nav className="flex flex-col px-4 text-sm">
                 <Link href="/about" className="py-2 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>About</Link>

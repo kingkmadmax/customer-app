@@ -77,7 +77,7 @@ export default function SearchHeader() {
   }, [searchParams]);
 
   return (
-    <header className="w-full bg-white border-b sticky top-0 z-50 shadow-sm">
+    <header className="w-full bg-white border-b border-gray-300 shadow-2xl sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top Row - Logo + Nav + Icons */}
         <div className="flex items-center justify-between h-16">
@@ -122,7 +122,7 @@ export default function SearchHeader() {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              className="w-full h-12 pl-12 pr-4 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full h-12 pl-12 pr-4 rounded-2xl border border-gray-400 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder=""
             />
             <FaSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />

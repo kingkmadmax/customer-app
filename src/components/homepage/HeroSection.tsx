@@ -13,7 +13,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <div className="relative h-[500px] overflow-hidden flex items-center justify-center text-white">
+    <div className="relative h-[300px] overflow-hidden flex items-center justify-center text-white">
 
       {/* Parallax Image */}
       <div
