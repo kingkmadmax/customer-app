@@ -1,22 +1,9 @@
 ﻿"use client";
 
 import { useState, useRef, useEffect } from "react";
-import Cards from "./cards";
+import Cards from "@/components/homepage/Cards";
 import Best from "./BestSection";
-
-export interface Product {
-  id: number;
-  status: string;
-  image: string[];
-  name: string;
-  price: number;
-  reviews: number;
-  dateAdded:string;
-  deposite: number;
-  rating: number;
-  category: string;
-  conditon: string;
-}
+import { Product } from "@/lib/type"; 
 
 interface ContentProps {
   card: Product[];

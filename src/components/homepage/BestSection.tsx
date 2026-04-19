@@ -1,53 +1,35 @@
 "use client";
 
 import { useMemo } from "react";
-import Cards from "./cards";
+import Cards from "@/components/homepage/Cards"; // Ensure this points to your Cards container
+import { Product } from "@/lib/type"; // Import from your central types file
 
-export interface Product {
-  id: number;
-  status: string;
-  image: string[];
-  name: string;
-  price: number;
-  reviews: number;
-  deposite: number;
-  rating: number;
-  dateAdded: string;
-  category: string;
-  conditon: string;
-}
-
-interface ContentProps {
+interface BestProps {
   card: Product[];
 }
 
-export default function Best({ card = [] }: ContentProps) {
-  // logic: Only products with dates -> Sort Newest -> Take exactly 8
+export default function Best({ card = [] }: BestProps) {
+  // Logic: Sort by date newest first -> Take top 4 (or 8)
   const displayProducts = useMemo(() => {
     return [...card]
-      .filter((product) => product.dateAdded !== undefined && product.dateAdded !== null)
+      .filter((product) => product.dateAdded)
       .sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime())
-      .slice(0, 4);
+      .slice(0, 4); // Change to 8 if you want two rows
   }, [card]);
 
   return (
-       <div className="mt-10">
+    <div className="mt-10 px-4">
       {/* HEADER */}
-      <h1 className="text-xl sm:text-2xl font-bold ">New Prodict</h1>
+      <h1 className="text-xl sm:text-2xl font-bold mb-6">New Products</h1>
 
-      <div className="flex flex-col lg:flex-row lg:gap-12">
-        
-        {/* CATEGORIES SECTION */}
-  
-
-        {/* PRODUCTS / CARDS AREA */}
-        <div className="flex-1 ml-5 pb-40 pl-55 transition-all item-center duration-500">
-  <div className="transition-all duration-500 ease-in-out opacity-100">
-    <div className="sm:pl-1">
-      <Cards card={displayProducts} />
-    </div>
-  </div>
-</div>
+      <div className="flex flex-col">
+        {/* PRODUCTS AREA */}
+        <div className="w-full transition-all duration-500">
+          <div className="opacity-100">
+            {/* FIXED: changed Card={...} to card={...} to match your component props */}
+            <Cards card={displayProducts} layout="grid" />
+          </div>
+        </div>
       </div>
     </div>
   );
