@@ -57,13 +57,19 @@ export default function CartSummary() {
                 <div key={item.id} className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-gray-100 flex-shrink-0">
-                        <Image 
-                          src={imageSrc} 
-                          alt={item.name || "Product"} 
-                          fill 
-                          className="object-cover" 
-                        />
+                      <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-gray-100 flex-shrink-0 bg-gray-50">
+                        {item.image && (Array.isArray(item.image) ? item.image.length > 0 : item.image.trim() !== "") ? (
+                          <Image 
+                            src={Array.isArray(item.image) ? item.image[0] : item.image} 
+                            alt={item.name || "Product"} 
+                            fill 
+                            className="object-cover" 
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-[8px] text-center p-1 font-bold">
+                            NO IMAGE
+                          </div>
+                        )}
                       </div>
                       <div>
                         <p className="font-bold text-sm text-gray-800 line-clamp-1">{item.name}</p>

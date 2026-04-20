@@ -133,7 +133,7 @@ export default function ProductDetails() {
                   activeImage === index ? "border-blue-500" : "border-transparent"
                 }`}
               >
-                {imgSrc ? (
+                {imgSrc && typeof imgSrc === 'string' && imgSrc.trim() !== "" ? (
                   <Image src={imgSrc} alt={`Thumb ${index}`} fill className="object-contain p-2" />
                 ) : (
                   <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-[10px]">No Image</div>
@@ -143,7 +143,7 @@ export default function ProductDetails() {
           </div>
 
           <div className="relative flex-1 bg-gray-50 rounded-xl overflow-hidden h-[650px] border border-gray-100">
-            {product.image?.[activeImage] ? (
+            {product.image?.[activeImage] && typeof product.image[activeImage] === 'string' && product.image[activeImage].trim() !== "" ? (
               <Image
                 src={product.image[activeImage]}
                 alt={product.name}

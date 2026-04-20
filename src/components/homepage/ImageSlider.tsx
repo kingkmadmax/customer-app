@@ -110,13 +110,19 @@ export default function ImageSlider({
                 <div className="group/card relative aspect-[4/5] overflow-hidden rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 bg-white">
                   
                   <Link href={`/product/${product.id}`} className="block h-full w-full">
-                    <Image
-                      src={product.image[0]}
-                      alt={product.name}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover/card:scale-110"
-                      sizes="(max-width: 768px) 100vw, 25vw"
-                    />
+                    {product.image?.[0] && typeof product.image[0] === 'string' && product.image[0].trim() !== "" ? (
+                      <Image
+                        src={product.image[0]}
+                        alt={product.name}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover/card:scale-110"
+                        sizes="(max-width: 768px) 100vw, 25vw"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500">
+                        No Image
+                      </div>
+                    )}
                     
                     {/* Floating Badge */}
                     <div className="absolute top-4 left-4 z-20">

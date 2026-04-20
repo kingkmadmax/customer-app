@@ -31,7 +31,7 @@ export default function Card({
       {/* IMAGE SECTION */}
       <div className="relative h-44 w-full bg-gray-50 overflow-hidden">
         <Link href={`/product/${product.id}`} className="w-full h-full block">
-          {product.image?.[0] ? (
+          {product.image?.[0] && typeof product.image[0] === 'string' && product.image[0].trim() !== "" ? (
             <Image
               src={product.image[0]}
               alt={product.name}
