@@ -259,6 +259,7 @@ details: {
     conditon: "new",
     location: "Addis Ababa",
     price: 399.99,
+    dateAdded: "2026-03-17",
     rating: 4.5,
     reviews: 98,
     status: "available",
@@ -286,6 +287,7 @@ details: {
     location: "Addis Ababa",
     price: 899.99,
     rating: 4.6,
+    dateAdded: "2026-03-17",
     reviews: 234,
     status: "available",
    details: {
@@ -298,6 +300,7 @@ details: {
       { label: "Brand", value: "Toyota" },
       { label: "Model", value: "Camry" },
       { label: "Year", value: "2022" },
+      
       { label: "Fuel Type", value: "Hybrid" },
       { label: "Transmission", value: "Automatic" }
     ],
@@ -311,6 +314,7 @@ details: {
     conditon: "new",
     location: "Addis Ababa",
     price: 280.00,
+    dateAdded: "2026-03-17",
     rating: 4.0,
     reviews: 67,
     status: "available",
@@ -335,6 +339,7 @@ details: {
     category: "Vehicles",
     deposite: 500.00,
     conditon: "used",
+    dateAdded: "2026-03-17",
     location: "Addis Ababa",
     price: 249.99,
     rating: 4.7,
@@ -363,6 +368,7 @@ details: {
     conditon: "new",
     location: "Addis Ababa",
     price: 129.99,
+    dateAdded: "2026-03-17",
     rating: 4.2,
     reviews: 89,
     status: "available",
