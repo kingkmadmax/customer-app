@@ -1,5 +1,5 @@
 "use client";
-import Cards from "@/components/homepage/Card";
+import Cards from "@/components/homepage/Cards";
 import { products } from "@/app/data/product";   // make sure path is correct
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
@@ -36,7 +36,8 @@ export default function SearchPage() {
       </p>
 
       {filteredProducts.length > 0 ? (
-        <Cards card={filteredProducts} />
+        
+         <Cards card={filteredProducts} />
       ) : (
        <div className="flex flex-col justify-center items-center text-center gap-3 py-10">
   

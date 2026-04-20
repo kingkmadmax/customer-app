@@ -154,7 +154,11 @@ export default function ProfilePage() {
                     {favorites.map((product) => (
                       <div key={product.id} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex gap-4 group hover:border-blue-200 transition-all">
                         <div className="relative w-24 h-24 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0">
-                          <Image src={product.image[0]} alt={product.name} fill className="object-contain p-2" />
+                          {product.image?.[0] ? (
+                            <Image src={product.image[0]} alt={product.name} fill className="object-contain p-2" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400 text-[10px]">No Image</div>
+                          )}
                         </div>
                         <div className="flex-1 flex flex-col justify-between">
                           <div>

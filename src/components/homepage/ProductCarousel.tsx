@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useState, useRef, useEffect } from "react";
-import Cards from "@/components/homepage/Cards";
+import Cards from "@/components/homepage/cards";
 import Best from "./BestSection";
 import { Product } from "@/lib/type"; 
 

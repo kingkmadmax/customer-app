@@ -13,51 +13,63 @@ export default function CartSummary() {
       ? [{ ...product, quantity: 1 }]
       : [];
 
-  // Type-casting as any to avoid 'deposite' missing errors if interfaces aren't updated yet
   const summaryItems = [...cartItems, ...checkoutItem] as any[];
 
-  
-  
   // Subtotal = Price * Quantity * Days
   const subtotal = summaryItems.reduce((acc, item) => {
     return acc + (item.price * item.quantity * rentalDays);
   }, 0);
 
-  // Total Deposit = Sum of all individual deposite values
+  // Total Deposit - Handles both common spellings and ensures valid numbers
   const totalDeposit = summaryItems.reduce((acc, item) => {
-    return acc + (Number(item.deposite ?? 0) * item.quantity);
+    const depValue = item.deposite ?? item.deposit ?? 0;
+    return acc + (Number(depValue) * item.quantity);
   }, 0);
 
   const serviceFee = subtotal * 0.1; // 10% Fee
   const finalTotal = subtotal + serviceFee + totalDeposit;
 
   return (
-    <div className="p-6 border border-gray-300 rounded-2xl shadow-xl flex flex-col h-[600px] bg-white sticky top-10">
+    /* h-fit removes the gap when there's only 1 product; max-h keeps it from growing too large */
+    <div className="p-6 border border-gray-300 rounded-2xl shadow-xl flex flex-col h-fit max-h-[85vh] bg-white sticky top-10">
       <h2 className="text-xl font-bold mb-6 text-gray-800 border-b pb-2">Cart Summary</h2>
 
       {summaryItems.length === 0 ? (
-        <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
+        <div className="py-10 flex-1 flex flex-col items-center justify-center text-gray-400">
           <p>Your cart is empty</p>
         </div>
       ) : (
         <>
-          {/* ✅ SCROLLABLE ITEM LIST */}
-          <div className="flex-1 overflow-y-auto pr-2 space-y-5">
+          {/* ✅ SCROLLABLE ITEM LIST - max-h-[280px] roughly shows 3 items before scrolling */}
+          <div className="overflow-y-auto pr-2 space-y-5 max-h-[280px] custom-scrollbar">
             {summaryItems.map((item) => {
-              // Flat calculation: Price * Qty * Days
               const itemRentalTotal = item.price * item.quantity * rentalDays;
+
+              {/* SAFE IMAGE LOGIC: Prevents the "" string error */}
+              const imageSrc = 
+                Array.isArray(item.image) && item.image.length > 0 
+                  ? item.image[0] 
+                  : (item.image && typeof item.image === 'string' && item.image.trim() !== "" 
+                      ? item.image 
+                      : "/placeholder.jpg");
 
               return (
                 <div key={item.id} className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-gray-100 flex-shrink-0">
-                        <Image 
-                          src={Array.isArray(item.image) ? item.image[0] : (item.image || "/placeholder.jpg")} 
-                          alt={item.name} 
-                          fill 
-                          className="object-cover" 
-                        />
+                      <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-gray-100 flex-shrink-0 bg-gray-50">
+                        {item.image && (Array.isArray(item.image) ? item.image.length > 0 : item.image.trim() !== "") ? (
+                          <Image 
+                            src={Array.isArray(item.image) ? item.image[0] : item.image} 
+                            alt={item.name || "Product"} 
+                            fill 
+                            className="object-cover" 
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-[8px] text-center p-1 font-bold">
+                            NO IMAGE
+                          </div>
+                        )}
                       </div>
                       <div>
                         <p className="font-bold text-sm text-gray-800 line-clamp-1">{item.name}</p>
@@ -70,13 +82,6 @@ export default function CartSummary() {
                       ${itemRentalTotal.toFixed(1)}
                     </span>
                   </div>
-
-                  {(item.deposite ?? 0) > 0 && (
-                    <div className="flex justify-between items-center bg-orange-50 px-3 py-1 rounded-lg">
-                     
-                    
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -105,7 +110,7 @@ export default function CartSummary() {
             </div>
 
             <div className="flex flex-col pt-4 border-t-2 border-gray-900 mt-2">
-              <div className="flex justify-between  text-2xl ">
+              <div className="flex justify-between text-2xl font-bold">
                 <span>Total</span>
                 <span>${finalTotal.toFixed(2)}</span>
               </div>

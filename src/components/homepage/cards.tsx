@@ -25,9 +25,9 @@ export default function Cards({ card = [], layout = "grid" }: CardsProps) {
           isFavorite={favorites.some(f => f.id === item.id)}
           onQuickView={(p) => console.log("Quick view for", p.name)}
           onFavorite={(p) => toggleFavorite(p)}
-          onAddToCart={(p) => addToCart({...p, quantity: 1} as any)}
+          onAddToCart={(p) => addToCart({ ...p, image: p.image[0], quantity: 1 } as any)}
           onRentNow={(p) => {
-            setCheckoutProduct(p as any);
+            setCheckoutProduct({ ...p, image: p.image[0] } as any);
             router.push("/Checkout/checkout");
           }}
         />
