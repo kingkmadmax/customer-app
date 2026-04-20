@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingCart, Star, Plus, X, Heart, Eye } from "lucide-react";
+import { ShoppingCart, Star,X, Plus, Heart, Eye } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
@@ -15,20 +15,20 @@ interface SingleCardProps {
   isFavorite: boolean;
 }
 
-export default function Card({ 
-  product, 
-  onQuickView, 
-  onFavorite, 
-  onAddToCart, 
-  onRentNow, 
-  isFavorite 
+export default function Card({
+  product,
+  onQuickView,
+  onFavorite,
+  onAddToCart,
+  onRentNow,
+  isFavorite
 }: SingleCardProps) {
 
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="w-[250px] h-[350px] flex-shrink-0 bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group relative flex flex-col mx-auto">
-      
+    <div className="w-full max-w-[250px] h-[350px] flex-shrink-0 bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group relative flex flex-col mx-auto">
+
       {/* IMAGE SECTION */}
       <div className="relative h-44 w-full bg-gray-50 overflow-hidden">
         <Link href={`/product/${product.id}`} className="w-full h-full block">
@@ -36,7 +36,7 @@ export default function Card({
             <Image
               src={product.image[0]}
               alt={product.name}
-              fill 
+              fill
               className="object-cover group-hover:scale-110 transition-transform duration-500"
             />
           ) : (
@@ -45,7 +45,7 @@ export default function Card({
             </div>
           )}
         </Link>
-        
+
         {/* HOVER ACTIONS */}
         <div className="absolute top-3 right-3 z-10 flex flex-col gap-2 translate-x-12 group-hover:translate-x-0 transition-transform duration-300">
           <button onClick={() => onQuickView(product)} className="bg-white p-2 rounded-full shadow-lg hover:bg-black hover:text-white transition-colors">
@@ -64,7 +64,7 @@ export default function Card({
           <h3 className="font-semibold text-sm line-clamp-2 text-gray-900 h-10 leading-tight">
             {product.name}
           </h3>
-          
+
           <p className="text-[10px] text-gray-400 uppercase tracking-widest font-medium">
             {product.category} • {product.conditon}
           </p>
@@ -96,20 +96,18 @@ export default function Card({
             {/* The Toggle (Plus) Button - NOW ON THE LEFT */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`mr-2 z-20 flex items-center justify-center w-9 h-9 rounded-full shadow-sm transition-all duration-300 ${
-                isOpen ? "bg-gray-100 text-black" : "bg-black text-white"
-              }`}
+              className={`mr-2 z-20 flex items-center justify-center w-9 h-9 rounded-full shadow-sm transition-all duration-300 ${isOpen ? "bg-gray-300 text-black" : "bg-blue-600 text-white"
+                }`}
             >
-              {isOpen ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+              {isOpen ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4 " />}
             </button>
 
             {/* Container for the sliding buttons - Now slides from the LEFT side */}
             <div
-              className={`flex gap-1.5 transition-all duration-500 ease-out transform ${
-                isOpen 
-                  ? "translate-x-0 opacity-100" 
+              className={`flex gap-1.5 transition-all duration-500 ease-out transform ${isOpen
+                  ? "translate-x-0 opacity-100"
                   : "-translate-x-full opacity-0 pointer-events-none"
-              }`}
+                }`}
             >
               <button
                 onClick={() => onAddToCart(product)}

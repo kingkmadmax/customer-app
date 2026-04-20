@@ -34,7 +34,7 @@ export default function Home() {
 >
   
  
-  <div className="flex flex-col gap-40">
+  <div className="flex flex-col gap-20">
     
    
     {/* Image Slider reveals on scroll */}

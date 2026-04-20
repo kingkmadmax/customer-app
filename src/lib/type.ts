@@ -28,4 +28,5 @@ export interface Product {
 export interface CardsProps {
   card: Product[];
   layout?: "grid" | "flex";
+  gap?: string;
 }

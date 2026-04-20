@@ -1,9 +1,10 @@
 ﻿"use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Cards from "@/components/homepage/cards";
 import Best from "./BestSection";
 import { Product } from "@/lib/type"; 
+import MoreSection from "@/components/homepage/MareSection"
 
 interface ContentProps {
   card: Product[];
@@ -12,143 +13,116 @@ interface ContentProps {
 export default function Content({ card = [] }: ContentProps) {
   const [filter, setFilter] = useState<string>("All");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 9;
-  const [visibleCount, setVisibleCount] = useState<number>(9);
+  const itemsPerPage = 8;
 
-
-    useEffect(() => {
+  useEffect(() => {
     window.scrollTo({ top: 1500, behavior: "smooth" });
   }, [currentPage]);
+
   const filteredProducts =
-  filter === "All"
-    ? card
-    : card.filter((product) => product.category === filter);
+    filter === "All"
+      ? card
+      : card.filter((product) => product.category === filter);
 
-const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
-const startIndex = (currentPage - 1) * itemsPerPage;
-const paginatedProducts = filteredProducts.slice(
-  startIndex,
-  startIndex + itemsPerPage
-);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = filteredProducts.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
- 
   const categories = ["All", "Condition", "Houses", "Vehicles", "Electronics"];
 
-  const handleShowMore = () => {
-    setVisibleCount((prev) => prev + 9);
-  };
-
   return (
-    <div className="">
-      {/* HEADER */}
-      <h1 className="text-xl sm:text-2xl font-bold my-">Featured Properties</h1>
-
-      {/* MAIN LAYOUT: Column on mobile, Row on Desktop */}
-      <div className="flex flex-col lg:flex-row lg:gap-5">
+    <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col">
+      {/* HEADER SECTION - Matching BestSection Style */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6 mt-10">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-black tracking-tight mb-2">
+            Featured Properties
+          </h1>
+          <p className="text-gray-500 text-sm md:text-base font-medium max-w-xl">
+            Browse our curated selection of premium listings across all categories. Perfect for any occasion.
+          </p>
+        </div>
+        <div className="h-[2px] flex-1 bg-gray-100 mb-2 hidden md:block mx-10"></div>
         
-        {/* CATEGORIES SECTION */}
-        <div className="w-full lg:w-50 pb-40   flex-shrink-0 mb-8 lg:mb-0">
-          {/* Mobile: Horizontal Scroll Row */}
-          <div className="lg:hidden">
-            <div className="flex overflow-x-auto  no-scrollbar">
-              {categories.map((cat) => (
+      </div>
+
+      {/* CATEGORIES SECTION */}
+      <nav className="w-full mb-10 flex justify-start">
+        <ul className="flex flex-wrap justify-start gap-3">
+          {categories.map((cat) => (
+            <li key={cat}>
+              <button
+                onClick={() => {
+                  setFilter(cat);
+                  setCurrentPage(1);
+                }}
+                className={`py-2 px-6 rounded-full text-sm font-medium transition-all border ${
+                  filter === cat
+                    ? "bg-black text-white border-black shadow-md"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-400 hover:bg-gray-50"
+                }`}
+              >
+                {cat}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      {/* PRODUCTS AREA - Centered Content */}
+      <div className="w-full flex flex-col items-center">
+        <div className="w-full transition-all duration-500 py-10">
+          {/* Ensure the Cards component internal grid is centered if it has a max-width */}
+          <Cards card={paginatedProducts} gap="gap-3" />
+        </div>
+        
+        {/* PAGINATION - Centered */}
+        {filteredProducts.length > itemsPerPage && (
+          <div className="flex justify-center items-center gap-3 pt-12 pb-16">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((p) => p - 1)}
+              className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-30 hover:bg-gray-50 transition-colors"
+            >
+              Prev
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .slice(Math.max(0, currentPage - 2), Math.max(3, currentPage + 1))
+              .map((page) => (
                 <button
-                  key={cat}
-                  onClick={() => {
-                    setFilter(cat);
-                    setVisibleCount(9);
-                  }}
-                  className={`whitespace-nowrap  rounded-sm text-sm border transition-all ${
-                    filter === cat
-                      ? "bg-black text-white border-black"
-                      : "bg-white text-gray-600 border-gray-200 hover:border-gray-400"
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`px-4 py-2 rounded-lg border transition-all duration-300 ${
+                    currentPage === page
+                      ? "bg-black text-white border-black scale-105 shadow-md"
+                      : "bg-white text-black border-gray-300 hover:border-black"
                   }`}
                 >
-                  {cat}
+                  {page}
                 </button>
               ))}
-            </div>
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((p) => p + 1)}
+              className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-30 hover:bg-gray-50 transition-colors"
+            >
+              Next
+            </button>
           </div>
-
-          {/* Desktop: Vertical Sidebar */}
-          <nav className="hidden lg:block bg-white rounded-2xl shadow-sm p-6 sticky top-24">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-black mb-6">
-              Categories
-            </h3>
-            <ul className="space-y-2">
-              {categories.map((cat) => (
-                <li key={cat}>
-                  <button
-                    onClick={() => {
-                      setFilter(cat);
-                      setVisibleCount(9);
-                    }}
-                    className={`w-full text-left text-sm py-3 px-4 border-l-4 transition-all ${
-                      filter === cat
-                        ? "font-bold border-l-black bg-gray-50 text-black"
-                        : "text-gray-500 border-l-white hover:bg-gray-50 hover:border-l-gray-300"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-
-        {/* PRODUCTS / CARDS AREA */}
-        <div className="flex-1  transition-all duration-500 ease-in-out">
-           <div className="transition-all duration-500 ease-in-out opacity-100">
-              <Cards card={paginatedProducts} />
-           </div>
-          
-          {/* SHOW MORE BUTTON */}
-              {visibleCount < filteredProducts.length && (
-      <div className="flex justify-center items-center gap-3 pt-10">
-  {/* Previous */}
-  <button
-    disabled={currentPage === 1}
-    onClick={() => setCurrentPage((p) => p - 1)}
-    className="px-4 py-2 border border-gray-500 rounded-lg disabled:opacity-50"
-  >
-    Prev
-  </button>
-
-  {/* Page Numbers (max 3 visible) */}
-  {Array.from({ length: totalPages }, (_, i) => i + 1)
-    .slice(
-      Math.max(0, currentPage - 2),
-      Math.max(3, currentPage + 1)
-    )
-    .map((page) => (
-      <button
-        key={page}
-        onClick={() => setCurrentPage(page)}
-        className={`px-4 py-2 rounded-lg border border-gray-500   transition-all duration-300 ${
-          currentPage === page
-            ? "bg-black text-white scale-110 shadow-md"
-            : "bg-white text-black hover:scale-105"
-        }`}
-      >
-        {page}
-      </button>
-    ))}
-
-  {/* Next */}
-  <button
-    disabled={currentPage === totalPages}
-    onClick={() => setCurrentPage((p) => p + 1)}
-    className="px-4 py-2 border border-gray-500  rounded-lg disabled:opacity-50"
-  >
-    Next
-  </button>
-</div>
-    )}
-        </div>
+        )}
       </div>
-      <Best card={paginatedProducts}/>
+
+      {/* Best Section - Usually contains its own centering logic, but wrapped just in case */}
+      <div className="w-full flex flex-col items-center">
+        <Best card={filteredProducts}/>
+        <MoreSection />
+      </div>
     </div>
   );
 }
