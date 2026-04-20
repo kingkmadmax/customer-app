@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Product, CardsProps } from "@/lib/type"; // Using Alias
-import Card from "@/components/homepage/card"; // Relative import is fine for files in the same folder
+import Card from "@/components/homepage/Card"; // Relative import is fine for files in the same folder
 import { useCartStore, useCheckoutStore } from "@/components/store/cat-store";
 import { useFavoriteStore } from "@/components/store/favorite-store";
 

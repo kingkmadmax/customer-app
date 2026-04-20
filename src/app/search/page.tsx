@@ -1,5 +1,5 @@
 "use client";
-import Cards from "@/components/homepage/card";
+import Cards from "@/components/homepage/Card";
 import { products } from "@/app/data/product";   // make sure path is correct
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";

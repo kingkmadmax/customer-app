@@ -10,7 +10,7 @@ export interface Product {
   deposite: number;
   conditon: string; 
   location: string;
-  dateAdded: string;
+  dateAdded?: string;
   price: number;
   rating: number;
   reviews: number;
