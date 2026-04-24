@@ -5,119 +5,110 @@ import { useCartStore, useCheckoutStore } from "../store/cat-store";
 
 export default function CartSummary() {
   const { cartItems } = useCartStore();
-  const { product, rentalDays } = useCheckoutStore();
+  const { product, rentalDays = 1 } = useCheckoutStore();
 
-  // Combine cart items and the specific checkout product
-  const checkoutItem =
-    product && !cartItems.some((item) => item.id === product.id)
-      ? [{ ...product, quantity: 1 }]
-      : [];
+  // Combine cart items and checkout product
+  const checkoutItem = product && !cartItems.some((item) => item.id === product.id)
+    ? [{ ...product, quantity: 1 }]
+    : [];
 
-  const summaryItems = [...cartItems, ...checkoutItem] as any[];
+  const summaryItems = [...cartItems, ...checkoutItem];
 
-  // Subtotal = Price * Quantity * Days
+  // Calculations
   const subtotal = summaryItems.reduce((acc, item) => {
-    return acc + (item.price * item.quantity * rentalDays);
+    return acc + (item.price * (item.quantity || 1) * rentalDays);
   }, 0);
 
-  // Total Deposit - Handles both common spellings and ensures valid numbers
   const totalDeposit = summaryItems.reduce((acc, item) => {
-    const depValue = item.deposite ?? item.deposit ?? 0;
-    return acc + (Number(depValue) * item.quantity);
+    const depValue = item.deposite ?? item.deposite ?? 0;
+    return acc + Number(depValue) * (item.quantity || 1);
   }, 0);
 
-  const serviceFee = subtotal * 0.1; // 10% Fee
+  const serviceFee = subtotal * 0.1;
   const finalTotal = subtotal + serviceFee + totalDeposit;
 
   return (
-    /* h-fit removes the gap when there's only 1 product; max-h keeps it from growing too large */
-    <div className="p-6 border border-gray-300 rounded-2xl shadow-xl flex flex-col h-fit max-h-[85vh] bg-white sticky top-10">
-      <h2 className="text-xl font-bold mb-6 text-gray-800 border-b pb-2">Cart Summary</h2>
+    <div className="p-6 border border-gray-200 rounded-2xl bg-white shadow-sm sticky top-6">
+      <h2 className="text-xl font-bold mb-6 text-gray-900">Order Summary</h2>
 
       {summaryItems.length === 0 ? (
-        <div className="py-10 flex-1 flex flex-col items-center justify-center text-gray-400">
+        <div className="py-16 text-center text-gray-400">
           <p>Your cart is empty</p>
         </div>
       ) : (
         <>
-          {/* ✅ SCROLLABLE ITEM LIST - max-h-[280px] roughly shows 3 items before scrolling */}
-          <div className="overflow-y-auto pr-2 space-y-5 max-h-[280px] custom-scrollbar">
+          {/* Items */}
+          <div className="space-y-6 max-h-[340px] overflow-y-auto pr-3 custom-scrollbar">
             {summaryItems.map((item) => {
-              const itemRentalTotal = item.price * item.quantity * rentalDays;
-
-              {/* SAFE IMAGE LOGIC: Prevents the "" string error */}
-              const imageSrc = 
-                Array.isArray(item.image) && item.image.length > 0 
-                  ? item.image[0] 
-                  : (item.image && typeof item.image === 'string' && item.image.trim() !== "" 
-                      ? item.image 
-                      : "/placeholder.jpg");
+              const itemTotal = item.price * (item.quantity || 1) * rentalDays;
+              const imageSrc = Array.isArray(item.image) && item.image.length > 0
+                ? item.image[0]
+                : (typeof item.image === "string" && item.image.trim() ? item.image : "/placeholder.jpg");
 
               return (
-                <div key={item.id} className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-gray-100 flex-shrink-0 bg-gray-50">
-                        {item.image && (Array.isArray(item.image) ? item.image.length > 0 : item.image.trim() !== "") ? (
-                          <Image 
-                            src={Array.isArray(item.image) ? item.image[0] : item.image} 
-                            alt={item.name || "Product"} 
-                            fill 
-                            className="object-cover" 
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-[8px] text-center p-1 font-bold">
-                            NO IMAGE
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <p className="font-bold text-sm text-gray-800 line-clamp-1">{item.name}</p>
-                        <p className="text-[11px] text-gray-500 font-medium">
-                          ${item.price.toFixed(2)} / day | Qty: {item.quantity}
-                        </p>
-                      </div>
-                    </div>
-                    <span className="font-bold text-sm text-gray-900">
-                      ${itemRentalTotal.toFixed(1)}
-                    </span>
+                <div key={item.id} className="flex gap-4">
+                  <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-gray-100 flex-shrink-0 bg-gray-50">
+                    <Image
+                      src={imageSrc}
+                      alt={item.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+
+                  <div className="flex-1 min-w-0 pt-1">
+                    <p className="font-semibold text-gray-800 line-clamp-2 leading-tight">
+                      {item.name}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1.5">
+                      ${item.price} × {item.quantity || 1} × {rentalDays} days
+                    </p>
+                  </div>
+
+                  <div className="text-right font-semibold text-gray-900 pt-1">
+                    ${itemTotal.toFixed(0)}
                   </div>
                 </div>
               );
             })}
           </div>
 
-          {/* ✅ TOTALS FOOTER */}
-          <div className="mt-6 pt-4 border-t-2 border-dashed border-gray-100 space-y-3">
-            <div className="flex justify-between text-sm text-gray-600">
-              <span>Rental Duration</span>
-              <span className="font-semibold">{rentalDays} Days</span>
+          {/* Divider */}
+          <div className="h-px bg-gray-100 my-6" />
+
+          {/* Pricing Breakdown */}
+          <div className="space-y-3 text-sm">
+            <div className="flex justify-between text-gray-600">
+              <span>Rental Period</span>
+              <span className="font-medium">{rentalDays} days</span>
             </div>
 
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Rental Subtotal</span>
-              <span className="font-bold text-gray-900">${subtotal.toFixed(2)}</span>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Subtotal</span>
+              <span className="font-semibold">${subtotal.toFixed(2)}</span>
             </div>
 
-            <div className="flex justify-between text-sm text-emerald-600 font-medium">
+            <div className="flex justify-between text-emerald-600">
               <span>Service Fee (10%)</span>
               <span>+${serviceFee.toFixed(2)}</span>
             </div>
 
-            <div className="flex justify-between text-sm text-orange-600 font-bold">
-              <span>Total Security Deposit</span>
+            <div className="flex justify-between text-orange-600">
+              <span>Security Deposit</span>
               <span>+${totalDeposit.toFixed(2)}</span>
             </div>
 
-            <div className="flex flex-col pt-4 border-t-2 border-gray-900 mt-2">
-              <div className="flex justify-between text-2xl font-bold">
-                <span>Total</span>
-                <span>${finalTotal.toFixed(2)}</span>
-              </div>
-              <p className="text-[10px] text-gray-400 text-right mt-1 italic">
-                *Deposit is refundable after the rental period.
-              </p>
+            {/* Total */}
+            <div className="pt-4 mt-4 border-t border-gray-900 flex justify-between items-baseline">
+              <span className="text-lg font-bold text-gray-900">Total Due</span>
+              <span className="text-2xl font-bold text-gray-900">
+                ${finalTotal.toFixed(2)}
+              </span>
             </div>
+
+            <p className="text-[10px] text-gray-400 text-right italic">
+              * Security deposit is fully refundable upon safe return
+            </p>
           </div>
         </>
       )}

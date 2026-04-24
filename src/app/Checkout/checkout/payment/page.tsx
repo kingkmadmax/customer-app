@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CreditCard, Smartphone, Building2, CheckCircle2,  ArrowRight, Upload, Copy, ShieldCheck } from "lucide-react";
+import { CreditCard, Smartphone, Building2, CheckCircle2, ArrowRight, Upload, Copy, ShieldCheck } from "lucide-react";
+
 import CheckoutStepper from "@/components/checkout/CheckoutStepper";
 import CartSummary from "@/components/checkout/CartSummary";
 
@@ -14,17 +15,15 @@ export default function PaymentPage() {
   
   const [isVerifying, setIsVerifying] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
 
   const bankAccounts = [
     { bank: "CBE", acc: "1000123456789", name: "Rental Co. PLC" },
     { bank: "Dashen", acc: "009988776655", name: "Rental Co. PLC" },
-   
   ];
-   const teleAccounts = [
+
+  const teleAccounts = [
     { bank: "TeleBIRR", acc: "0911223344", name: "Rental Co. PLC" },
-   
   ];
 
   const handleVerification = () => {
@@ -35,154 +34,182 @@ export default function PaymentPage() {
     }, 1500);
   };
 
+  const canProceed = () => {
+    if (selectedMethod === "card") return true;
+    if (selectedMethod === "bank" || selectedMethod === "telebirr") return !!receiptFile;
+    return false;
+  };
+
   return (
-    <div className="max-w-5xl mx-auto p-6 min-h-screen bg-gray-50 text-gray-900">
+    <div className="max-w-6xl mx-auto p-6 text-balck">
       <CheckoutStepper step={4} />
 
-      {/* ✅ Adjusted Grid: 1.5fr for payment, 1fr for summary for a "smaller" look */}
-      <div className="grid md:grid-cols-[1.5fr_1fr] gap-6 mt-6 items-stretch">
-        
-        {/* ================= LEFT SIDE: SMALLER PAYMENT CONTENT ================= */}
-        <div className="space-y-4 flex flex-col">
-          
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+
+        {/* LEFT: PAYMENT SECTION */}
+        <div className="p-6 border border-gray-300 rounded-xl shadow-xl bg-white">
+          <h2 className="text-xl font-bold mb-2">Payment Method</h2>
+          <p className="text-gray-500 mb-6">
+            Choose your preferred payment method
+          </p>
+
+          {/* Payment Method Tabs */}
           {!isSubmitted && (
-            <div className="p-3 bg-white border border-gray-200 rounded-2xl shadow-sm flex gap-2">
+            <div className="flex gap-2 mb-6">
               {[
                 { id: "card", name: "Card", icon: CreditCard },
-                { id: "telebirr", name: "telebirr", icon: Smartphone },
-                { id: "bank", name: "Bank", icon: Building2 },
+                { id: "telebirr", name: "TeleBIRR", icon: Smartphone },
+                { id: "bank", name: "Bank Transfer", icon: Building2 },
               ].map((m) => (
                 <button
                   key={m.id}
                   onClick={() => setSelectedMethod(m.id as PaymentMethod)}
                   className={`flex-1 py-3 rounded-xl flex flex-col items-center gap-1 transition-all border-2 ${
-                    selectedMethod === m.id ? "border-blue-600 bg-blue-50 text-blue-600" : "border-transparent text-gray-400 hover:bg-gray-50"
+                    selectedMethod === m.id 
+                      ? "border-blue-600 bg-blue-50 text-blue-600" 
+                      : "border-transparent text-gray-400 hover:bg-gray-50"
                   }`}
                 >
                   <m.icon className="w-4 h-4" />
-                  <span className="text-[9px] font-black uppercase tracking-tighter">{m.name}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider">{m.name}</span>
                 </button>
               ))}
             </div>
           )}
 
-          {/* MAIN ACTION CARD - Reduced padding (p-6) and min-height (min-h-[350px]) */}
-          <div className="p-6 bg-white border border-gray-200 rounded-[1.5rem] shadow-md flex-1 flex flex-col justify-center relative overflow-hidden min-h-[380px]">
-            
+          {/* Main Payment Content */}
+          <div className="min-h-[400px]">
             {isSubmitted ? (
-              <div className="flex flex-col items-center justify-center animate-in zoom-in duration-500 text-black text-center">
+              <div className="flex flex-col items-center justify-center h-full text-center">
                 <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-6">
                   <CheckCircle2 className="w-12 h-12 text-emerald-500" />
                 </div>
-                <h2 className="text-2xl font-black mb-1">Done!</h2>
-                <p className="text-xs text-gray-500 max-w-[200px]">Payment details received successfully.</p>
+                <h2 className="text-2xl font-bold mb-1">Payment Received!</h2>
+                <p className="text-gray-500 mb-6">Thank you for your payment.</p>
+                
                 <button 
                   onClick={() => router.push("/Checkout/checkout/step-5")}
-                  className="mt-6 px-8 py-3 text-white bg-gray-900 text-black rounded-xl font-bold text-sm flex items-center gap-2"
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg"
                 >
-                  NEXT <ArrowRight className="w-4 h-4" />
+                  Continue
                 </button>
               </div>
             ) : (
-              <div className="space-y-6 animate-in fade-in duration-300">
-                
-                {/* 🏦 BANK TRANSFER VIEW */}
+              <div className="space-y-6">
+                {/* Bank Transfer */}
                 {selectedMethod === "bank" && (
                   <div className="space-y-4">
-                    <h3 className="text-md font-bold">Bank Transfer</h3>
-                    <div className="space-y-2">
-                      {bankAccounts.map((acc, i) => (
-                        <div key={i} className="p-3 bg-gray-50 rounded-xl flex justify-between items-center border border-gray-100">
-                          <div className="text-sm">
-                            <p className="text-[9px] font-bold text-blue-600 uppercase">{acc.bank}</p>
-                            <p className="font-mono font-bold">{acc.acc}</p>
-                          </div>
-                          <button className="p-1.5 hover:bg-white rounded-full"><Copy className="w-3.5 h-3.5 text-gray-400" /></button>
+                    <h3 className="font-semibold">Bank Transfer</h3>
+                    {bankAccounts.map((acc, i) => (
+                      <div key={i} className="p-4 bg-gray-50 rounded-xl flex justify-between items-center border border-gray-100">
+                        <div>
+                          <p className="text-xs text-blue-600 font-bold">{acc.bank}</p>
+                          <p className="font-mono font-medium">{acc.acc}</p>
                         </div>
-                      ))}
-                    </div>
-                    <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 cursor-pointer">
-                      <div className="text-center">
-                         <Upload className="w-5 h-5 text-gray-400 mx-auto mb-1" />
-                         <p className="text-[10px] text-gray-500">{receiptFile ? receiptFile.name : "Upload proof"}</p>
+                        <button className="p-2 hover:bg-white rounded-full">
+                          <Copy className="w-4 h-4 text-gray-400" />
+                        </button>
                       </div>
-                      <input type="file" className="hidden" onChange={(e) => setReceiptFile(e.target.files?.[0] || null)} />
+                    ))}
+                    <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50">
+                      <Upload className="w-5 h-5 text-gray-400 mb-1" />
+                      <p className="text-xs text-gray-500">
+                        {receiptFile ? receiptFile.name : "Upload payment receipt"}
+                      </p>
+                      <input 
+                        type="file" 
+                        className="hidden" 
+                        onChange={(e) => setReceiptFile(e.target.files?.[0] || null)} 
+                      />
                     </label>
-                    <button onClick={handleVerification} disabled={!receiptFile} className="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold text-sm">CHECK RECEIPT</button>
                   </div>
                 )}
 
-                {/* 📱 TELEBIRR VIEW */}
+                {/* TeleBIRR */}
                 {selectedMethod === "telebirr" && (
                   <div className="space-y-4">
-                    <div className="w-14 h-14 bg-blue-600 rounded-2xl mx-auto flex items-center justify-center">
-                      <Smartphone className="text-white w-7 h-7" />
-                    </div>
-                    <h3 className="text-md font-bold">TeleBIRR</h3>
-                    <div className="space-y-2">
-                      {teleAccounts.map((acc, i) => (
-                        <div key={i} className="p-3 bg-gray-50 rounded-xl flex justify-between items-center border border-gray-100">
-                          <div className="text-sm">
-                            <p className="text-[9px] font-bold text-blue-600 uppercase">{acc.bank}</p>
-                            <p className="font-mono font-bold">{acc.acc}</p>
-                          </div>
-                          <button className="p-1.5 hover:bg-white rounded-full"><Copy className="w-3.5 h-3.5 text-gray-400" /></button>
+                    <h3 className="font-semibold">TeleBIRR Payment</h3>
+                    {teleAccounts.map((acc, i) => (
+                      <div key={i} className="p-4 bg-gray-50 rounded-xl flex justify-between items-center border border-gray-100">
+                        <div>
+                          <p className="text-xs text-blue-600 font-bold">{acc.bank}</p>
+                          <p className="font-mono font-medium">{acc.acc}</p>
                         </div>
-                      ))}
-                    </div>
-                    <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 cursor-pointer">
-                      <div className="text-center">
-                         <Upload className="w-5 h-5 text-gray-400 mx-auto mb-1" />
-                         <p className="text-[10px] text-gray-500">{receiptFile ? receiptFile.name : "Upload proof"}</p>
+                        <button className="p-2 hover:bg-white rounded-full">
+                          <Copy className="w-4 h-4 text-gray-400" />
+                        </button>
                       </div>
-                      <input type="file" className="hidden" onChange={(e) => setReceiptFile(e.target.files?.[0] || null)} />
+                    ))}
+                    <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50">
+                      <Upload className="w-5 h-5 text-gray-400 mb-1" />
+                      <p className="text-xs text-gray-500">
+                        {receiptFile ? receiptFile.name : "Upload payment receipt"}
+                      </p>
+                      <input 
+                        type="file" 
+                        className="hidden" 
+                        onChange={(e) => setReceiptFile(e.target.files?.[0] || null)} 
+                      />
                     </label>
-                    <button onClick={handleVerification} disabled={!receiptFile} className="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold text-sm">CHECK RECEIPT</button>
                   </div>
                 )}
 
-                {/* 💳 CARD VIEW */}
+                {/* Card Payment */}
                 {selectedMethod === "card" && (
-                   <div className="space-y-3">
-                     <h3 className="text-md font-bold">Card Payment</h3>
-                     <input placeholder="Card Number" className="w-full p-3 border rounded-xl bg-gray-50 text-sm" />
-                     <div className="grid grid-cols-2 gap-3">
-                        <input placeholder="MM/YY" className="p-3 border rounded-xl bg-gray-50 text-sm" />
-                        <input placeholder="CVV" className="p-3 border rounded-xl bg-gray-50 text-sm" />
-                     </div>
-                     <button onClick={handleVerification} className="w-full py-4 bg-gray-900 text-white rounded-xl font-bold text-sm">SUBMIT CARD</button>
-                   </div>
+                  <div className="space-y-4">
+                    <h3 className="font-semibold">Card Payment</h3>
+                    <input 
+                      placeholder="Card Number" 
+                      className="w-full p-3 border border-gray-300 rounded-lg" 
+                    />
+                    <div className="grid grid-cols-2 gap-4">
+                      <input 
+                        placeholder="MM/YY" 
+                        className="p-3 border border-gray-300 rounded-lg" 
+                      />
+                      <input 
+                        placeholder="CVV" 
+                        className="p-3 border border-gray-300 rounded-lg" 
+                      />
+                    </div>
+                  </div>
                 )}
               </div>
             )}
           </div>
+
+          {/* Consistent Buttons */}
+          {!isSubmitted && (
+            <div className="flex justify-between mt-10">
+              <button
+                onClick={() => router.back()}
+                className="px-6 py-2 bg-gray-300 rounded-lg"
+              >
+                Back
+              </button>
+
+              <button
+                onClick={handleVerification}
+                disabled={!canProceed()}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-300 disabled:text-gray-400"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* ================= RIGHT SIDE: SUMMARY ================= */}
-        <div className="flex flex-col">
-          <div className="sticky top-6 flex-1 flex flex-col gap-3">
-            <div className="flex-1 overflow-hidden">
-               {/* Make sure CartSummary is flexible */}
-              <CartSummary />
-            </div>
-            <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100 flex gap-2">
-               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-               <p className="text-[9px] text-emerald-800 leading-tight">
-                 Secure 256-bit payment. Deposits are refundable.
-               </p>
-            </div>
+        {/* RIGHT: CART SUMMARY */}
+        <div>
+          <CartSummary />
+          <div className="mt-6 p-4 bg-blue-50 rounded-2xl border border-blue-100 flex gap-3">
+            <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0" />
+            <p className="text-sm text-blue-800 leading-snug">
+              Secure 256-bit payment. Your information is protected.
+            </p>
           </div>
         </div>
-
       </div>
     </div>
   );
 }
-
-
-
-
-
-
-
-

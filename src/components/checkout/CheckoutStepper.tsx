@@ -22,7 +22,7 @@ export default function CheckoutStepper({
   ].slice(0, totalSteps || 6);
 
   return (
-    <div className="w-full max-w-[1440px] mx-auto px-4 py-8">
+    <div className="w-full max-w-[1440px] mx-auto px-10 py-10 mb-10">
       {/* 1. The Main Flex Container */}
       <div className="flex items-start justify-between w-full gap-0">
         
