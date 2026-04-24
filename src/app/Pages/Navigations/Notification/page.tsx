@@ -5,7 +5,7 @@ import { notifications } from "@/app/Pages/Navigations/Notification/Notification
 export default function NotificationPage() {
   return (
     // MAIN CONTAINER: White background, 100vh height
-    <div className="min-h-screen bg-white text-gray-900 flex flex-col items-center">
+    <div className="min-h-screen text-gray-900 flex flex-col items-center">
       
       {/* 1. BREADCRUMB SECTION (Top Left) */}
       <section className="w-full max-w-7xl mx-auto px-6 py-6 border-b border-gray-100">

@@ -119,7 +119,7 @@ export default function ProductDetails() {
   };
 
   return (
-    <div className="mt-6 h-full w-full mb-10 bg-white">
+    <div className="mt-6 h-full w-full mb-10">
       <div className="flex flex-col lg:flex-row max-w-7xl mx-auto px-6 gap-12 mt-20">
         
         {/* Left: Image Gallery */}

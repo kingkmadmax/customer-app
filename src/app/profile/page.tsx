@@ -20,9 +20,9 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("profile");
 
   return (
-    <div className="min-h-screen bg-white pb-20 text-black">
+    <div className="min-h-screen pb-20 text-black">
       {/* HEADER SECTION - Clean & Flat */}
-      <div className="bg-white border-b border-gray-300">
+      <div className="border-b border-gray-300">
         <div className="max-w-6xl mx-auto px-6 py-10">
           <div className="flex flex-col md:flex-row items-center gap-8">
             {/* Profile Picture */}
