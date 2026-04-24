@@ -46,8 +46,7 @@ const socials = [
 ];
 
 const SocialCard: React.FC = () => {
-  return (
-    <div className="flex gap-5  rounded-lg shadow-md">
+  return (    <div className="flex gap-5  rounded-lg shadow-md">
       {socials.map((social) => (
         <a
           key={social.name}
