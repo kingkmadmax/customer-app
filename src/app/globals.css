@@ -3,7 +3,7 @@
 /* Font variables from next/font */
 :root {
   color-scheme: light;
-  --background: #ffffff;
+  --background: #ECF2F2;
   --foreground: #000000;
   --font-source-serif: var(--font-source-serif);
   /* This must stay */
@@ -23,11 +23,11 @@
 
 
 html, body {
-  background-color: white !important;
+  background-color: #ECF2F2 !important;
   color: black !important;
 }
 
 body {
-  background: white;
+  background: #ECF2F2;
   color: black;
 }
