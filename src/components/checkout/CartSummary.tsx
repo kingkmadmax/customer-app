@@ -12,6 +12,8 @@ export default function CartSummary() {
     ? [{ ...product, quantity: 1 }]
     : [];
 
+
+    
   const summaryItems = [...cartItems, ...checkoutItem];
 
   // Calculations

@@ -9,8 +9,8 @@ export async function registerUser(formData: FormData) {
 
   const KEYCLOAK_URL = process.env.NEXT_PUBLIC_KEYCLOAK_URL;
   const REALM = process.env.NEXT_PUBLIC_KEYCLOAK_REALM;
-  const ADMIN_CLIENT_ID = process.env.KEYCLOAK_ADMIN_CLIENT_ID;
-  const ADMIN_CLIENT_SECRET = process.env.KEYCLOAK_ADMIN_CLIENT_SECRET;
+  const ADMIN_CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID;
+  const ADMIN_CLIENT_SECRET = process.env.KEYCLOAK_CLIENT_SECRET;
 
   try {
     // 1. Get admin token (client_credentials)

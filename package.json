@@ -12,6 +12,7 @@
     "@heroicons/react": "^2.2.0",
     "@react-three/drei": "^10.7.7",
     "@supabase/supabase-js": "^2.103.0",
+    "axios": "^1.15.2",
     "framer-motion": "^12.38.0",
     "keycloak-js": "^26.2.3",
     "lucide-react": "^1.7.0",

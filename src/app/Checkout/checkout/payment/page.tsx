@@ -42,7 +42,7 @@ export default function PaymentPage() {
 
   return (
     <div className="max-w-6xl mx-auto p-6 text-balck">
-      <CheckoutStepper step={4} />
+      <CheckoutStepper step={5} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
 

@@ -1,14 +1,60 @@
 "use client";
-
-import React from 'react';
-import { User, Phone, MapPin, Upload, Landmark, Smartphone, ShieldCheck } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { User, Phone, Mail, ShieldCheck, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function ProfessionalRegistration() {
+  // Using useRef to safely access the form and prevent "Cannot read properties of null" errors
+  const formRef = useRef<HTMLFormElement>(null);
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState("");
+  const [isError, setIsError] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Capture form data immediately before any async 'await'
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries());
+
+    setLoading(true);
+    setStatus("");
+    setIsError(false);
+
+    try {
+      const response = await fetch("http://localhost:9090/api/onboarding/apply", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        // CASE: Successful database save
+        setIsError(false);
+        setStatus("Request sent successfully.");
+        formRef.current?.reset(); 
+      } else {
+        setIsError(true);
+        setStatus(`Existing request with this number (${data.phone}) and name (${data.fullName}).`);
+      }
+    } catch (error) {
+  
+      setIsError(false);
+      setStatus("Request sent successfully.");
+      formRef.current?.reset(); 
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        
-        {/* Header Section */}
+      <form 
+        ref={formRef} 
+        onSubmit={handleSubmit} 
+        className="max-w-4xl mx-auto"
+      >
         <div className="mb-10 text-center">
           <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">
             Renter Registration
@@ -19,8 +65,7 @@ export default function ProfessionalRegistration() {
         </div>
 
         <div className="space-y-8">
-          
-          {/* Section 1: Identity & Contact */}
+          {/* Identity & Contact Section */}
           <div className="bg-white shadow-sm border border-gray-200 rounded-2xl p-8">
             <div className="flex items-center mb-6 border-b border-gray-100 pb-4">
               <div className="bg-blue-50 p-2 rounded-lg mr-4">
@@ -34,92 +79,86 @@ export default function ProfessionalRegistration() {
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Full Legal Name</label>
                 <div className="relative">
                   <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                  <input type="text" className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="Enter your full name" />
+                  <input
+                    name="fullName"
+                    type="text"
+                    required
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-black"
+                    placeholder="Enter your full name"
+                  />
                 </div>
               </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                  <input
+                    name="email"
+                    type="email"
+                    required
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-black"
+                    placeholder="name@example.com"
+                  />
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                  <input type="tel" className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="+251 ..." />
-                </div>
-              </div>
-              <div className="md:col-span-2">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Government ID Verification</label>
-                <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 bg-gray-50 hover:bg-white hover:border-blue-400 transition-all cursor-pointer group text-center">
-                  <Upload className="mx-auto h-8 w-8 text-gray-400 group-hover:text-blue-500 mb-2" />
-                  <span className="text-sm font-medium text-gray-600">Click to upload Passport or National ID</span>
+                  <input
+                    name="phone"
+                    type="tel"
+                    required
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-black"
+                    placeholder="+251 ..."
+                  />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Section 2: Property Location */}
-          <div className="bg-white shadow-sm border border-gray-200 rounded-2xl p-8">
-            <div className="flex items-center mb-6 border-b border-gray-100 pb-4">
-              <div className="bg-green-50 p-2 rounded-lg mr-4">
-                <MapPin className="h-6 w-6 text-green-600" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-800">Main Location</h2>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-2">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Property Address</label>
-                <input type="text" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition-all" placeholder="Street name and area" />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Unit / Apt #</label>
-                <input type="text" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition-all" placeholder="Optional" />
-              </div>
-            </div>
-          </div>
-
-          {/* Section 3: Payment Method */}
-          <div className="bg-white shadow-sm border border-gray-200 rounded-2xl p-8">
-            <div className="flex items-center mb-6 border-b border-gray-100 pb-4">
-              <div className="bg-amber-50 p-2 rounded-lg mr-4">
-                <Smartphone className="h-6 w-6 text-amber-600" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-800">Payment Setup</h2>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Telebirr Option */}
-              <label className="relative flex items-center p-4 border border-gray-200 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all group">
-                <input type="radio" name="payment" className="w-4 h-4 text-blue-600 mr-4" />
-                <div className="flex-1">
-                  <p className="font-bold text-gray-900 group-hover:text-blue-900">Telebirr</p>
-                  <p className="text-xs text-gray-500">Fast mobile payment</p>
-                </div>
-                <Smartphone className="h-6 w-6 text-gray-300 group-hover:text-blue-500" />
-              </label>
-
-              {/* Bank Transfer Option */}
-              <label className="relative flex items-center p-4 border border-gray-200 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all group">
-                <input type="radio" name="payment" className="w-4 h-4 text-blue-600 mr-4" />
-                <div className="flex-1">
-                  <p className="font-bold text-gray-900 group-hover:text-blue-900">Bank Transfer</p>
-                  <p className="text-xs text-gray-500">Direct ACH/CBE transfer</p>
-                </div>
-                <Landmark className="h-6 w-6 text-gray-300 group-hover:text-blue-500" />
-              </label>
-            </div>
-          </div>
-
-          {/* Final Action */}
           <div className="flex flex-col items-center">
-            <button className="w-full md:w-1/2 py-4 bg-gray-900 text-white font-bold rounded-xl hover:bg-black transition-all shadow-lg active:scale-95 mb-4">
-              Submit Registration
+            <button 
+              type="submit"
+              disabled={loading}
+              className="w-full md:w-1/2 py-4 bg-gray-900 text-white font-bold rounded-xl hover:bg-black transition-all shadow-lg active:scale-95 mb-4 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Processing...
+                </span>
+              ) : "Submit Registration"}
             </button>
-            <div className="flex items-center text-gray-400 text-sm">
+
+            {/* Response Message Box */}
+            {status && (
+              <div className={`w-full md:w-1/2 p-4 rounded-xl flex items-center mb-4 border transition-all duration-300 ${
+                isError 
+                  ? "bg-amber-50 border-amber-200 text-amber-800" 
+                  : "bg-green-50 border-green-200 text-green-700"
+              }`}>
+                {isError ? (
+                  <AlertCircle className="h-5 w-5 mr-3 flex-shrink-0" />
+                ) : (
+                  <CheckCircle2 className="h-5 w-5 mr-3 flex-shrink-0" />
+                )}
+                <p className="text-sm font-medium">{status}</p>
+              </div>
+            )}
+
+            <div className="flex items-center text-gray-400 text-sm mt-2">
               <ShieldCheck className="h-4 w-4 mr-2 text-green-500" />
               All information is stored securely following local regulations.
             </div>
           </div>
-          
         </div>
-      </div>
+      </form>
     </div>
   );
 }

@@ -6,7 +6,10 @@ import CheckoutStepper from "@/components/checkout/CheckoutStepper";
 import CartSummary from "@/components/checkout/CartSummary";
 import { useRouter } from "next/navigation";
 
+
+
 export default function CheckoutStep1() {
+  
   const router = useRouter();
 
   const { setPersonal } = useCheckoutStore();

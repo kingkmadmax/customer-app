@@ -1,12 +1,38 @@
-import { create } from "zustand";
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+
+/* =========================
+    🔐 AUTH STORE
+   ========================= */
+interface AuthState {
+  userId: number | null;
+  token: string | null;
+  setSession: (id: number, token: string) => void;
+  clearSession: () => void;
+}
+
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      userId: null,
+      token: null,
+      setSession: (id, token) => set({ userId: id, token: token }),
+      clearSession: () => {
+        set({ userId: null, token: null });
+      },
+    }),
+    {
+      name: 'auth-storage', // saves to localStorage
+    }
+  )
+);
 
 /* =========================
     🛒 CART STORE
-========================= */
-
+   ========================= */
 export type CartItem = {
   id: number;
-  image: string;
+  image: string | string[];
   name: string;
   price: number;
   deposite: number;
@@ -27,73 +53,77 @@ type CartStore = {
   hideMessage: () => void;
 };
 
-export const useCartStore = create<CartStore>((set, get) => ({
-  cartItems: [],
-  cartItemCount: 0,
-  message: null,
-  showMessage: false,
+export const useCartStore = create<CartStore>()(
+  persist(
+    (set, get) => ({
+      cartItems: [],
+      cartItemCount: 0,
+      message: null,
+      showMessage: false,
 
-  addToCart: (item) => {
-    const items = get().cartItems;
-    const existing = items.find((i) => i.id === item.id);
+      addToCart: (item) => {
+        const items = get().cartItems;
+        const existing = items.find((i) => i.id === item.id);
 
-    if (existing) {
-      set({ message: "Product already in cart", showMessage: true });
-      setTimeout(() => set({ showMessage: false, message: null }), 2000);
-      return;
-    }
+        if (existing) {
+          set({ message: "Product already in cart", showMessage: true });
+          setTimeout(() => set({ showMessage: false, message: null }), 2000);
+          return;
+        }
 
-    const updated = [...items, item];
-    set({
-      cartItems: updated,
-      cartItemCount: updated.reduce((sum, i) => sum + i.quantity, 0),
-    });
-  },
+        const updated = [...items, item];
+        set({
+          cartItems: updated,
+          cartItemCount: updated.reduce((sum, i) => sum + i.quantity, 0),
+        });
+      },
 
-  removeFromCart: (id) => {
-    const filtered = get().cartItems.filter((i) => i.id !== id);
-    set({
-      cartItems: filtered,
-      cartItemCount: filtered.reduce((sum, i) => sum + i.quantity, 0),
-    });
-  },
+      removeFromCart: (id) => {
+        const filtered = get().cartItems.filter((i) => i.id !== id);
+        set({
+          cartItems: filtered,
+          cartItemCount: filtered.reduce((sum, i) => sum + i.quantity, 0),
+        });
+      },
 
-  increaseQuantity: (id) => {
-    set((state) => {
-      const updated = state.cartItems.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      );
-      return {
-        cartItems: updated,
-        cartItemCount: updated.reduce((s, i) => s + i.quantity, 0),
-      };
-    });
-  },
+      increaseQuantity: (id) => {
+        set((state) => {
+          const updated = state.cartItems.map((item) =>
+            item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+          );
+          return {
+            cartItems: updated,
+            cartItemCount: updated.reduce((s, i) => s + i.quantity, 0),
+          };
+        });
+      },
 
-  decreaseQuantity: (id) => {
-    set((state) => {
-      const updated = state.cartItems
-        .map((item) =>
-          item.id === id && item.quantity > 1
-            ? { ...item, quantity: item.quantity - 1 }
-            : item
-        )
-        .filter((item) => item.quantity > 0);
-      return {
-        cartItems: updated,
-        cartItemCount: updated.reduce((s, i) => s + i.quantity, 0),
-      };
-    });
-  },
+      decreaseQuantity: (id) => {
+        set((state) => {
+          const updated = state.cartItems
+            .map((item) =>
+              item.id === id && item.quantity > 1
+                ? { ...item, quantity: item.quantity - 1 }
+                : item
+            )
+            .filter((item) => item.quantity > 0);
+          return {
+            cartItems: updated,
+            cartItemCount: updated.reduce((s, i) => s + i.quantity, 0),
+          };
+        });
+      },
 
-  clearCart: () => set({ cartItems: [], cartItemCount: 0 }),
-  hideMessage: () => set({ showMessage: false, message: null }),
-}));
+      clearCart: () => set({ cartItems: [], cartItemCount: 0 }),
+      hideMessage: () => set({ showMessage: false, message: null }),
+    }),
+    { name: 'cart-storage' }
+  )
+);
 
 /* =========================
     💳 CHECKOUT STORE
-========================= */
-
+   ========================= */
 type RentalDates = {
   location: string;
   receiveDate: string;
@@ -111,7 +141,7 @@ type CheckoutState = {
     name: string;
     price: number;
     deposite: number;
-    image: string;
+    image: string | string[];
   } | null;
   personal: { name: string; email: string; phone: string; fid: string };
   rental: RentalDates;
@@ -121,58 +151,51 @@ type CheckoutState = {
   setPersonal: (data: CheckoutState["personal"]) => void;
   setRental: (data: RentalDates) => void;
   setBiometric: (data: BiometricData) => void;
-  calculateRentalDays: () => number;
   clearCheckout: () => void;
 };
 
-export const useCheckoutStore = create<CheckoutState>((set, get) => ({
-  product: null,
-  personal: { name: "", email: "", phone: "", fid: "" },
-  rental: { location: "", receiveDate: "", returnDate: "" },
-  biometric: { faceImage: null, idImage: null },
-  rentalDays: 1,
+export const useCheckoutStore = create<CheckoutState>()(
+  persist(
+    (set, get) => ({
+      product: null,
+      personal: { name: "", email: "", phone: "", fid: "" },
+      rental: { location: "", receiveDate: "", returnDate: "" },
+      biometric: { faceImage: null, idImage: null },
+      rentalDays: 1,
 
-  setProduct: (product) => set({ product }),
-  setPersonal: (data) => set({ personal: data }),
-  setBiometric: (data) => set({ biometric: data }),
+      setProduct: (product) => set({ product }),
+      setPersonal: (data) => set({ personal: data }),
+      setBiometric: (data) => set({ biometric: data }),
 
-  setRental: (data) => {
-    const start = new Date(data.receiveDate);
-    const end = new Date(data.returnDate);
-    let days = 1;
+      setRental: (data) => {
+        const start = new Date(data.receiveDate);
+        const end = new Date(data.returnDate);
+        let days = 1;
 
-    if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
-      const diff = end.getTime() - start.getTime();
-      days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-      if (days <= 0) days = 1;
-    }
+        if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+          const diff = end.getTime() - start.getTime();
+          days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+          if (days <= 0) days = 1;
+        }
 
-    set({ rental: data, rentalDays: days });
-  },
+        set({ rental: data, rentalDays: days });
+      },
 
-  calculateRentalDays: () => {
-    const { receiveDate, returnDate } = get().rental;
-    const start = new Date(receiveDate);
-    const end = new Date(returnDate);
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) return 1;
-    const diff = end.getTime() - start.getTime();
-    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    return days > 0 ? days : 1;
-  },
-
-  clearCheckout: () => set({
-    product: null,
-    personal: { name: "", email: "", phone: "", fid: "" },
-    rental: { location: "", receiveDate: "", returnDate: "" },
-    biometric: { faceImage: null, idImage: null },
-    rentalDays: 1,
-  }),
-}));
+      clearCheckout: () => set({
+        product: null,
+        personal: { name: "", email: "", phone: "", fid: "" },
+        rental: { location: "", receiveDate: "", returnDate: "" },
+        biometric: { faceImage: null, idImage: null },
+        rentalDays: 1,
+      }),
+    }),
+    { name: 'checkout-storage' }
+  )
+);
 
 /* =========================
-    ⭐ REVIEW STORE (New)
-========================= */
-
+    ⭐ REVIEW STORE
+   ========================= */
 export interface Review {
   id: number;
   author: string;
@@ -185,12 +208,10 @@ type ReviewStore = {
   reviews: Review[];
   addReview: (review: Omit<Review, "id" | "date">) => void;
   resetReviews: () => void;
-  // Optional: Get reviews for a specific product (for future scalability)
-  getReviewsForProduct: (productId: number) => Review[];
 };
 
-export const useReviewStore = create<ReviewStore>((set, get) => ({
-  reviews: [], // You can initialize with default reviews here if needed
+export const useReviewStore = create<ReviewStore>((set) => ({
+  reviews: [],
 
   addReview: (newReviewData) =>
     set((state) => {
@@ -210,11 +231,4 @@ export const useReviewStore = create<ReviewStore>((set, get) => ({
     }),
 
   resetReviews: () => set({ reviews: [] }),
-
-  // For future use when you want per-product reviews
-  getReviewsForProduct: (productId: number) => {
-    // Currently returns all reviews.
-    // You can modify this later when you add productId to Review interface.
-    return get().reviews;
-  },
 }));

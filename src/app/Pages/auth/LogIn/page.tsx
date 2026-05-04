@@ -4,6 +4,8 @@ import Image from "next/image";
 import { FaGoogle } from "react-icons/fa";  
 import { IdentificationIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
+import { loginUser } from "@/lib/auth";
+
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -16,40 +18,48 @@ export default function LoginPage() {
     setLoading(true);
     setMessage('');
 
-    const formData = new URLSearchParams();
-    formData.append('grant_type', 'password');
-    formData.append('client_id', process.env.NEXT_PUBLIC_LOGIN_CLIENT_ID!);
-    formData.append('username', username);
-    formData.append('password', password);
+   try {
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('password', password);
 
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_KEYCLOAK_URL}/realms/${process.env.NEXT_PUBLIC_KEYCLOAK_REALM}/protocol/openid-connect/token`,
-        {
+      // STEP 1: Get the token from Keycloak (via your Server Action)
+      const result = await loginUser(formData);
+
+      if (result.success) {
+        // STEP 2: Send the token to your Spring Boot backend for validation
+        // Using your local Spring Boot port (9090)
+        const backendRes = await fetch('http://localhost:9090/api/auth/validate-token', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: formData,
+          headers: {
+            'Authorization': `Bearer ${result.access_token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (backendRes.ok) {
+          // STEP 3: Both systems passed! Store tokens and redirect
+          localStorage.setItem('access_token', result.access_token);
+          localStorage.setItem('refresh_token', result.refresh_token);
+          
+          setMessage('✅ Login and Validation successful!');
+          window.location.href = '/';
+        } else {
+          // The token exists but the backend rejected it (e.g., Role mismatch or Timeout)
+          const errorData = await backendRes.json().catch(() => ({}));
+          setMessage(`❌ Backend validation failed: ${errorData.message || 'Unauthorized'}`);
         }
-      );
-
-      const data = await res.json();
-
-      if (res.ok) {
-        // Store tokens (in production: use httpOnly cookies via server action)
-        localStorage.setItem('access_token', data.access_token);
-        localStorage.setItem('refresh_token', data.refresh_token);
-        setMessage('✅ Login successful!');
-        // Redirect or update UI
-        window.location.href = '/';
       } else {
-        setMessage(`❌ ${data.error_description || 'Login failed'}`);
+        setMessage(`❌ ${result.error || 'Login failed'}`);
       }
     } catch (err) {
-      setMessage('❌ Network error');
+      console.error("Login sequence error:", err);
+      setMessage('❌ Network error. Is the backend running?');
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="flex min-h-screen  items-center justify-center bg-white text-black">

@@ -2,6 +2,7 @@ import { Source_Serif_4 } from 'next/font/google';
 import './globals.css';
 import {Header} from '@/components/homepage/header';
 import Footer from '@/components/homepage/Footer';
+import SessionProvider from '@/components/store/SessionProvider';
 
 // Configure the font
 const sourceSerif = Source_Serif_4({
@@ -20,9 +21,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={sourceSerif.variable}>
       <body>
-        <Header/>
-        {children}
-        <Footer/>
+        <SessionProvider>
+          <Header/>
+          {children}
+          <Footer/>
+        </SessionProvider>
         </body>
     </html>
   );
