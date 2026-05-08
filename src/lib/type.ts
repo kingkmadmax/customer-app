@@ -4,18 +4,34 @@ export interface Specification {
 }
 
 export interface Product {
- id: number;
+
+  id: number;
+  ownerId?: string;
   name: string;
   price: number;
-  category: string;
-  condition: string;        // Note: "conditon" typo in your card
+  category?: string;
   location?: string;
+  condition?: string;
   deposit?: number;
   description?: string;
-  image: string[];          // Important: your card expects array
-  rating?: number;
+  imageUrl?: string;
+  
+  // Keep these for compatibility with your stores and old code
+  status?: string;
+  image: string[];
+  deposite?: number;
   reviews?: number;
-  ownerId?: string;
+  rating?: number;
+}
+  
+export interface CartItem {
+  id: number;        // This is the 'cartItemId' from your Controller
+  productId: number; // The actual product ID
+  userId: string;
+  name: string;
+  price: number;
+  image: string;     // Your controller uses 'image' (singular string)
+  quantity: number;
 }
 
 export interface CardsProps {

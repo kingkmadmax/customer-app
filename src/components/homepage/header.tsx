@@ -168,7 +168,7 @@ export function Header() {
                       {/* The Button */}
                       <div className=" px-4 py-1 rounded-full flex hover:bg-gray-200 items-center justify-center ml-2">
                         <Link 
-                          href="/HeaderEliment/renter" 
+                          href="/renter" 
                           className="text-sm font-semibold   transition-colors whitespace-nowrap"
                         >
                           How to be a Renter
@@ -176,6 +176,7 @@ export function Header() {
                       </div>
                     </nav>
                   </div>
+
 
               <div ref={userDropdownRef} className="relative">
                 <button
@@ -218,7 +219,7 @@ export function Header() {
               {/* Note: I removed the extra refs from here and moved mobileMenuRef to the button wrapper above */}
               <nav className="flex flex-col px-4 text-sm">
                 <Link href="/about" className="py-2 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>About</Link>
-                <Link href="/HeaderEliment/renter" className="py-2 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>Merchant</Link>
+                <Link href="/renter" className="py-2 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>Merchant</Link>
                 <Link href="/HeaderEliment/Fax" className="py-2 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>FAQs</Link>
                 <Link href="/HeaderEliment/contact" className="py-2 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
               </nav>

@@ -9,12 +9,13 @@ export default function ProfessionalRegistration() {
   const [status, setStatus] = useState("");
   const [isError, setIsError] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Capture form data immediately before any async 'await'
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
+
+    console.log(">>> [NET] Sending Data:", data);
 
     setLoading(true);
     setStatus("");
@@ -29,20 +30,43 @@ export default function ProfessionalRegistration() {
         body: JSON.stringify(data),
       });
 
+      console.log(`>>> [NET] HTTP Status: ${response.status}`);
+
+      const responseText = await response.text();
+      let result;
+      try {
+        result = JSON.parse(responseText);
+        console.log(">>> [NET] Server Response Object:", result);
+      } catch (e) {
+        console.log(">>> [NET] Server Response (Raw Text):", responseText);
+      }
+
       if (response.ok) {
-        // CASE: Successful database save
+        console.log(">>> [LOGIC] Success path triggered.");
         setIsError(false);
-        setStatus("Request sent successfully.");
-        formRef.current?.reset(); 
+        setStatus(result?.message ?? "Request sent successfully.");
+        formRef.current?.reset();
       } else {
+        // --- THIS IS THE SECTION CAUSING YOUR ISSUE ---
+        console.warn(">>> [LOGIC] Error path triggered (response.ok was false).");
         setIsError(true);
-        setStatus(`Existing request with this number (${data.phone}) and name (${data.fullName}).`);
+        
+        if (result?.message) {
+          console.log(">>> [DEBUG] Found server message:", result.message);
+          setStatus(result.message);
+        } else {
+          // If you see this in the console, your backend didn't send a JSON "message"
+          console.error(">>> [DEBUG] Backend error occurred, but 'result.message' is missing.");
+          console.log(">>> [DEBUG] Fallback logic used. Phone:", data.phone);
+          setStatus(
+            `Existing request found with number (${data.phone}) or name (${data.fullName}).`
+          );
+        }
       }
     } catch (error) {
-  
-      setIsError(false);
-      setStatus("Request sent successfully.");
-      formRef.current?.reset(); 
+      console.error(">>> [NET] Critical Connection Error:", error);
+      setIsError(true);
+      setStatus("Unable to reach the server. Please check if your Spring Boot app is running on 9090.");
     } finally {
       setLoading(false);
     }

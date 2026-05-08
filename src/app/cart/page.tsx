@@ -1,193 +1,205 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useCartStore } from "@/components/store/cat-store"; // Note: ensure 'cat-store' isn't a typo for 'cart-store'
-import { Plus, Minus, Trash2 } from "lucide-react";
+import { useAuthStore } from "@/components/store/cat-store"; 
+import { Plus, Minus, Trash2, ShoppingCart, Loader2, Edit3, Check } from "lucide-react";
 import Link from "next/link";
+import { CartItem } from "@/lib/type";
 
 export default function CartPage() {
-  const router = useRouter();
-  const { cartItems, removeFromCart, increaseQuantity, decreaseQuantity } = useCartStore();
+  const { token, userId } = useAuthStore(); // Get Auth details
+
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
 
-  // Status color function
-  const getStatusStyle = (status: string = "accepted") => {
-    const s = status.toLowerCase();
-    if (s === "accepted") return "bg-green-100 text-green-700 px-4 py-1 rounded-2xl text-sm font-semibold";
-    if (s === "pending")  return "bg-yellow-100 text-yellow-700 px-4 py-1 rounded-2xl text-sm font-semibold";
-    if (s === "declined") return "bg-red-100 text-red-700 px-4 py-1 rounded-2xl text-sm font-semibold";
-    return "bg-gray-100 text-gray-700 px-4 py-1 rounded-2xl text-sm font-semibold";
+  const API_BASE = "http://localhost:9090/api/cart";
+
+  // 1. Fetch Cart directly from DB
+  const fetchCart = async () => {
+    if (!token || !userId) return;
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE}?userId=${userId}`, {
+        method: "GET",
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` 
+        },
+      });
+      const data = await res.json();
+      setCartItems(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Failed to load cart", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Calculate totals
+  useEffect(() => {
+    fetchCart();
+  }, [token, userId]);
+
+  // 2. Handle Quantity Changes
+  const updateQuantity = async (cartItemId: number, newQuantity: number) => {
+    if (newQuantity < 1) return;
+    try {
+      await fetch(`${API_BASE}/update`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ cartItemId, quantity: newQuantity }),
+      });
+      fetchCart(); // Re-sync with Database
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // 3. Handle Removal
+  const removeItem = async (id: number) => {
+    try {
+      await fetch(`${API_BASE}/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchCart(); // Re-sync with Database
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Calculations
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const serviceFee = subtotal * 0.1;
   const finalTotal = subtotal + serviceFee;
 
+  if (loading) return <div className="py-40 text-center"><Loader2 className="animate-spin mx-auto text-blue-600" /></div>;
+
   return (
     <div className="max-w-6xl mx-auto px-6 md:px-12 py-12 text-gray-900">
-      
-      {/* Cart Table */}
-      <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
-        <table className="w-full min-w-[750px] font-medium">
-          <thead>
-            <tr className="border-b bg-white">
-              <th className="py-5 px-6 text-left font-semibold text-sm text-gray-600">Product Name</th>
-              <th className="py-5 px-6 text-center font-semibold text-gray-600 w-32">Quantity</th>
-              <th className="py-5 px-6 text-right font-semibold text-gray-600">Price</th>
-              <th className="py-5 px-6 text-center font-semibold text-gray-600 w-40">Status</th>
-              {isEditing && (
-                <th className="py-5 px-6 text-center font-semibold text-gray-600 w-20">Action</th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {cartItems.length === 0 ? (
-              <tr>
-                <td colSpan={isEditing ? 5 : 4} className="py-20 text-center text-gray-500 text-sm">
-                  Your cart is empty
-                </td>
-              </tr>
-            ) : (
-              cartItems.map((item) => (
-                <tr key={item.id} className="border-b last:border-none hover:bg-gray-50/20 transition-colors">
-                  
-                  {/* 1. Image + Name */}
-                  <td className="py-6 px-6">
-                    <div className="flex items-center gap-4">
-                      <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-gray-100 flex-shrink-0 bg-white">
-                        {item.image && (Array.isArray(item.image) ? item.image.length > 0 : item.image.trim() !== "") ? (
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-bold flex items-center gap-2">
+          <ShoppingCart className="text-blue-600" /> Your Rental Cart
+        </h1>
+        <div className="flex gap-4">
+          <button 
+            onClick={() => setIsEditing(!isEditing)} 
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${isEditing ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+          >
+            {isEditing ? <><Check size={16}/> Done</> : <><Edit3 size={16}/> Edit Cart</>}
+          </button>
+        </div>
+      </div>
+
+      {/* EMPTY STATE */}
+      {cartItems.length === 0 ? (
+        <div className="text-center py-24 border-2 border-dashed rounded-3xl bg-gray-50">
+          <ShoppingCart className="mx-auto mb-4 text-gray-300" size={60} />
+          <p className="text-gray-500 text-lg mb-6">Your cart is currently empty</p>
+          <Link href="/" className="px-8 py-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200">
+            Start Renting
+          </Link>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          {/* TABLE SECTION */}
+          <div className="lg:col-span-2 overflow-hidden rounded-2xl border bg-white shadow-sm">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr className="border-b">
+                  <th className="py-4 px-6 text-left text-xs font-semibold uppercase text-gray-500">Product</th>
+                  <th className="py-4 px-6 text-center text-xs font-semibold uppercase text-gray-500">Quantity</th>
+                  <th className="py-4 px-6 text-right text-xs font-semibold uppercase text-gray-500">Total Price</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {cartItems.map((item) => (
+                  <tr key={item.id} className="hover:bg-gray-50/50 transition">
+                    <td className="py-5 px-6">
+                      <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 relative rounded-lg overflow-hidden border bg-gray-100">
                           <Image
                             src={Array.isArray(item.image) ? item.image[0] : item.image}
                             alt={item.name}
                             fill
                             className="object-cover"
-                            sizes="80px"
                           />
-                        ) : (
-                          <div className="w-full h-full bg-gray-50 flex items-center justify-center text-gray-400 text-[10px] text-center p-2">
-                             No Image
+                        </div>
+                        <div>
+                          <p className="font-bold text-gray-800">{item.name}</p>
+                          <p className="text-sm text-gray-500">{item.price.toLocaleString()} ETB / day</p>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="py-5 px-6">
+                      <div className="flex justify-center items-center gap-4">
+                        {isEditing ? (
+                          <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg border">
+                            <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="p-1 hover:bg-white rounded shadow-sm transition"><Minus size={14}/></button>
+                            <span className="font-bold w-6 text-center">{item.quantity}</span>
+                            <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="p-1 hover:bg-white rounded shadow-sm transition"><Plus size={14}/></button>
                           </div>
+                        ) : (
+                          <span className="font-semibold text-gray-700 bg-gray-100 px-3 py-1 rounded-full text-sm">
+                            x{item.quantity}
+                          </span>
                         )}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-base leading-tight line-clamp-2">
-                          {item.name}
-                        </h3>
-                        <p className="text-sm text-gray-500 mt-1">
-                          ${item.price.toFixed(2)} / week
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-
-                  {/* 2. Quantity - Removed bg-black to show the icons */}
-                  <td className="py-6 px-6">
-                    <div className="flex items-center justify-center gap-3">
-                      {isEditing ? (
-                        <>
-                          <button
-                            onClick={() => decreaseQuantity(item.id)}
-                            className="w-9 h-9 flex items-center justify-center border border-gray-300 rounded-xl bg-white hover:bg-gray-100 active:scale-95 transition"
-                          >
-                            <Minus className="h-4 w-4 text-gray-600" />
-                          </button>
-
-                          <div className="font-semibold text-lg min-w-[32px] text-center">
-                            {item.quantity}
-                          </div>
-
-                          <button
-                            onClick={() => increaseQuantity(item.id)}
-                            className="w-9 h-9 flex items-center justify-center border border-gray-300 rounded-xl bg-white hover:bg-gray-100 active:scale-95 transition"
-                          >
-                            <Plus className="h-4 w-4 text-gray-600" />
-                          </button>
-                        </>
-                      ) : (
-                        <span className="font-semibold text-lg">{item.quantity}</span>
-                      )}
-                    </div>
-                  </td>
-
-                  {/* 3. Price */}
-                  <td className="py-6 px-6 text-right font-semibold text-lg">
-                    ${(item.price * item.quantity).toFixed(2)}
-                  </td>
-
-                  {/* 4. Status */}
-                  <td className="py-6 px-6 text-center">
-                    <span className={getStatusStyle(item.status || "accepted")}>
-                      {(item.status || "Accepted").toUpperCase()}
-                    </span>
-                  </td>
-
-                  {/* 5. Delete Button */}
-                  {isEditing && (
-                    <td className="py-6 px-6 text-center">
-                      <button
-                        onClick={() => removeFromCart(item.id)}
-                        className="text-red-600 hover:text-red-700 p-2 transition hover:scale-110"
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </button>
                     </td>
-                  )}
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
 
-      {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row justify-between gap-4 mt-12">
-        <button
-          onClick={() => setIsEditing(!isEditing)}
-          className="order-2 sm:order-1 px-8 h-12 border-2 border-gray-300 rounded-full font-bold text-sm hover:bg-gray-50 transition"
-        >
-          {isEditing ? "Done Editing" : "Update Cart"}
-        </button>
+                    <td className="py-5 px-6 text-right relative">
+                      <div className="flex flex-col items-end">
+                        <span className="font-bold text-gray-900">{(item.price * item.quantity).toLocaleString()} ETB</span>
+                        {isEditing && (
+                          <button 
+                            onClick={() => removeItem(item.id)}
+                            className="mt-2 text-red-500 hover:text-red-700 flex items-center gap-1 text-xs"
+                          >
+                            <Trash2 size={14} /> Remove
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-        <button
-          onClick={() => router.push("/Checkout/checkout")}
-          disabled={cartItems.length === 0}
-          className="order-1 sm:order-2 px-8 h-12 bg-black text-white rounded-xl font-bold text-sm hover:bg-gray-800 transition disabled:bg-gray-400"
-        >
-          Go to Checkout
-        </button>
-      </div>
-
-      {/* Summary Box */}
-      {cartItems.length > 0 && (
-        <div className="mt-16 flex justify-center">
-          <div className="bg-white border border-gray-200 rounded-2xl p-8 w-full max-w-md shadow-lg">
-            <h3 className="text-2xl font-bold text-center mb-8">Order Summary</h3>
-
-            <div className="space-y-4 text-lg">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal</span>
-                <span className="font-semibold">${subtotal.toFixed(2)}</span>
-              </div>
-
-              <div className="flex justify-between border-t border-gray-100 pt-4">
-                <span className="text-gray-600">Service Fee (10%)</span>
-                <span className="font-semibold text-emerald-600">+${serviceFee.toFixed(2)}</span>
-              </div>
-
-              <div className="border-t-2 border-gray-900 pt-4 mt-2">
-                <div className="flex justify-between text-2xl font-bold">
+          {/* SUMMARY SECTION */}
+          <div className="lg:col-span-1">
+            <div className="bg-white border rounded-2xl p-6 shadow-sm sticky top-6">
+              <h2 className="text-xl font-bold mb-6 border-b pb-4">Rental Summary</h2>
+              
+              <div className="space-y-4 mb-6">
+                <div className="flex justify-between text-gray-600">
+                  <span>Subtotal</span>
+                  <span className="font-semibold">{subtotal.toLocaleString()} ETB</span>
+                </div>
+                <div className="flex justify-between text-gray-600">
+                  <span>Service Fee (10%)</span>
+                  <span className="font-semibold">{serviceFee.toLocaleString()} ETB</span>
+                </div>
+                <div className="border-t pt-4 flex justify-between text-xl font-black text-gray-900">
                   <span>Total</span>
-                  <span>${finalTotal.toFixed(2)}</span>
+                  <span>{finalTotal.toLocaleString()} ETB</span>
                 </div>
               </div>
-            </div>
 
-            <p className="text-center text-xs text-gray-500 mt-8 italic">
-              Payments are non-refundable once processed.
-            </p>
+              <button className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition transform active:scale-95 shadow-lg shadow-blue-100">
+                Proceed to Checkout
+              </button>
+              
+              <p className="text-center text-xs text-gray-400 mt-4 italic">
+                * Taxes and specific rental deposits calculated at checkout.
+              </p>
+            </div>
           </div>
         </div>
       )}

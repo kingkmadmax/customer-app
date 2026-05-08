@@ -61,22 +61,54 @@ export const useCartStore = create<CartStore>()(
       message: null,
       showMessage: false,
 
-      addToCart: (item) => {
-        const items = get().cartItems;
-        const existing = items.find((i) => i.id === item.id);
+      addToCart: async (item) => {
+  const token = useAuthStore.getState().token;
 
-        if (existing) {
-          set({ message: "Product already in cart", showMessage: true });
-          setTimeout(() => set({ showMessage: false, message: null }), 2000);
-          return;
-        }
+  if (!token) {
+    set({ message: "Please login first", showMessage: true });
+    return;
+  }
 
-        const updated = [...items, item];
-        set({
-          cartItems: updated,
-          cartItemCount: updated.reduce((sum, i) => sum + i.quantity, 0),
-        });
+  try {
+    const res = await fetch("http://localhost:9090/api/cart/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // 🔥 THIS LINKS USER
       },
+      body: JSON.stringify({
+        productId: item.id,
+        quantity: item.quantity,
+      }),
+    });
+
+    if (!res.ok) throw new Error("Failed");
+
+    // ✅ AFTER backend success → update local cart
+    const items = get().cartItems;
+    const existing = items.find((i) => i.id === item.id);
+
+    if (existing) {
+      set({ message: "Product already in cart", showMessage: true });
+      return;
+    }
+
+    const updated = [...items, item];
+
+    set({
+      cartItems: updated,
+      cartItemCount: updated.reduce((sum, i) => sum + i.quantity, 0),
+      message: "Added to cart",
+      showMessage: true,
+    });
+
+  } catch (err) {
+    console.error(err);
+    set({ message: "Error adding to cart", showMessage: true });
+  }
+
+  setTimeout(() => set({ showMessage: false, message: null }), 2000);
+},
 
       removeFromCart: (id) => {
         const filtered = get().cartItems.filter((i) => i.id !== id);

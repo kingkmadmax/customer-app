@@ -26,14 +26,14 @@ export default function ImageSlider({
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
   const [itemsPerView, setItemsPerView] = useState(1);
 
-  // Fetch from Backend
+ 
   useEffect(() => {
     if (initialProducts?.length) return;
 
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:8080/api/rentals");
+        const res = await fetch("http://localhost:9090/api/products/all");
 
         if (!res.ok) throw new Error("Failed to fetch products");
 

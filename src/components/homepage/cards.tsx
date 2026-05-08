@@ -16,7 +16,7 @@ export default function Cards({ card = [], gap = "gap-6" }: CardsProps) {
             product={product}
             onQuickView={(p) => console.log("Quick View:", p.name)}
             onFavorite={(p) => console.log("Favorite:", p.name)}
-            onAddToCart={(p) => console.log("Add to Cart:", p.name)}
+           
             onRentNow={(p) => console.log("Rent Now:", p.name)}
             isFavorite={false} // Will be dynamic later
           />

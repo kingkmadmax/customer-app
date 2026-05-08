@@ -3,24 +3,26 @@ import { persist } from 'zustand/middleware';
 import { products } from "@/app/data/product"
 
 export interface Product {
+  
   id: number;
-  status: string;
-  image: string[];
+  ownerId?: string;
   name: string;
   price: number;
-  deposite: number;
-  reviews: number;
-  rating: number;
-  category: string;
-  conditon: string;
-  details?: {
-    description: string;
-    features: string;
-    package: string;
-    warranty: string;
-  };
-  specifications?: Array<{ label: string; value: string }>;
+  category?: string;
+  location?: string;
+  condition?: string;
+  deposit?: number;
+  description?: string;
+  imageUrl?: string;
+  
+  // Keep these for compatibility with your stores and old code
+  status?: string;
+  image?: string[];
+  deposite?: number;
+  reviews?: number;
+  rating?: number;
 }
+
 
 interface FavoriteStore {
   favorites: Product[];

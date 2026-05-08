@@ -1,16 +1,17 @@
 "use client";
 
-import { ShoppingCart, Star, X, Plus, Heart, Eye } from "lucide-react";
+import { ShoppingCart, Star, X, Plus, Heart, Eye, Loader2, Check } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation"; // Add this for redirecting
 import { Product } from "@/lib/type";
+import { useAuthStore } from "@/components/store/cat-store"; 
 
 interface SingleCardProps {
   product: Product;
   onQuickView: (product: Product) => void;
   onFavorite: (product: Product) => void;
-  onAddToCart: (product: Product) => void;
   onRentNow: (product: Product) => void;
   isFavorite: boolean;
 }
@@ -19,21 +20,66 @@ export default function Card({
   product,
   onQuickView,
   onFavorite,
-  onAddToCart,
   onRentNow,
   isFavorite,
 }: SingleCardProps) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
+
+  // FIX: Extract BOTH token and userId from your store
+  const { token, userId } = useAuthStore(); 
+
+  const handleAddToCart = async () => {
+    if (!token || !userId) {
+      alert("Please log in to rent equipment");
+      return;
+    }
+
+    try {
+      setStatus("loading"); // Start loading animation
+
+      const res = await fetch("http://localhost:9090/api/cart/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userId: userId,        // Now this is defined!
+          productId: product.id, 
+          name: product.name,
+          price: product.price,
+          image: product.image[0],
+          quantity: 1,           
+        }),
+      });
+
+      if (res.ok) {
+        setStatus("success");
+        // Optional: Wait a second so they see the "Success" checkmark before redirecting
+        setTimeout(() => {
+          router.push("/cart");
+        }, 800);
+      } else {
+        setStatus("idle");
+        console.error("Failed to add to cart");
+      }
+    } catch (error) {
+      setStatus("idle");
+      console.error("Network error:", error);
+    }
+  };
 
   return (
     <div className="w-full max-w-[250px] h-[350px] flex-shrink-0 bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group relative flex flex-col mx-auto">
-
+      
       {/* IMAGE SECTION */}
       <div className="relative h-44 w-full bg-gray-50 overflow-hidden">
         <Link href={`/product/${product.id}`} className="w-full h-full block">
-          {product.image?.[0] && typeof product.image[0] === "string" && product.image[0].trim() !== "" ? (
+          {product.image ? (
             <Image
-              src={product.image[0]}
+              src={Array.isArray(product.image) ? product.image[0] : product.image}
               alt={product.name}
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-500"
@@ -70,10 +116,9 @@ export default function Card({
           </h3>
 
           <p className="text-[10px] text-gray-400 uppercase tracking-widest font-medium">
-            {product.category} • {product.condition || "New"}
+            {product.category} • {product.condition || "Professional"}
           </p>
 
-          {/* RATINGS */}
           <div className="flex items-center gap-1">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
@@ -85,21 +130,20 @@ export default function Card({
           </div>
         </div>
 
-        {/* BOTTOM SECTION: PRICE & BUTTONS */}
+        {/* BOTTOM SECTION */}
         <div className="pt-2">
           <div className="flex items-baseline mb-3">
             <span className="text-lg font-bold text-black tracking-tighter">
-              ${product.price?.toFixed(0) || "0"}
+              {product.price?.toLocaleString() || "0"}
             </span>
-            <span className="text-[10px] text-gray-500 font-medium ml-1 uppercase">/ Month</span>
+            <span className="text-[10px] text-gray-500 font-medium ml-1 uppercase">ETB / Day</span>
           </div>
 
-          {/* Sliding Buttons */}
           <div className="relative flex items-center justify-start w-full h-10 overflow-hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`mr-2 z-20 flex items-center justify-center w-9 h-9 rounded-full shadow-sm transition-all duration-300 ${
-                isOpen ? "bg-gray-300 text-black" : "bg-blue-600 text-white"
+              className={`mr-2 z-20 flex items-center justify-center min-w-[36px] min-h-[36px] rounded-full shadow-sm transition-all duration-300 ${
+                isOpen ? "bg-gray-200 text-black" : "bg-blue-600 text-white"
               }`}
             >
               {isOpen ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
@@ -111,10 +155,20 @@ export default function Card({
               }`}
             >
               <button
-                onClick={() => onAddToCart(product)}
-                className="whitespace-nowrap px-3 h-8 bg-black text-white rounded-lg text-[11px] font-bold uppercase flex items-center justify-center gap-1.5 hover:bg-gray-800 transition-colors"
+                onClick={handleAddToCart}
+                disabled={status !== "idle"}
+                className={`whitespace-nowrap px-3 h-8 rounded-lg text-[11px] font-bold uppercase flex items-center justify-center gap-1.5 transition-all ${
+                    status === "success" ? "bg-green-600 text-white" : "bg-black text-white hover:bg-gray-800"
+                }`}
               >
-                <ShoppingCart className="w-3 h-3" /> Add
+                {status === "loading" ? (
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                ) : status === "success" ? (
+                  <Check className="w-3 h-3" />
+                ) : (
+                  <ShoppingCart className="w-3 h-3" />
+                )}
+                {status === "loading" ? "Adding" : status === "success" ? "Added" : "Add"}
               </button>
 
               <button
