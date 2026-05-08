@@ -5,49 +5,74 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
 
-export interface Product {
-  id: number;
-  name: string;
-  category: string;
-  deposite: number;
-  conditon: string;
-  location: string;
-  price: number;
-  rating: number;
-  reviews: number;
-  status: string;
-  image: string[];
-  details: {
-    description: string;
-    features: string;
-    package: string;
-    warranty: string;
-  };
-  specifications: { label: string; value: string }[];
-}
+import { Product } from "@/lib/type";
 
 interface ImageSliderProps {
-  products: Product[];
   autoPlay?: boolean;
   interval?: number;
+  initialProducts?: Product[];
 }
 
 export default function ImageSlider({
-  products,
   autoPlay = true,
   interval = 5000,
+  initialProducts,
 }: ImageSliderProps) {
+  const [products, setProducts] = useState<Product[]>(initialProducts || []);
+  const [loading, setLoading] = useState(!initialProducts);
+  const [error, setError] = useState<string | null>(null);
+
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
   const [itemsPerView, setItemsPerView] = useState(1);
 
+  // Fetch from Backend
+  useEffect(() => {
+    if (initialProducts?.length) return;
+
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("http://localhost:8080/api/rentals");
+
+        if (!res.ok) throw new Error("Failed to fetch products");
+
+        const data = await res.json();
+
+        // Format to match Product type
+        const formatted: Product[] = data.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          price: item.price || 0,
+          category: item.category || "Other",
+          condition: item.condition || "New",
+          location: item.location,
+          deposit: item.deposit,
+          description: item.description,
+          image: item.imageUrl ? [item.imageUrl] : [],
+          ownerId: item.ownerId,
+        }));
+
+        setProducts(formatted);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load products");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [initialProducts]);
+
+  // Resize logic
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1536) setItemsPerView(7);     // 2xl+: 7 items
-      else if (window.innerWidth >= 1280) setItemsPerView(6); // xl: 6 items
-      else if (window.innerWidth >= 1024) setItemsPerView(5); // lg: 5 items
-      else if (window.innerWidth >= 768) setItemsPerView(3);  // md: 3 items
-      else setItemsPerView(2);                                // sm: 2 items
+      if (window.innerWidth >= 1536) setItemsPerView(7);
+      else if (window.innerWidth >= 1280) setItemsPerView(6);
+      else if (window.innerWidth >= 1024) setItemsPerView(5);
+      else if (window.innerWidth >= 768) setItemsPerView(3);
+      else setItemsPerView(2);
     };
 
     handleResize();
@@ -66,8 +91,9 @@ export default function ImageSlider({
     if (canGoNext) setIndex((prev) => prev + 1);
   }, [canGoNext]);
 
+  // Autoplay
   useEffect(() => {
-    if (!autoPlay) return;
+    if (!autoPlay || products.length === 0) return;
     const timer = setInterval(() => {
       if (direction === "forward") {
         if (canGoNext) setIndex((prev) => prev + 1);
@@ -78,12 +104,25 @@ export default function ImageSlider({
       }
     }, interval);
     return () => clearInterval(timer);
-  }, [autoPlay, interval, direction, canGoNext, canGoPrev]);
+  }, [autoPlay, interval, direction, canGoNext, canGoPrev, products.length]);
+
+  if (loading) {
+    return (
+      <div className="group relative w-full py-8 bg-gray-50">
+        <div className="relative max-w-[1600px] mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="aspect-[4/6] bg-gray-200 rounded-xl animate-pulse" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="group relative w-full py-8 bg-gray-50">
-      <div className="relative max-w-[1600px] mx-auto px-4"> {/* Wider container */}
-
+      <div className="relative max-w-[1600px] mx-auto px-4">
         {/* Navigation Buttons */}
         <button
           onClick={prevSlide}
@@ -99,21 +138,17 @@ export default function ImageSlider({
         <div className="overflow-hidden">
           <div
             className="flex transition-transform duration-700 ease-out"
-            style={{
-              transform: `translateX(-${index * (100 / itemsPerView)}%)`,
-            }}
+            style={{ transform: `translateX(-${index * (100 / itemsPerView)}%)` }}
           >
             {products.map((product) => (
               <div
                 key={product.id}
-                className="flex-shrink-0 px-1.5 transition-all duration-500" // tighter spacing
+                className="flex-shrink-0 px-1.5 transition-all duration-500"
                 style={{ width: `${100 / itemsPerView}%` }}
               >
-                {/* Smaller & Shorter Card */}
-                <div className="group/card relative aspect-[4/6] overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-all duration-500 bg-white"> {/* Changed to 4/6 */}
-                  
+                <div className="group/card relative aspect-[4/6] overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-all duration-500 bg-white">
                   <Link href={`/product/${product.id}`} className="block h-full w-full">
-                    {product.image?.[0] && typeof product.image[0] === "string" && product.image[0].trim() !== "" ? (
+                    {product.image?.[0] ? (
                       <Image
                         src={product.image[0]}
                         alt={product.name}
@@ -127,17 +162,17 @@ export default function ImageSlider({
                       </div>
                     )}
 
-                    {/* Floating Badge - Smaller */}
+                    {/* Floating Badge */}
                     <div className="absolute top-2 left-2 z-20">
                       <span className="bg-white/90 backdrop-blur-sm px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-gray-900 rounded-full shadow-sm">
-                        {product.conditon}
+                        {product.condition || "New"}
                       </span>
                     </div>
 
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent opacity-75 group-hover/card:opacity-95 transition-opacity" />
 
-                    {/* Content - More compact */}
+                    {/* Content */}
                     <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-2 group-hover/card:translate-y-0 transition-transform duration-500">
                       <p className="text-blue-400 text-[10px] font-bold uppercase tracking-wider mb-1">
                         New Arrival
@@ -150,7 +185,7 @@ export default function ImageSlider({
                         <div>
                           <p className="text-white text-xl font-light">
                             <span className="text-sm mr-1">$</span>
-                            {product.price.toLocaleString()}
+                            {product.price?.toLocaleString() || "0"}
                           </p>
                         </div>
 
@@ -166,6 +201,7 @@ export default function ImageSlider({
           </div>
         </div>
 
+        {/* Right Button */}
         <button
           onClick={nextSlide}
           disabled={!canGoNext}

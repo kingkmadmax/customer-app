@@ -4,25 +4,18 @@ export interface Specification {
 }
 
 export interface Product {
-  id: number;
+ id: number;
   name: string;
-  category: string;
-  deposite: number;
-  conditon: string; 
-  location: string;
-  dateAdded?: string;
   price: number;
-  rating: number;
-  reviews: number;
-  status: string;
-  image: string[];
-  details: {
-    description: string;
-    features: string;
-    package: string;
-    warranty: string;
-  };
-  specifications: Specification[];
+  category: string;
+  condition: string;        // Note: "conditon" typo in your card
+  location?: string;
+  deposit?: number;
+  description?: string;
+  image: string[];          // Important: your card expects array
+  rating?: number;
+  reviews?: number;
+  ownerId?: string;
 }
 
 export interface CardsProps {
