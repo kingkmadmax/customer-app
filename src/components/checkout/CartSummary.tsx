@@ -91,13 +91,10 @@ export default function CartSummary() {
 // ==================== TOTAL CALCULATION HOOK ====================
 export const useOrderTotal = () => {
   const { cartItems } = useCartStore();
-  const { product, rentalDays = 1 } = useCheckoutStore();
+  const {  rentalDays = 1 } = useCheckoutStore();
 
-  const checkoutItem = product && !cartItems.some((item) => item.id === product.id)
-    ? [{ ...product, quantity: 1 }]
-    : [];
+const summaryItems = cartItems;
 
-  const summaryItems = [...cartItems, ...checkoutItem];
 
   const uniqueSummaryItems = summaryItems.reduce((acc, item) => {
     const existingIndex = acc.findIndex((i) => i.id === item.id);

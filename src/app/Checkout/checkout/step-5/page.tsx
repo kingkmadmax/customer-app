@@ -24,6 +24,7 @@ export default function CheckoutStep5() {
   // ✅ Pulling 'personal', 'rental', and 'biometrics' from your store
   // Make sure your store has a 'biometric' object containing { faceImage, idImage }
   const { personal, rental, biometric } = useCheckoutStore();
+  const { clearCart } = useCartStore();
   
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -33,6 +34,7 @@ export default function CheckoutStep5() {
     await new Promise((res) => setTimeout(res, 2500));
     setLoading(false);
     setIsSuccess(true);
+    clearCart();
     setTimeout(() => router.push("/"), 3000);
   };
 

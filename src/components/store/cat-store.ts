@@ -67,52 +67,26 @@ export const useCartStore = create<CartStore>()(
       message: null,
       showMessage: false,
 
-      addToCart: async (item) => {
-  const token = useAuthStore.getState().token;
+addToCart: (item: CartItem) => {
+  const items = get().cartItems;
+  const existing = items.find((i) => i.id === item.id);
 
-  if (!token) {
-    set({ message: "Please login first", showMessage: true });
-    return;
-  }
-
-  try {
-    const res = await fetch("http://localhost:9090/api/cart/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // 🔥 THIS LINKS USER
-      },
-      body: JSON.stringify({
-        productId: item.id,
-        quantity: item.quantity,
-      }),
+  if (existing) {
+    set({ 
+      message: "Product already in cart", 
+      showMessage: true 
     });
-
-    if (!res.ok) throw new Error("Failed");
-
-    // ✅ AFTER backend success → update local cart
-    const items = get().cartItems;
-    const existing = items.find((i) => i.id === item.id);
-
-    if (existing) {
-      set({ message: "Product already in cart", showMessage: true });
-      return;
-    }
-
+  } else {
     const updated = [...items, item];
-
     set({
       cartItems: updated,
       cartItemCount: updated.reduce((sum, i) => sum + i.quantity, 0),
       message: "Added to cart",
       showMessage: true,
     });
-
-  } catch (err) {
-    console.error(err);
-    set({ message: "Error adding to cart", showMessage: true });
   }
 
+  // Auto-hide the message after 2 seconds
   setTimeout(() => set({ showMessage: false, message: null }), 2000);
 },
 

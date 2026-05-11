@@ -1,56 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { ShoppingCart, Check, Loader2 } from "lucide-react";
-import { useAuthStore } from "@/components/store/cat-store"; // Only for the token
+import { useCartStore } from "@/components/store/cat-store";
 
 interface CartButtonProps {
   productId: number;
   productName: string;
   price: number;
   image: string;
+  deposite?: number;
 }
 
-export default function CartButton({ productId, productName, price, image }: CartButtonProps) {
+export default function CartButton({ productId, productName, price, image, deposite = 0 }: CartButtonProps) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const token = useAuthStore((state) => state.token);
+  const { addToCart, message, showMessage } = useCartStore();
 
-  const handleAddToCart = async () => {
-    if (!token) {
-      alert("Please login first!");
-      return;
-    }
-
-    setStatus("loading");
-
-    try {
-      const response = await fetch("http://localhost:9090/api/cart/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          productId: productId,
-          name: productName,
-          price: price,
-          image: image,
-          quantity: 1,
-        }),
-      });
-
-      if (response.ok) {
+  // Listen to message changes to update button status
+  React.useEffect(() => {
+    if (showMessage && message) {
+      if (message === "Added to cart") {
         setStatus("success");
-        // Reset button after 2 seconds
         setTimeout(() => setStatus("idle"), 2000);
       } else {
         setStatus("error");
         setTimeout(() => setStatus("idle"), 2000);
       }
-    } catch (err) {
-      setStatus("error");
-      setTimeout(() => setStatus("idle"), 2000);
     }
+  }, [showMessage, message]);
+
+  const handleAddToCart = () => {
+    setStatus("loading");
+    
+    const cartItem = {
+      id: productId,
+      name: productName,
+      price: price,
+      deposite: deposite,
+      image: image,
+      quantity: 1,
+    };
+
+    addToCart(cartItem);
   };
 
   return (

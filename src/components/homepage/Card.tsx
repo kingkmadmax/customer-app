@@ -4,9 +4,8 @@ import { ShoppingCart, Star, X, Plus, Heart, Eye, Loader2, Check } from "lucide-
 import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // Add this for redirecting
 import { Product } from "@/lib/type";
-import { useAuthStore } from "@/components/store/cat-store"; 
+import { useCartStore, CartItem } from "@/components/store/cat-store"; 
 
 interface SingleCardProps {
   product: Product;
@@ -23,52 +22,36 @@ export default function Card({
   onRentNow,
   isFavorite,
 }: SingleCardProps) {
-  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
 
-  // FIX: Extract BOTH token and userId from your store
-  const { token, userId } = useAuthStore(); 
+  // Get the addToCart action from your Zustand store
+  const addToCart = useCartStore((state) => state.addToCart);
 
-  const handleAddToCart = async () => {
-    if (!token || !userId) {
-      alert("Please log in to rent equipment");
-      return;
-    }
+  const handleAddToCart = () => {
+    setStatus("loading");
 
-    try {
-      setStatus("loading"); // Start loading animation
+    // Construct the item based on your CartItem type in cat-store
+    const itemToStore: CartItem = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      // Matching your store's spelling "deposite"
+      deposite: product.deposit || 0, 
+      image: Array.isArray(product.image) ? product.image[0] : (product.image || ""),
+      quantity: 1,
+      status: "pending",
+    };
 
-      const res = await fetch("http://localhost:9090/api/cart/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId: userId,        // Now this is defined!
-          productId: product.id, 
-          name: product.name,
-          price: product.price,
-          image: product.image[0],
-          quantity: 1,           
-        }),
-      });
+    // This updates state AND localStorage automatically via Zustand Persist
+    addToCart(itemToStore);
 
-      if (res.ok) {
-        setStatus("success");
-        // Optional: Wait a second so they see the "Success" checkmark before redirecting
-        setTimeout(() => {
-          router.push("/cart");
-        }, 800);
-      } else {
-        setStatus("idle");
-        console.error("Failed to add to cart");
-      }
-    } catch (error) {
+    // Provide instant UI feedback
+    setStatus("success");
+    
+    setTimeout(() => {
       setStatus("idle");
-      console.error("Network error:", error);
-    }
+    }, 1500);
   };
 
   return (
