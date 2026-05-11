@@ -7,6 +7,8 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 interface AuthState {
   userId: number | null;
   token: string | null;
+  cartCount: number; // Add this
+  setCartCount: (count: number) => void;
   setSession: (id: number, token: string) => void;
   clearSession: () => void;
 }
@@ -16,6 +18,8 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       userId: null,
       token: null,
+      cartCount: 0,
+      setCartCount: (count) => set({ cartCount: count }),
       setSession: (id, token) => set({ userId: id, token: token }),
       clearSession: () => {
         set({ userId: null, token: null });
@@ -42,6 +46,7 @@ export type CartItem = {
 
 type CartStore = {
   cartItems: CartItem[];
+  
   cartItemCount: number;
   message: string | null;
   showMessage: boolean;
@@ -51,6 +56,7 @@ type CartStore = {
   decreaseQuantity: (id: number) => void;
   clearCart: () => void;
   hideMessage: () => void;
+  loadCart: () => Promise<void>;
 };
 
 export const useCartStore = create<CartStore>()(
@@ -148,6 +154,45 @@ export const useCartStore = create<CartStore>()(
 
       clearCart: () => set({ cartItems: [], cartItemCount: 0 }),
       hideMessage: () => set({ showMessage: false, message: null }),
+
+      loadCart: async () => {
+        const token = useAuthStore.getState().token;
+        const userId = useAuthStore.getState().userId;
+
+        if (!token || !userId) return;
+
+        try {
+          const res = await fetch(`http://localhost:9090/api/cart?userId=${userId}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!res.ok) throw new Error("Failed to load cart");
+
+          const data = await res.json();
+          const backendItems: any[] = Array.isArray(data) ? data : [];
+
+          // Transform backend items to store format
+          const storeItems: CartItem[] = backendItems.map(item => ({
+            id: item.productId, // Use productId as id for store
+            image: item.image, // Backend has string
+            name: item.name,
+            price: item.price,
+            deposite: 0, // Backend might not have this, set default
+            quantity: item.quantity,
+          }));
+
+          set({
+            cartItems: storeItems,
+            cartItemCount: storeItems.reduce((sum, i) => sum + i.quantity, 0),
+          });
+        } catch (err) {
+          console.error("Failed to load cart", err);
+        }
+      },
     }),
     { name: 'cart-storage' }
   )

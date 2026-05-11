@@ -9,7 +9,7 @@ import { FaSearch } from "react-icons/fa";
 import { ShoppingCart, Menu, User } from "lucide-react";
 
 import { useLocationStore } from "@/components/store/location-store";
-import { useCartStore } from "@/components/store/cat-store";
+import { useCartStore,useAuthStore } from "@/components/store/cat-store";
 import SearchHeader from "@/app/search/SearchHeader";
 
 type Location = { value: string; label: string; };
@@ -34,7 +34,7 @@ export function Header() {
   }
   const isSearchPage = pathname.startsWith("/search");
   const router = useRouter();
-
+  const cartItemCount = useCartStore((state) => state.cartItemCount);
   // 1. Create unique refs for each dropdown/menu
   const userDropdownRef = useRef<HTMLDivElement>(null);
   const locationDropdownRef = useRef<HTMLDivElement>(null);
@@ -47,7 +47,7 @@ export function Header() {
 
   const selectedLocation = useLocationStore((state) => state.selectedLocation);
   const setSelectedLocation = useLocationStore((state) => state.setSelectedLocation);
-  const cartItemCount = useCartStore((state) => state.cartItemCount);
+
 
   
   // 2. Updated click-outside logic
@@ -200,15 +200,15 @@ export function Header() {
                 )}
               </div>
 
-              <Link href="/cart">
-                <div className="relative p-1.5 hover:bg-gray-100 rounded-full">
-                  <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 text-gray-700" />
-                  {cartItemCount > 0 && (
-                    <span className="absolute top-0 right-0 bg-blue-500 text-white text-[9px] w-3.5 h-3.5 flex items-center justify-center rounded-full">
-                      {cartItemCount}
-                    </span>
-                  )}
-                </div>
+           <Link href="/cart" className="relative p-2 hover:bg-gray-100 rounded-full transition">
+                <ShoppingCart className="w-6 h-6 text-gray-700" />
+                
+                {/* THE NOTIFICATION BADGE */}
+                {cartItemCount > 0 && (
+                  <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white ring-2 ring-white">
+                    {cartItemCount > 9 ? "9+" : cartItemCount}
+                  </span>
+                )}
               </Link>
             </div>
           </div>

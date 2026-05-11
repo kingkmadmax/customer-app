@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { useAuthStore } from "@/components/store/cat-store";
+import { useAuthStore, useCartStore } from "@/components/store/cat-store";
 import api from "@/lib/api";
 
 export default function SessionProvider({ children }: { children: React.ReactNode }) {
   const { setSession, clearSession, token } = useAuthStore();
+  const { loadCart } = useCartStore();
 
   useEffect(() => {
     // 1. Check if we have a token in LocalStorage
@@ -17,6 +18,8 @@ export default function SessionProvider({ children }: { children: React.ReactNod
         .then((res) => {
           // 3. Set the global session
           setSession(res.data.userId, savedToken);
+          // 4. Load the cart after session is set
+          loadCart();
         })
         .catch(() => {
           // 4. If token is expired, clear the session

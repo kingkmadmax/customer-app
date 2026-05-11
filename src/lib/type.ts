@@ -23,19 +23,48 @@ export interface Product {
   reviews?: number;
   rating?: number;
 }
-  
 export interface CartItem {
-  id: number;        // This is the 'cartItemId' from your Controller
-  productId: number; // The actual product ID
-  userId: string;
+  id: number;
+  productId: number;
   name: string;
   price: number;
-  image: string;     // Your controller uses 'image' (singular string)
+  image: string[];      // Based on our previous fix, this is now a string
   quantity: number;
+  deposit?: number;   // Add this line (the '?' means it's optional)
+  category?: string;  // Optional: add other fields you might need
 }
+  
+
 
 export interface CardsProps {
   card: Product[];
   layout?: "grid" | "flex";
   gap?: string;
+}
+ export interface Booking {
+  id: number;
+  userId: string;
+  email: string;
+  name: string;
+  phone: string;
+  fid: string;
+  
+  faceImage: string;
+  idImage: string;
+  image: string; // Product image
+  
+  productId: number;
+  productName: string;
+  quantity: number;
+  price: number;
+  deposit: number;
+  totalPrice: number;
+  
+  location: string;
+  rentalStartDate: string;
+  receiveDate: string; // Will come as YYYY-MM-DD
+  returnDate: string;
+  bookingDate: string; // Will come as ISO Timestamp
+  
+  status: string;
 }

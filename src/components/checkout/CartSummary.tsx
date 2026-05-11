@@ -4,30 +4,7 @@ import Image from "next/image";
 import { useCartStore, useCheckoutStore } from "../store/cat-store";
 
 export default function CartSummary() {
-  const { cartItems } = useCartStore();
-  const { product, rentalDays = 1 } = useCheckoutStore();
-
-  // Combine cart items and checkout product
-  const checkoutItem = product && !cartItems.some((item) => item.id === product.id)
-    ? [{ ...product, quantity: 1 }]
-    : [];
-
-
-    
-  const summaryItems = [...cartItems, ...checkoutItem];
-
-  // Calculations
-  const subtotal = summaryItems.reduce((acc, item) => {
-    return acc + (item.price * (item.quantity || 1) * rentalDays);
-  }, 0);
-
-  const totalDeposit = summaryItems.reduce((acc, item) => {
-    const depValue = item.deposite ?? item.deposite ?? 0;
-    return acc + Number(depValue) * (item.quantity || 1);
-  }, 0);
-
-  const serviceFee = subtotal * 0.1;
-  const finalTotal = subtotal + serviceFee + totalDeposit;
+  const { finalTotal, subtotal, serviceFee, totalDeposit, rentalDays, summaryItems } = useOrderTotal();
 
   return (
     <div className="p-6 border border-gray-200 rounded-2xl bg-white shadow-sm sticky top-6">
@@ -39,23 +16,18 @@ export default function CartSummary() {
         </div>
       ) : (
         <>
-          {/* Items */}
+          {/* Items List */}
           <div className="space-y-6 max-h-[340px] overflow-y-auto pr-3 custom-scrollbar">
-            {summaryItems.map((item) => {
+            {summaryItems.map((item, index) => {
               const itemTotal = item.price * (item.quantity || 1) * rentalDays;
               const imageSrc = Array.isArray(item.image) && item.image.length > 0
                 ? item.image[0]
                 : (typeof item.image === "string" && item.image.trim() ? item.image : "/placeholder.jpg");
 
               return (
-                <div key={item.id} className="flex gap-4">
+                <div key={`${item.id}-${index}`} className="flex gap-4">
                   <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-gray-100 flex-shrink-0 bg-gray-50">
-                    <Image
-                      src={imageSrc}
-                      alt={item.name}
-                      fill
-                      className="object-cover"
-                    />
+                    <Image src={imageSrc} alt={item.name} fill className="object-cover" />
                   </div>
 
                   <div className="flex-1 min-w-0 pt-1">
@@ -75,7 +47,6 @@ export default function CartSummary() {
             })}
           </div>
 
-          {/* Divider */}
           <div className="h-px bg-gray-100 my-6" />
 
           {/* Pricing Breakdown */}
@@ -100,7 +71,6 @@ export default function CartSummary() {
               <span>+${totalDeposit.toFixed(2)}</span>
             </div>
 
-            {/* Total */}
             <div className="pt-4 mt-4 border-t border-gray-900 flex justify-between items-baseline">
               <span className="text-lg font-bold text-gray-900">Total Due</span>
               <span className="text-2xl font-bold text-gray-900">
@@ -117,3 +87,48 @@ export default function CartSummary() {
     </div>
   );
 }
+
+// ==================== TOTAL CALCULATION HOOK ====================
+export const useOrderTotal = () => {
+  const { cartItems } = useCartStore();
+  const { product, rentalDays = 1 } = useCheckoutStore();
+
+  const checkoutItem = product && !cartItems.some((item) => item.id === product.id)
+    ? [{ ...product, quantity: 1 }]
+    : [];
+
+  const summaryItems = [...cartItems, ...checkoutItem];
+
+  const uniqueSummaryItems = summaryItems.reduce((acc, item) => {
+    const existingIndex = acc.findIndex((i) => i.id === item.id);
+    if (existingIndex >= 0) {
+      const existingItem = acc[existingIndex];
+      acc[existingIndex] = {
+        ...existingItem,
+        quantity: (existingItem.quantity || 1) + (item.quantity || 1),
+      };
+      return acc;
+    }
+    return [...acc, { ...item }];
+  }, [] as typeof summaryItems);
+
+  const subtotal = uniqueSummaryItems.reduce((acc, item) => {
+    return acc + (item.price * (item.quantity || 1) * rentalDays);
+  }, 0);
+
+  const totalDeposit = uniqueSummaryItems.reduce((acc, item) => {
+    return acc + Number(item.deposite ?? 0) * (item.quantity || 1);
+  }, 0);
+
+  const serviceFee = subtotal * 0.1;
+  const finalTotal = subtotal + serviceFee + totalDeposit;
+
+  return {
+    finalTotal,
+    subtotal,
+    serviceFee,
+    totalDeposit,
+    rentalDays,
+    summaryItems: uniqueSummaryItems
+  };
+};
