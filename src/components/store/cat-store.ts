@@ -135,37 +135,7 @@ addToCart: (item: CartItem) => {
 
         if (!token || !userId) return;
 
-        try {
-          const res = await fetch(`http://localhost:9090/api/cart?userId=${userId}`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          if (!res.ok) throw new Error("Failed to load cart");
-
-          const data = await res.json();
-          const backendItems: any[] = Array.isArray(data) ? data : [];
-
-          // Transform backend items to store format
-          const storeItems: CartItem[] = backendItems.map(item => ({
-            id: item.productId, // Use productId as id for store
-            image: item.image, // Backend has string
-            name: item.name,
-            price: item.price,
-            deposite: 0, // Backend might not have this, set default
-            quantity: item.quantity,
-          }));
-
-          set({
-            cartItems: storeItems,
-            cartItemCount: storeItems.reduce((sum, i) => sum + i.quantity, 0),
-          });
-        } catch (err) {
-          console.error("Failed to load cart", err);
-        }
+       
       },
     }),
     { name: 'cart-storage' }
@@ -208,6 +178,7 @@ type CheckoutState = {
 export const useCheckoutStore = create<CheckoutState>()(
   persist(
     (set, get) => ({
+      
       product: null,
       personal: { name: "", email: "", phone: "", fid: "" },
       rental: { location: "", receiveDate: "", returnDate: "" },
