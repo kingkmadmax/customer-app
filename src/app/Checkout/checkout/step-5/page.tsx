@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import CheckoutStepper from "@/components/checkout/CheckoutStepper";
 import CartSummary from "@/components/checkout/CartSummary";
-import { useCartStore, useCheckoutStore } from "@/components/store/cat-store";
+import { useCartStore, useCheckoutStore,useAuthStore } from "@/components/store/cat-store";
 import { 
   CheckCircle2, 
   User, 
@@ -19,24 +19,110 @@ import {
 } from "lucide-react";
 
 export default function CheckoutStep5() {
-  const router = useRouter();
+
   
-  // ✅ Pulling 'personal', 'rental', and 'biometrics' from your store
-  // Make sure your store has a 'biometric' object containing { faceImage, idImage }
-  const { personal, rental, biometric } = useCheckoutStore();
+
   const { clearCart } = useCartStore();
   
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-
-  const handleFinish = async () => {
-    setLoading(true);
-    await new Promise((res) => setTimeout(res, 2500));
-    setLoading(false);
-    setIsSuccess(true);
-    clearCart();
-    setTimeout(() => router.push("/"), 3000);
+  const router = useRouter();
+  const { personal, rental, biometric, product, rentalDays } = useCheckoutStore();
+  const uploadToCloudinary = async (base64Image: string | null) => {
+    if (!base64Image) return null;
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
+   
+  const formData = new FormData();
+  formData.append("file", base64Image);
+  formData.append("upload_preset", uploadPreset!); // ! tells TS it's not null
+    const res = await fetch("https://api.cloudinary.com/v1_1/" + cloudName + "/image/upload", { // 👈 Replace with your Cloud name
+      method: "POST",
+      body: formData,
+    });
+    const data = await res.json();
+    return data.secure_url;
   };
+
+const handleFinish = async () => {
+  if (!product) {
+    alert("Please complete all required fields");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    // 1. Upload images to Cloudinary
+    const faceUrl = await uploadToCloudinary(biometric?.faceImage);
+    const idUrl = await uploadToCloudinary(biometric?.idImage);
+    const formatToDateTime = (dateStr: string): string => {
+      if (!dateStr) return "";
+      // If date doesn't have time, add default time (e.g., 10:00:00)
+      if (dateStr.length === 10) { // "2026-05-21"
+        return `${dateStr}T10:00:00`;
+      }
+      return dateStr; // already has time
+    };
+
+    // 2. Get real userId from auth store
+    const { userId: authUserId, token } = useAuthStore.getState();
+
+    if (!authUserId || !token) {
+      alert("Please login again");
+      router.push("/login");
+      return;
+    }
+
+    // 3. Prepare payload exactly as your backend expects
+    const bookingData = {
+      product: { id: product.id },
+      userId: authUserId.toString(),
+      customerName: personal.name,
+      email: personal.email,
+      phone: personal.phone,
+      fidaId: personal.fid,
+      pickupLocation: rental.location,
+      receiveDate: formatToDateTime(rental.receiveDate),
+      returnDate: formatToDateTime(rental.returnDate),
+      rentalDays: rentalDays,
+      faceImageUrl: faceUrl,
+      idImageUrl: idUrl,
+      status: "PENDING",
+    };
+
+    // 4. Send to backend
+    const response = await fetch("http://localhost:9090/api/bookings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,   // ← Good practice
+      },
+      body: JSON.stringify(bookingData),
+    });
+
+    if (response.ok) {
+      setIsSuccess(true);
+      clearCart();
+      
+      // Optional: clear checkout store too
+      useCheckoutStore.getState().clearCheckout();
+
+      setTimeout(() => {
+        router.push("/");
+      }, 2800);
+    } else {
+      const errorMsg = await response.text();
+      console.error("Booking failed:", errorMsg);
+      alert(`Booking failed: ${errorMsg || "Unknown error"}`);
+    }
+  } catch (error) {
+    console.error("Submission error:", error);
+    alert("Something went wrong. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (isSuccess) {
     return (
@@ -56,7 +142,7 @@ export default function CheckoutStep5() {
 
       <div className="grid md:grid-cols-[1.5fr_1fr] gap-6 mt-6 items-stretch">
         
-        {/* ================= LEFT: INFORMATION REVIEW ================= */}
+       
         <div className="space-y-4 flex flex-col">
           <div className="bg-white border border-gray-200 rounded-[1.5rem] shadow-md p-6 flex-1 flex flex-col">
             
@@ -90,7 +176,7 @@ export default function CheckoutStep5() {
                 </div>
               </section>
 
-              {/* 2. 🔥 BIOMETRIC IMAGES SECTION */}
+
               <section>
                 <div className="flex items-center gap-2 mb-3">
                   <Scan className="w-4 h-4 text-blue-600" />
@@ -113,7 +199,6 @@ export default function CheckoutStep5() {
                     </div>
                   </div>
 
-                  {/* ID IMAGE */}
                   <div className="space-y-2">
                     <p className="text-[9px] font-black text-gray-400 uppercase ml-1">ID Document</p>
                     <div className="aspect-square bg-gray-100 rounded-2xl border-2 border-white shadow-sm overflow-hidden relative group">
