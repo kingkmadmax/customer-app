@@ -14,8 +14,7 @@ import {
   ArrowRight, 
   ChevronLeft, 
   ShieldCheck,
-  Scan,
-  Camera
+  Scan, Camera
 } from "lucide-react";
 
 export default function CheckoutStep5() {
@@ -28,6 +27,7 @@ export default function CheckoutStep5() {
   const [isSuccess, setIsSuccess] = useState(false);
   const router = useRouter();
   const { personal, rental, biometric, product, rentalDays } = useCheckoutStore();
+  const { cartItems } = useCartStore();
   const uploadToCloudinary = async (base64Image: string | null) => {
     if (!base64Image) return null;
     const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
@@ -45,15 +45,15 @@ export default function CheckoutStep5() {
   };
 
 const handleFinish = async () => {
-  if (!product) {
-    alert("Please complete all required fields");
+  if (cartItems.length === 0) {
+    alert("No products in cart");
     return;
   }
 
   setLoading(true);
 
   try {
-    // 1. Upload images to Cloudinary
+
     const faceUrl = await uploadToCloudinary(biometric?.faceImage);
     const idUrl = await uploadToCloudinary(biometric?.idImage);
     const formatToDateTime = (dateStr: string): string => {
@@ -62,10 +62,9 @@ const handleFinish = async () => {
       if (dateStr.length === 10) { // "2026-05-21"
         return `${dateStr}T10:00:00`;
       }
-      return dateStr; // already has time
+      return dateStr; 
     };
 
-    // 2. Get real userId from auth store
     const { userId: authUserId, token } = useAuthStore.getState();
 
     if (!authUserId || !token) {
@@ -74,48 +73,50 @@ const handleFinish = async () => {
       return;
     }
 
-    // 3. Prepare payload exactly as your backend expects
-    const bookingData = {
-      product: { id: product.id },
-      userId: authUserId.toString(),
-      customerName: personal.name,
-      email: personal.email,
-      phone: personal.phone,
-      fidaId: personal.fid,
-      pickupLocation: rental.location,
-      receiveDate: formatToDateTime(rental.receiveDate),
-      returnDate: formatToDateTime(rental.returnDate),
-      rentalDays: rentalDays,
-      faceImageUrl: faceUrl,
-      idImageUrl: idUrl,
-      status: "PENDING",
-    };
+    for (const item of cartItems) {
+      const bookingData = {
+        product: { id: item.id },
+        userId: authUserId.toString(),
+        customerName: personal.name,
+        email: personal.email,
+        phone: personal.phone,
+        fidaId: personal.fid,
+        pickupLocation: rental.location,
+        receiveDate: formatToDateTime(rental.receiveDate),
+        returnDate: formatToDateTime(rental.returnDate),
+        rentalDays: rentalDays,
+        faceImageUrl: faceUrl,
+        idImageUrl: idUrl,
+        status: "PENDING",
+      };
 
-    // 4. Send to backend
-    const response = await fetch("http://localhost:9090/api/bookings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,   // ← Good practice
-      },
-      body: JSON.stringify(bookingData),
-    });
+      const response = await fetch("http://localhost:9090/api/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(bookingData),
+      });
 
-    if (response.ok) {
-      setIsSuccess(true);
-      clearCart();
-      
-      // Optional: clear checkout store too
-      useCheckoutStore.getState().clearCheckout();
-
-      setTimeout(() => {
-        router.push("/");
-      }, 2800);
-    } else {
-      const errorMsg = await response.text();
-      console.error("Booking failed:", errorMsg);
-      alert(`Booking failed: ${errorMsg || "Unknown error"}`);
+      if (!response.ok) {
+        const errorMsg = await response.text();
+        console.error("Booking failed for product", item.id, ":", errorMsg);
+        alert(`Booking failed for ${item.name}: ${errorMsg || "Unknown error"}`);
+        return;
+      }
     }
+
+    // All bookings successful
+    setIsSuccess(true);
+    clearCart();
+    
+    // Optional: clear checkout store too
+    useCheckoutStore.getState().clearCheckout();
+
+    setTimeout(() => {
+      router.push("/");
+    }, 2800);
   } catch (error) {
     console.error("Submission error:", error);
     alert("Something went wrong. Please try again.");
@@ -243,7 +244,7 @@ const handleFinish = async () => {
                 loading ? "bg-gray-100 text-gray-900 cursor-not-allowed shadow-none" : "bg-gray-900 text-white hover:bg-gray-900"
               }`}
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin text-gray-900" /> : "FINISH ORDER & PAY"}
+              {loading ? <Loader2 className="w-5 h-5 animate-spin text-gray-900" /> : "FINISH ORDER"}
             </button>
           </div>
 

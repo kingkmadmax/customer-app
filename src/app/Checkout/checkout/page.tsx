@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCartStore, useCheckoutStore } from "@/components/store/cat-store";
 import CheckoutStepper from "@/components/checkout/CheckoutStepper";
 import CartSummary from "@/components/checkout/CartSummary";
@@ -12,12 +12,27 @@ export default function CheckoutStep1() {
   
   const router = useRouter();
 
-  const { setPersonal } = useCheckoutStore();
+  const { setPersonal, setProduct } = useCheckoutStore();
   const { cartItems } = useCartStore();
 
   // Debug logging
   console.log("Checkout page - cartItems:", cartItems);
   console.log("Checkout page - checkout product:", useCheckoutStore.getState().product);
+
+  // Set product from cart if not already set
+  useEffect(() => {
+    const currentProduct = useCheckoutStore.getState().product;
+    if (!currentProduct && cartItems.length > 0) {
+      const firstItem = cartItems[0];
+      setProduct({
+        id: firstItem.id,
+        name: firstItem.name,
+        price: firstItem.price,
+        deposite: firstItem.deposite,
+        image: firstItem.image,
+      });
+    }
+  }, [cartItems, setProduct]);
 
   const [form, setForm] = useState({
     name: "",

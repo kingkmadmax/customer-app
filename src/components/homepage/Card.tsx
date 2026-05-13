@@ -5,7 +5,8 @@ import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
 import { Product } from "@/lib/type";
-import { useCartStore, CartItem } from "@/components/store/cat-store"; 
+import { useCartStore, CartItem, useCheckoutStore } from "@/components/store/cat-store"; 
+import { useRouter } from "next/navigation";
 
 interface SingleCardProps {
   product: Product;
@@ -14,6 +15,7 @@ interface SingleCardProps {
   onRentNow: (product: Product) => void;
   isFavorite: boolean;
 }
+
 
 export default function Card({
   product,
@@ -27,7 +29,9 @@ export default function Card({
 
   // Get the addToCart action from your Zustand store
   const addToCart = useCartStore((state) => state.addToCart);
+  const setProduct =useCheckoutStore((state) => state.setProduct);
 
+  const router = useRouter();
   const handleAddToCart = () => {
     setStatus("loading");
 
@@ -53,7 +57,32 @@ export default function Card({
       setStatus("idle");
     }, 1500);
   };
+ const handleAddToChackout = () => {
+  setStatus("loading");
 
+  // 1. Prepare the data object
+  const itemToCheckout = {
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    deposite: product.deposit || 0, // Spelling matches your store
+    image: Array.isArray(product.image) ? product.image[0] : (product.image || ""),
+  };
+
+  // 2. CALL the store function (this was the missing part!)
+  // We use the 'setProduct' function we got from useCheckoutStore at the top
+  setProduct(itemToCheckout);
+
+  // 3. Provide UI feedback and Navigate
+  setStatus("success");
+  
+  // Move to checkout page
+  router.push("/Checkout/checkout");
+
+  setTimeout(() => {
+    setStatus("idle");
+  }, 1500);
+};
   return (
     <div className="w-full max-w-[250px] h-[350px] flex-shrink-0 bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group relative flex flex-col mx-auto">
       
@@ -155,7 +184,8 @@ export default function Card({
               </button>
 
               <button
-                onClick={() => onRentNow(product)}
+                 onClick={handleAddToChackout}
+
                 className="whitespace-nowrap px-3 h-8 bg-blue-600 text-white rounded-lg text-[11px] font-bold uppercase hover:bg-blue-700 transition-colors"
               >
                 Rent Now
