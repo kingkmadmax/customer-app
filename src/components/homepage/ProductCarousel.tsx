@@ -150,8 +150,6 @@ export default function Content() {
           </button>
         </div>
       )}
-
-      {/* <Best card={filteredProducts} /> */}
       <MoreSection />
     </div>
   );

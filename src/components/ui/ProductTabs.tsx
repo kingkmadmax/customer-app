@@ -1,0 +1,181 @@
+"use client";
+
+import { useState } from "react";
+import { Star, Info, List, MessageSquare } from "lucide-react";
+import { Product } from "@/lib/type";
+import { useReviewStore } from "@/components/store/cat-store";
+
+type TabType = "detail" | "specifications" | "reviews";
+
+interface ProductTabsProps {
+  product: Product;
+}
+export default function ProductTabs({ product }: ProductTabsProps) {
+  const [selectedTab, setSelectedTab] = useState<TabType>("detail");
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [newReview, setNewReview] = useState({ author: "", rating: 0, comment: "" });
+  const [hoverRating, setHoverRating] = useState(0);
+
+  const { reviews, addReview } = useReviewStore();
+
+  const handleSubmitReview = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newReview.author || newReview.rating === 0 || !newReview.comment) return;
+
+    addReview({
+      author: newReview.author,
+      rating: newReview.rating,
+      comment: newReview.comment,
+    });
+
+    setNewReview({ author: "", rating: 0, comment: "" });
+    setShowReviewForm(false);
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto mt-24 px-6">
+      {/* Tabs Navigation */}
+      <div className="flex border-b border-gray-200 mb-8 gap-8 overflow-x-auto no-scrollbar">
+        {[
+          { id: "detail", name: "Product Details", icon: Info },
+          { id: "specifications", name: "Technical Specs", icon: List },
+          { id: "reviews", name: `Reviews (${reviews.length})`, icon: MessageSquare },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setSelectedTab(tab.id as TabType)}
+            className={`pb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-widest transition-all whitespace-nowrap ${
+              selectedTab === tab.id
+                ? "border-b-2 border-blue-600 text-blue-600"
+                : "text-gray-400 hover:text-gray-600"
+            }`}
+          >
+            <tab.icon className="w-4 h-4" />
+            {tab.name}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      <div className="min-h-[300px] bg-white rounded-3xl p-8 border border-gray-50 shadow-sm">
+        {selectedTab === "detail" && (
+          <div className="max-w-3xl space-y-4 animate-in slide-in-from-bottom-2">
+            <h3 className="text-xl font-bold text-gray-900">About this product</h3>
+            <p className="text-gray-600 leading-relaxed">
+              {product.description || "No detailed description provided."}
+            </p>
+            <div className="grid grid-cols-2 gap-4 mt-6">
+              <div className="p-4 bg-gray-50 rounded-xl">
+                <p className="text-xl text-black font-bold ">Condition</p>
+                <p className="font-bold text-gray-600">{product.condition || "Mint Condition"}</p>
+              </div>
+              <div className="p-4 bg-gray-50 rounded-xl">
+                <p className="text-xl text-black font-bold ">Location</p>
+                <p className="font-bold text-gray-600">{product.location || "Addis Ababa"}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {selectedTab === "specifications" && (
+          <div className="animate-in slide-in-from-bottom-2">
+            <table className="w-full text-left border-collapse">
+              <tbody>
+                <tr className="border-b border-gray-50">
+                  <td className="py-4 font-bold text-black w-1/3">Model</td>
+                  <td className="py-4 text-gray-800">{product.name}</td>
+                </tr>
+                <tr className="border-b border-gray-50">
+                  <td className="py-4 font-bold text-black">Category</td>
+                  <td className="py-4 text-gray-800">{product.category}</td>
+                </tr>
+                <tr className="border-b border-gray-50">
+                  <td className="py-4 font-bold text-black">Availability</td>
+                  <td className="py-4 text-green-600 font-bold">In Stock</td>
+                </tr>
+                <tr>
+                  <td className="py-4 font-bold text-black">Min Rental Period</td>
+                  <td className="py-4 text-gray-800">1 Month</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {selectedTab === "reviews" && (
+          <div className="animate-in slide-in-from-bottom-2 flex flex-col gap-8">
+            <div className="flex justify-between items-center">
+              <h3 className="text-xl font-bold text-gray-900">User Experience</h3>
+              <button
+                onClick={() => setShowReviewForm(!showReviewForm)}
+                className="px-6 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold"
+              >
+                {showReviewForm ? "Cancel" : "Write Review"}
+              </button>
+            </div>
+
+            {showReviewForm && (
+              <form onSubmit={handleSubmitReview} className="bg-gray-50 p-6 rounded-2xl space-y-4 border border-gray-100">
+                <div className="grid grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    placeholder="Your Name"
+                    className="p-3 rounded-xl border border-gray-600 ring-1 ring-gray-200"
+                    value={newReview.author}
+                    onChange={(e) => setNewReview({ ...newReview, author: e.target.value })}
+                  />
+                  <div className="flex items-center gap-2 px-3">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star
+                        key={star}
+                        className={`w-7 h-7 cursor-pointer text-gray-600 ${(hoverRating || newReview.rating) >= star ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
+                        onMouseEnter={() => setHoverRating(star)}
+                        onMouseLeave={() => setHoverRating(0)}
+                        onClick={() => setNewReview({ ...newReview, rating: star })}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <textarea
+                  placeholder="Tell others about your rental experience..."
+                  className="w-full p-3 rounded-xl border border-gray-600  ring-1 ring-gray-200 min-h-[100px]"
+                  value={newReview.comment}
+                  onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                />
+                <button className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-100">
+                  Submit Feedback
+                </button>
+              </form>
+            )}
+
+            <div className="space-y-6">
+              {reviews.length > 0 ? (
+                reviews.map((review, idx) => (
+                  <div key={idx} className="border-b border-gray-50 pb-6 last:border-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-3 h-3 ${i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-200"}`}
+                          />
+                        ))}
+                      </div>
+                      <span className="font-bold text-sm">{review.author}</span>
+                    </div>
+                    <p className="text-gray-600 text-sm leading-relaxed">{review.comment}</p>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-10">
+                  <MessageSquare className="w-12 h-12 text-gray-200 mx-auto mb-4" />
+                  <p className="text-gray-400 font-medium">Be the first to review this product!</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
