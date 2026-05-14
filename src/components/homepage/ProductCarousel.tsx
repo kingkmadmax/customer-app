@@ -1,9 +1,9 @@
 ﻿"use client";
 
 import { useState, useEffect } from "react";
-import Cards from "@/components/homepage/cards";
-import Best from "./BestSection";
-import MoreSection from "@/components/homepage/MareSection";
+import Cards from "@/components/ui/cards";
+// import Best from "./BestSection";
+import MoreSection from "@/components/homepage/MoreSection";
 import { Product } from "@/lib/type";
 
 export default function Content() {
@@ -151,7 +151,7 @@ export default function Content() {
         </div>
       )}
 
-      <Best card={filteredProducts} />
+      {/* <Best card={filteredProducts} /> */}
       <MoreSection />
     </div>
   );

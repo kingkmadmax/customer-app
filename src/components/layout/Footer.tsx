@@ -2,7 +2,7 @@
 
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import SocialCard from "@/components/homepage/socalCard";
+import SocialCard from "@/components/ui/socalCard";
 
 export default function Footer() {
   return (

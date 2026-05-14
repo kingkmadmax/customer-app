@@ -4,12 +4,12 @@ import { FaCar, FaHome, FaScrewdriver, FaTv, FaTshirt, FaLaptop } from "react-ic
 import { FaEye, FaHeart } from "react-icons/fa";
 import { useEffect, useState } from "react";
 
-import ScrollReveal from "@/components/homepage/scrool";
+import ScrollReveal from "@/components/layout/scrool";
 import ImageSlider from "@/components/homepage/ImageSlider";
-import Adds from "@/components/homepage/Adds";
+import Adds from "@/components/ui/Adds";
 import Contente from "@/components/homepage/ProductCarousel";
-import Hero from "@/components/homepage/HeroSection";
-import { products,Add } from "@/app/data/product";
+import Hero from "@/components/layout/HeroSection";
+
 
 import { describe } from "node:test";
 import { image } from "framer-motion/m";
@@ -39,14 +39,14 @@ export default function Home() {
    
     {/* Image Slider reveals on scroll */}
     <ScrollReveal>
-      <ImageSlider products={products} />
+      <ImageSlider  />
     </ScrollReveal>
 
     
 
     {/* Contente reveals on scroll */}
     <ScrollReveal>
-      <Contente card={products} />
+      <Contente  />
     </ScrollReveal>
   </div>
 </main>

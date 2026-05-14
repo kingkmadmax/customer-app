@@ -4,7 +4,7 @@ import { ArrowLeft, Heart, Shield, Truck, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState } from "react";
-import ScrollReveal from "@/components/homepage/scrool";
+import ScrollReveal from "@/components/layout/scrool";
 
 export default function AboutPage() {
   return (

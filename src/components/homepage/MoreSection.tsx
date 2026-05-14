@@ -4,7 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck, Zap, Globe } from "lucide-react"; // Icons for the cards
 
-export default function AboutSection() {
+export default function MoreSection() {
   const cards = [
     {
       title: "Secure Rentals",

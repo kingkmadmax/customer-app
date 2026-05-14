@@ -1,6 +1,6 @@
 "use client";
 
-import Cards from "@/components/homepage/cards";
+import Cards from "@/components/ui/cards";
 import { Product } from "@/lib/type";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
