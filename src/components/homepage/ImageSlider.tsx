@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
+import getStatusColor from "@/components/ui/getStatusColor";
 
 import { Product } from "@/lib/type";
 
@@ -39,7 +40,6 @@ export default function ImageSlider({
 
         const data = await res.json();
 
-        // Format to match Product type
         const formatted: Product[] = data.map((item: any) => ({
           id: item.id,
           name: item.name,
@@ -47,6 +47,7 @@ export default function ImageSlider({
           category: item.category || "Other",
           condition: item.condition || "New",
           location: item.location,
+          Situation: item.Situation || item.situation || "New",
           deposit: item.deposit,
           description: item.description,
           image: item.imageUrl ? [item.imageUrl] : [],
@@ -148,7 +149,7 @@ export default function ImageSlider({
               >
                 <div className="group/card relative aspect-[4/6] overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-all duration-500 bg-white">
                   <Link href={`/product/${product.id}`} className="block h-full w-full">
-                    {product.image?.[0] ? (
+                    {product.image?.[0] ?(
                       <Image
                         src={product.image[0]}
                         alt={product.name}
@@ -162,12 +163,14 @@ export default function ImageSlider({
                       </div>
                     )}
 
-                    {/* Floating Badge */}
-                    <div className="absolute top-2 left-2 z-20">
-                      <span className="bg-white/90 backdrop-blur-sm px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-gray-900 rounded-full shadow-sm">
-                        {product.condition || "New"}
-                      </span>
-                    </div>
+    
+                      <div className="absolute top-3 left-3 z-10 flex items-center gap-2 bg-white/100 rounded-full w-22 h-4">
+                        <span className={`w-3 h-3 rounded-full animate-pulse ${getStatusColor(product.Situation)}`} />
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-700">
+                          {product.Situation}
+                        </span>
+                      </div>
+                  
 
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent opacity-75 group-hover/card:opacity-95 transition-opacity" />

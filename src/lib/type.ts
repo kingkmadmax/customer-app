@@ -11,7 +11,7 @@ export interface Product {
   price: number;
   category?: string;
   location?: string;
-  condition?: string;
+  condition: string;
   deposit: number;
   description?: string;
   imageUrl?: string;
@@ -28,8 +28,8 @@ export interface CartItem {
   name: string;
   price: number;
   image: string[];     
-  deposit: number;   // Add this line (the '?' means it's optional)
-  category: string;  // Optional: add other fields you might need
+  deposit: number;   
+  category: string;  
 }
   
 

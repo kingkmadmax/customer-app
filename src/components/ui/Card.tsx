@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Product } from "@/lib/type";
 import { useCartStore, CartItem, useCheckoutStore } from "@/components/store/cat-store"; 
 import { useRouter } from "next/navigation";
+import getStatusColor from "@/components/ui/getStatusColor";
 
 interface SingleCardProps {
   product: Product;
@@ -15,16 +16,7 @@ interface SingleCardProps {
   onRentNow: (product: Product) => void;
   isFavorite: boolean;
 }
-const getStatusColor = (situation: string) => {
-  switch (situation?.toUpperCase()) {
-    case 'AVAILABLE':
-      return 'bg-green-800';
-    case 'RENTED':
-      return 'bg-red-800';
-    case 'UNAVAILABLE':
-      return 'bg-yellow-800';
-  }
-};
+
 
 export default function Card({
   product,

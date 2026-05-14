@@ -2,7 +2,8 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { ShieldCheck, Zap, Globe } from "lucide-react"; // Icons for the cards
+import { ShieldCheck, Zap, Globe } from "lucide-react";
+
 
 export default function MoreSection() {
   const cards = [

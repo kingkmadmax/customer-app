@@ -114,13 +114,7 @@ export default function AboutPage() {
           />
 
           {/* 4. Frame (1) - Pushed OUT to the bottom-right */}
-          <Image
-            src="/abute/frame (1).png"
-            alt="Frame"
-            height={67}
-            width={180}
-            className="absolute -bottom-20 -right-10 object-contain"
-          />
+       
 
           {/* 5. Frame - Pushed OUT to the top-right */}
           <Image
