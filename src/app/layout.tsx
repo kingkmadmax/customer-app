@@ -1,7 +1,7 @@
 import { Source_Serif_4 } from 'next/font/google';
 import './globals.css';
-import {Header} from '@/components/homepage/header';
-import Footer from '@/components/homepage/Footer';
+import {Header} from '@/components/layout/header';
+import Footer from '@/components/layout/Footer';
 import SessionProvider from '@/components/store/SessionProvider';
 
 // Configure the font

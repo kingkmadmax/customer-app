@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CreditCard, Smartphone, Building2, CheckCircle2, Upload, Copy, ShieldCheck } from "lucide-react";
-import { useOrderTotal } from "@/components/checkout/CartSummary";
+import { useOrderTotal } from "@/components/ui/CartSummary";
 import { useCheckoutStore } from "@/components/store/cat-store";
-import CheckoutStepper from "@/components/checkout/CheckoutStepper";
-import CartSummary from "@/components/checkout/CartSummary";
+import CheckoutStepper from "@/components/ui/CheckoutStepper";
+import CartSummary from "@/components/ui/CartSummary";
 
 type PaymentMethod = "card" | "telebirr" | "bank";
 

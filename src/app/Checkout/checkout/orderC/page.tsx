@@ -4,9 +4,9 @@ import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ChevronLeft, ShieldCheck } from "lucide-react";
 
-import CheckoutStepper from "@/components/checkout/CheckoutStepper";
-import CartSummary from "@/components/checkout/CartSummary";
-import { BiometricKYCStep } from "@/components/checkout/BiometricKYCStep";
+import CheckoutStepper from "@/components/ui/CheckoutStepper";
+import CartSummary from "@/components/ui/CartSummary";
+import { BiometricKYCStep } from "@/components/ui/BiometricKYCStep";
 import { useCheckoutStore } from "@/components/store/cat-store";
 
 export default function Step2Page() {
