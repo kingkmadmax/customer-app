@@ -162,7 +162,7 @@ export default function ProductDetails() {
               </div>
               <span className="text-sm text-gray-500 font-medium">({reviews.length || 12} Reviews)</span>
               <span className="flex items-center gap-1.5 text-green-600 text-sm font-bold ml-2">
-                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" /> Available Now
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />{product.Situation}
               </span>
             </div>
           </div>

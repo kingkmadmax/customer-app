@@ -50,7 +50,7 @@ export default function PaymentPage() {
         phone_number: personal.phone || "0912345678",
         tx_ref: txRef,
         callback_url: "https://webhook.site/#!/",
-        return_url: "http://localhost:3000/Checkout/checkout/step-5",
+        return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/Checkout/checkout/step-5`
       };
 
       console.log("Sending to Chapa:", payload);

@@ -12,11 +12,10 @@ export interface Product {
   category?: string;
   location?: string;
   condition?: string;
-  deposit?: number;
+  deposit: number;
   description?: string;
   imageUrl?: string;
-  
-  // Keep these for compatibility with your stores and old code
+  Situation:string;
   status?: string;
   image: string[];
   deposite?: number;
@@ -28,10 +27,9 @@ export interface CartItem {
   productId: number;
   name: string;
   price: number;
-  image: string[];      // Based on our previous fix, this is now a string
-  quantity: number;
-  deposit?: number;   // Add this line (the '?' means it's optional)
-  category?: string;  // Optional: add other fields you might need
+  image: string[];     
+  deposit: number;   // Add this line (the '?' means it's optional)
+  category: string;  // Optional: add other fields you might need
 }
   
 
@@ -51,7 +49,7 @@ export interface CardsProps {
   
   faceImage: string;
   idImage: string;
-  image: string; // Product image
+  image: string; 
   
   productId: number;
   productName: string;
@@ -62,9 +60,9 @@ export interface CardsProps {
   
   location: string;
   rentalStartDate: string;
-  receiveDate: string; // Will come as YYYY-MM-DD
+  receiveDate: string; 
   returnDate: string;
-  bookingDate: string; // Will come as ISO Timestamp
+  bookingDate: string; 
   
   status: string;
 }

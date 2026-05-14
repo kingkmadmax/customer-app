@@ -15,7 +15,16 @@ interface SingleCardProps {
   onRentNow: (product: Product) => void;
   isFavorite: boolean;
 }
-
+const getStatusColor = (situation: string) => {
+  switch (situation?.toUpperCase()) {
+    case 'AVAILABLE':
+      return 'bg-green-800';
+    case 'RENTED':
+      return 'bg-red-800';
+    case 'UNAVAILABLE':
+      return 'bg-yellow-800';
+  }
+};
 
 export default function Card({
   product,
@@ -40,9 +49,8 @@ export default function Card({
       id: product.id,
       name: product.name,
       price: product.price,
-      // Matching your store's spelling "deposite"
-      deposite: product.deposit || 0, 
-      image: Array.isArray(product.image) ? product.image[0] : (product.image || ""),
+      deposite: product.deposit, 
+      image: product.image[0] ,
       quantity: 1,
       status: "pending",
     };
@@ -65,15 +73,12 @@ export default function Card({
     id: product.id,
     name: product.name,
     price: product.price,
-    deposite: product.deposit || 0, // Spelling matches your store
+    deposite: product.deposit,
     image: Array.isArray(product.image) ? product.image[0] : (product.image || ""),
   };
 
-  // 2. CALL the store function (this was the missing part!)
-  // We use the 'setProduct' function we got from useCheckoutStore at the top
   setProduct(itemToCheckout);
 
-  // 3. Provide UI feedback and Navigate
   setStatus("success");
   
   // Move to checkout page
@@ -98,10 +103,16 @@ export default function Card({
             />
           ) : (
             <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
-              No Image
+              No Image  <div className="absolute top-3 left-3 z-10 flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full translate-x-12 group-hover:translate-x-0 transition-transform duration-300 "></div>
             </div>
           )}
         </Link>
+        <div className="absolute top-3 left-3 z-10 flex items-center gap-2 bg-white/100 rounded-full -translate-x-25 group-hover:translate-x-0 w-22 transition-transform duration-300 ">
+            <span className={`w-3 h-3 rounded-full animate-pulse ${getStatusColor(product.Situation)}`} />
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-700">
+              {product.Situation}
+            </span>
+          </div>
 
         {/* HOVER ACTIONS */}
         <div className="absolute top-3 right-3 z-10 flex flex-col gap-2 translate-x-12 group-hover:translate-x-0 transition-transform duration-300">
