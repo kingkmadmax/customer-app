@@ -59,3 +59,41 @@ export async function loginUser(formData: FormData) {
     return { success: false, error: 'Connection to Keycloak failed' };
   }
 }
+export async function refreshAccessToken(refreshToken: string) {
+  try {
+    const clientId = process.env.NEXT_PUBLIC_CLIENT_ID!;
+    const clientSecret = process.env.KEYCLOAK_CLIENT_SECRET!;
+    const keycloakUrl = process.env.NEXT_PUBLIC_KEYCLOAK_URL!;
+    const realm = process.env.NEXT_PUBLIC_KEYCLOAK_REALM!;
+
+    const params = new URLSearchParams();
+    params.append('grant_type', 'refresh_token');
+    params.append('client_id', clientId);
+    params.append('client_secret', clientSecret);
+    params.append('refresh_token', refreshToken);
+
+    const url = `${keycloakUrl}/realms/${realm}/protocol/openid-connect/token`;
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params,
+      cache: 'no-store'
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      return { success: false, error: data?.error_description || 'Failed to refresh token' };
+    }
+
+    return {
+      success: true,
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+    };
+  } catch (error) {
+    console.error('Refresh Token Error:', error);
+    return { success: false, error: 'Connection to Keycloak failed' };
+  }
+} 
