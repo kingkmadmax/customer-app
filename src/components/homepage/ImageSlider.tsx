@@ -27,20 +27,23 @@ export default function ImageSlider({
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
   const [itemsPerView, setItemsPerView] = useState(1);
 
- 
   useEffect(() => {
     if (initialProducts?.length) return;
 
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:9090/api/products/all");
+        // Note: You can customize 'size' here depending on how many items you want in your slider carousel
+        const res = await fetch("http://localhost:9090/api/products/all?page=0&size=15");
 
         if (!res.ok) throw new Error("Failed to fetch products");
 
         const data = await res.json();
 
-        const formatted: Product[] = data.map((item: any) => ({
+        // FIX: Extract the actual list from the paginated backend response 'data.content'
+        const rawProducts = data.content || [];
+
+        const formatted: Product[] = rawProducts.map((item: any) => ({
           id: item.id,
           name: item.name,
           price: item.price || 0,
@@ -121,6 +124,10 @@ export default function ImageSlider({
     );
   }
 
+  if (error) {
+    return <div className="text-center py-8 text-red-500">{error}</div>;
+  }
+
   return (
     <div className="group relative w-full py-8 bg-gray-50">
       <div className="relative max-w-[1600px] mx-auto px-4">
@@ -149,7 +156,7 @@ export default function ImageSlider({
               >
                 <div className="group/card relative aspect-[4/6] overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-all duration-500 bg-white">
                   <Link href={`/product/${product.id}`} className="block h-full w-full">
-                    {product.image?.[0] ?(
+                    {product.image?.[0] ? (
                       <Image
                         src={product.image[0]}
                         alt={product.name}
@@ -163,14 +170,12 @@ export default function ImageSlider({
                       </div>
                     )}
 
-    
-                      <div className="absolute top-3 left-3 z-10 flex items-center gap-2 bg-white/100 rounded-full w-22 h-4">
-                        <span className={`w-3 h-3 rounded-full animate-pulse ${getStatusColor(product.Situation)}`} />
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-700">
-                          {product.Situation}
-                        </span>
-                      </div>
-                  
+                    <div className="absolute top-3 left-3 z-10 flex items-center gap-2 bg-white rounded-full px-2 py-0.5 shadow-sm">
+                      <span className={`w-2 h-2 rounded-full animate-pulse ${getStatusColor(product.Situation)}`} />
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-700">
+                        {product.Situation}
+                      </span>
+                    </div>
 
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent opacity-75 group-hover/card:opacity-95 transition-opacity" />

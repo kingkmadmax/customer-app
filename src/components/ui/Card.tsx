@@ -81,10 +81,10 @@ export default function Card({
   }, 1500);
 };
   return (
-    <div className="w-full max-w-[250px] h-[350px] flex-shrink-0 bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group relative flex flex-col mx-auto">
+    <div className="w-full max-w-[250px] h-[400px] flex-shrink-0 bg-white border border-gray-300 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group relative flex flex-col mx-auto">
       
       {/* IMAGE SECTION */}
-      <div className="relative h-44 w-full bg-gray-50 overflow-hidden">
+      <div className="relative h-60 w-full bg-gray-50 overflow-hidden">
         <Link href={`/product/${product.id}`} className="w-full h-full block">
           {product.image ? (
             <Image
@@ -124,21 +124,21 @@ export default function Card({
       </div>
 
       {/* CONTENT SECTION */}
-      <div className="p-4 flex flex-col justify-between flex-1">
+      <div className="p-2 flex flex-col justify-between flex-1">
         <div className="space-y-1">
-          <h3 className="font-semibold text-sm line-clamp-2 text-gray-900 h-10 leading-tight">
+          <h3 className="font-semibold text-lg  text-black h-6 capitalize ">
             {product.name}
           </h3>
 
           <p className="text-[10px] text-gray-400 uppercase tracking-widest font-medium">
-            {product.category} • {product.condition || "Professional"}
+            {product.category}
           </p>
 
           <div className="flex items-center gap-1">
-            {Array.from({ length: 5 }).map((_, i) => (
+                    {Array.from({ length: 5 }).map((_, i) => (
               <Star
                 key={i}
-                className={`w-3 h-3 ${i < Math.floor(product.rating || 0) ? "fill-yellow-400 text-yellow-400" : "text-gray-200"}`}
+                className={`w-3 h-3 ${i < Math.floor( 3.5) ? "fill-yellow-400 text-yellow-400" : "text-gray-200"}`}
               />
             ))}
             <span className="text-[10px] text-gray-400">({product.reviews || 0})</span>

@@ -1,35 +1,79 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Star, Info, List, MessageSquare } from "lucide-react";
 import { Product } from "@/lib/type";
-import { useReviewStore } from "@/components/store/cat-store";
 
 type TabType = "detail" | "specifications" | "reviews";
+
+interface ReviewFromBackend {
+  id: number;
+  author: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+}
 
 interface ProductTabsProps {
   product: Product;
 }
+
 export default function ProductTabs({ product }: ProductTabsProps) {
   const [selectedTab, setSelectedTab] = useState<TabType>("detail");
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [newReview, setNewReview] = useState({ author: "", rating: 0, comment: "" });
   const [hoverRating, setHoverRating] = useState(0);
+  
+  // Real database state instead of Zustand
+  const [dbReviews, setDbReviews] = useState<ReviewFromBackend[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { reviews, addReview } = useReviewStore();
+  // 1. Sync local component state with reviews already attached to the product object
+  useEffect(() => {
+    if (product?.reviews) {
+      setDbReviews(product.reviews);
+    }
+  }, [product]);
 
-  const handleSubmitReview = (e: React.FormEvent) => {
+  // 2. Submit the comment to your Spring Boot API
+  const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newReview.author || newReview.rating === 0 || !newReview.comment) return;
 
-    addReview({
-      author: newReview.author,
-      rating: newReview.rating,
-      comment: newReview.comment,
-    });
+    setIsSubmitting(true);
 
-    setNewReview({ author: "", rating: 0, comment: "" });
-    setShowReviewForm(false);
+    try {
+      // Points exactly to your @PostMapping("/{productId}/reviews") Spring controller endpoint
+      const response = await fetch(`http://localhost:9090/api/products/${product.id}/reviews`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          author: newReview.author,
+          rating: newReview.rating,
+          comment: newReview.comment,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save review to the database");
+      }
+
+      const savedReviewFromServer: ReviewFromBackend = await response.json();
+
+      // Update the UI immediately with the newly returned database item
+      setDbReviews((prev) => [savedReviewFromServer, ...prev]);
+
+      // Reset form fields
+      setNewReview({ author: "", rating: 0, comment: "" });
+      setShowReviewForm(false);
+    } catch (error) {
+      console.error("Error connecting to backend server:", error);
+      alert("Could not save your comment right now. Is the Spring Boot server running?");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -39,7 +83,7 @@ export default function ProductTabs({ product }: ProductTabsProps) {
         {[
           { id: "detail", name: "Product Details", icon: Info },
           { id: "specifications", name: "Technical Specs", icon: List },
-          { id: "reviews", name: `Reviews (${reviews.length})`, icon: MessageSquare },
+          { id: "reviews", name: `Reviews (${dbReviews.length})`, icon: MessageSquare },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -119,8 +163,9 @@ export default function ProductTabs({ product }: ProductTabsProps) {
                 <div className="grid grid-cols-2 gap-4">
                   <input
                     type="text"
+                    required
                     placeholder="Your Name"
-                    className="p-3 rounded-xl border border-gray-600 ring-1 ring-gray-200"
+                    className="p-3 rounded-xl border border-gray-300 focus:border-gray-600 focus:outline-none"
                     value={newReview.author}
                     onChange={(e) => setNewReview({ ...newReview, author: e.target.value })}
                   />
@@ -128,7 +173,7 @@ export default function ProductTabs({ product }: ProductTabsProps) {
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star
                         key={star}
-                        className={`w-7 h-7 cursor-pointer text-gray-600 ${(hoverRating || newReview.rating) >= star ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
+                        className={`w-7 h-7 cursor-pointer transition-colors ${(hoverRating || newReview.rating) >= star ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
                         onMouseEnter={() => setHoverRating(star)}
                         onMouseLeave={() => setHoverRating(0)}
                         onClick={() => setNewReview({ ...newReview, rating: star })}
@@ -137,21 +182,25 @@ export default function ProductTabs({ product }: ProductTabsProps) {
                   </div>
                 </div>
                 <textarea
+                  required
                   placeholder="Tell others about your rental experience..."
-                  className="w-full p-3 rounded-xl border border-gray-600  ring-1 ring-gray-200 min-h-[100px]"
+                  className="w-full p-3 rounded-xl border border-gray-300 focus:border-gray-600 focus:outline-none min-h-[100px]"
                   value={newReview.comment}
                   onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
                 />
-                <button className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-100">
-                  Submit Feedback
+                <button 
+                  disabled={isSubmitting}
+                  className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-100 disabled:bg-blue-400"
+                >
+                  {isSubmitting ? "Saving to Server..." : "Submit Feedback"}
                 </button>
               </form>
             )}
 
             <div className="space-y-6">
-              {reviews.length > 0 ? (
-                reviews.map((review, idx) => (
-                  <div key={idx} className="border-b border-gray-50 pb-6 last:border-0">
+              {dbReviews.length > 0 ? (
+                dbReviews.map((review) => (
+                  <div key={review.id || review.createdAt} className="border-b border-gray-50 pb-6 last:border-0">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="flex">
                         {[...Array(5)].map((_, i) => (

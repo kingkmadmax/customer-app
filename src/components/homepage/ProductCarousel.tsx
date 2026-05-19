@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Cards from "@/components/ui/cards";
-// import Best from "./BestSection";
 import MoreSection from "@/components/homepage/MoreSection";
 import { Product } from "@/lib/type";
 
@@ -12,7 +11,10 @@ export default function Content() {
   const [error, setError] = useState<string | null>(null);
 
   const [filter, setFilter] = useState<string>("All");
+
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+
   const itemsPerPage = 8;
 
   // ==================== FETCH DATA ====================
@@ -22,21 +24,23 @@ export default function Content() {
         setLoading(true);
         setError(null);
 
-        const response = await fetch("http://localhost:9090/api/products/all");
+        const response = await fetch(
+          `http://localhost:9090/api/products/all?page=${currentPage - 1}&size=${itemsPerPage}`
+        );
 
         if (!response.ok) throw new Error("Failed to fetch products");
 
         const data = await response.json();
 
-        const formattedProducts: Product[] = data.map((item: any) => ({
+        const formattedProducts: Product[] = data.content.map((item: any) => ({
           id: Number(item.id),
           name: item.name,
           price: Number(item.price) || 0,
           category: item.category || "Other",
-          condition: item.condition ,
+          condition: item.condition,
           location: item.location,
           deposit: item.deposit,
-          Situation:item.Situation,
+          Situation: item.Situation,
           description: item.description,
           image: item.imageUrl ? [item.imageUrl] : [],
           rating: 4.5,
@@ -45,6 +49,7 @@ export default function Content() {
         }));
 
         setProducts(formattedProducts);
+        setTotalPages(data.totalPages); // 👈 IMPORTANT
       } catch (err) {
         console.error(err);
         setError("Failed to load products. Make sure backend is running.");
@@ -54,25 +59,30 @@ export default function Content() {
     }
 
     fetchProducts();
-  }, []);
+  }, [currentPage]);
 
-  // Filtering & Pagination
+  // ==================== FILTER (frontend only) ====================
   const filteredProducts =
     filter === "All"
       ? products
       : products.filter((product) => product.category === filter);
 
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
-
   const categories = ["All", "Houses", "Vehicles", "Electronics", "Condition"];
 
-  if (loading) return <div className="text-center py-24 text-xl">Loading products...</div>;
-  if (error) return <div className="text-center py-24 text-red-500">{error}</div>;
+  // ==================== LOADING / ERROR ====================
+  if (loading)
+    return (
+      <div className="text-center py-24 text-xl">Loading products...</div>
+    );
+
+  if (error)
+    return (
+      <div className="text-center py-24 text-red-500">{error}</div>
+    );
 
   return (
     <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col">
+
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6 mt-10">
         <div>
@@ -94,7 +104,7 @@ export default function Content() {
               <button
                 onClick={() => {
                   setFilter(cat);
-                  setCurrentPage(1);
+                  setCurrentPage(1); // reset page
                 }}
                 className={`py-2 px-6 rounded-full text-sm font-medium transition-all border ${
                   filter === cat
@@ -111,29 +121,35 @@ export default function Content() {
 
       {/* PRODUCTS GRID */}
       <div className="w-full transition-all duration-500 py-10">
-        <Cards card={paginatedProducts} gap="gap-6" />
+        <Cards card={filteredProducts} gap="gap-6" />
       </div>
 
       {/* PAGINATION */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-3 pt-12 pb-16">
+          
+          {/* Prev */}
           <button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((p) => p - 1)}
-            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-30 hover:bg-gray-50 transition-colors"
+            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-30 hover:bg-gray-50"
           >
             Prev
           </button>
 
+          {/* Pages */}
           {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .slice(Math.max(0, currentPage - 2), Math.max(3, currentPage + 1))
+            .slice(
+              Math.max(0, currentPage - 2),
+              Math.max(3, currentPage + 1)
+            )
             .map((page) => (
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
-                className={`px-4 py-2 rounded-lg border transition-all duration-300 ${
+                className={`px-4 py-2 rounded-lg border transition-all ${
                   currentPage === page
-                    ? "bg-black text-white border-black scale-105 shadow-md"
+                    ? "bg-black text-white border-black scale-105"
                     : "bg-white text-black border-gray-300 hover:border-black"
                 }`}
               >
@@ -141,15 +157,17 @@ export default function Content() {
               </button>
             ))}
 
+          {/* Next */}
           <button
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage((p) => p + 1)}
-            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-30 hover:bg-gray-50 transition-colors"
+            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-30 hover:bg-gray-50"
           >
             Next
           </button>
         </div>
       )}
+
       <MoreSection />
     </div>
   );

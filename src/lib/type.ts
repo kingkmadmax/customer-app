@@ -2,7 +2,13 @@ export interface Specification {
   label: string;
   value: string;
 }
-
+interface ReviewFromBackend {
+  id: number;
+  author: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+}
 export interface Product {
 
   id: number;
@@ -19,7 +25,7 @@ export interface Product {
   status?: string;
   image: string[];
   deposite?: number;
-  reviews?: number;
+  reviews?: ReviewFromBackend[];
   rating?: number;
 }
 export interface CartItem {
