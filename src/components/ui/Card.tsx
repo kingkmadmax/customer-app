@@ -17,7 +17,6 @@ interface SingleCardProps {
   isFavorite: boolean;
 }
 
-
 export default function Card({
   product,
   onQuickView,
@@ -28,16 +27,17 @@ export default function Card({
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
 
-  // Get the addToCart action from your Zustand store
   const addToCart = useCartStore((state) => state.addToCart);
-  const setProduct =useCheckoutStore((state) => state.setProduct);
-
+  const setProduct = useCheckoutStore((state) => state.setProduct);
   const router = useRouter();
+
+  // Safely fallback to handle single-string images or array types securely
+  const displayImage = product.imageUrl || (Array.isArray(product.image) ? product.image[0] : product.image) || "";
+
   const handleAddToCart = () => {
     setStatus("loading");
 
-    // Construct the item based on your CartItem type in cat-store
-    const itemToStore: CartItem = {
+  const itemToStore: CartItem = {
       id: product.id,
       name: product.name,
       price: product.price,
@@ -47,64 +47,62 @@ export default function Card({
       status: "pending",
     };
 
-    // This updates state AND localStorage automatically via Zustand Persist
     addToCart(itemToStore);
-
-    // Provide instant UI feedback
     setStatus("success");
     
     setTimeout(() => {
       setStatus("idle");
     }, 1500);
   };
- const handleAddToChackout = () => {
-  setStatus("loading");
 
-  // 1. Prepare the data object
-  const itemToCheckout = {
-    id: product.id,
-    name: product.name,
-    price: product.price,
-    deposite: product.deposit,
-    image: Array.isArray(product.image) ? product.image[0] : (product.image || ""),
+  const handleAddToChackout = () => {
+    setStatus("loading");
+
+    const itemToCheckout = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      deposite: product.deposit,
+      image: displayImage,
+    };
+
+    setProduct(itemToCheckout);
+    setStatus("success");
+    
+    router.push("/Checkout/checkout");
+
+    setTimeout(() => {
+      setStatus("idle");
+    }, 1500);
   };
 
-  setProduct(itemToCheckout);
-
-  setStatus("success");
-  
-  // Move to checkout page
-  router.push("/Checkout/checkout");
-
-  setTimeout(() => {
-    setStatus("idle");
-  }, 1500);
-};
   return (
     <div className="w-full max-w-[250px] h-[400px] flex-shrink-0 bg-white border border-gray-300 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group relative flex flex-col mx-auto">
       
       {/* IMAGE SECTION */}
       <div className="relative h-60 w-full bg-gray-50 overflow-hidden">
         <Link href={`/product/${product.id}`} className="w-full h-full block">
-          {product.image ? (
+          {displayImage ? (
             <Image
-              src={Array.isArray(product.image) ? product.image[0] : product.image}
+              src={displayImage}
               alt={product.name}
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-500"
             />
           ) : (
             <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
-              No Image  <div className="absolute top-3 left-3 z-10 flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full translate-x-12 group-hover:translate-x-0 transition-transform duration-300 "></div>
+              No Image
             </div>
           )}
         </Link>
+        
+        {/* FIX: Lowercase situation property */}
         <div className="absolute top-3 left-3 z-10 flex items-center gap-2 bg-white/100 rounded-full -translate-x-25 group-hover:translate-x-0 w-22 transition-transform duration-300 ">
-            <span className={`w-3 h-3 rounded-full animate-pulse ${getStatusColor(product.Situation)}`} />
-            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-700">
-              {product.Situation}
-            </span>
-          </div>
+          <span className={`w-3 h-3 rounded-full animate-pulse ${getStatusColor(product.Situation || "Available")}`} />
+          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-700">
+            {product.Situation || "Available"}
+          </span>
+        </div>
 
         {/* HOVER ACTIONS */}
         <div className="absolute top-3 right-3 z-10 flex flex-col gap-2 translate-x-12 group-hover:translate-x-0 transition-transform duration-300">
@@ -126,7 +124,7 @@ export default function Card({
       {/* CONTENT SECTION */}
       <div className="p-2 flex flex-col justify-between flex-1">
         <div className="space-y-1">
-          <h3 className="font-semibold text-lg  text-black h-6 capitalize ">
+          <h3 className="font-semibold text-lg text-black h-6 capitalize overflow-hidden text-ellipsis whitespace-nowrap">
             {product.name}
           </h3>
 
@@ -135,13 +133,14 @@ export default function Card({
           </p>
 
           <div className="flex items-center gap-1">
-                    {Array.from({ length: 5 }).map((_, i) => (
+            {Array.from({ length: 5 }).map((_, i) => (
               <Star
                 key={i}
-                className={`w-3 h-3 ${i < Math.floor( 3.5) ? "fill-yellow-400 text-yellow-400" : "text-gray-200"}`}
+                className={`w-3 h-3 ${i < Math.floor(product.rating || 0) ? "fill-yellow-400 text-yellow-400" : "text-gray-200"}`}
               />
             ))}
-            <span className="text-[10px] text-gray-400">({product.reviews || 0})</span>
+            {/* FIX: Read array length instead of rendering raw array object */}
+            <span className="text-[10px] text-gray-400">({product.reviews?.length || 0})</span>
           </div>
         </div>
 
@@ -173,7 +172,7 @@ export default function Card({
                 onClick={handleAddToCart}
                 disabled={status !== "idle"}
                 className={`whitespace-nowrap px-3 h-8 rounded-lg text-[11px] font-bold uppercase flex items-center justify-center gap-1.5 transition-all ${
-                    status === "success" ? "bg-green-600 text-white" : "bg-black text-white hover:bg-gray-800"
+                  status === "success" ? "bg-green-600 text-white" : "bg-black text-white hover:bg-gray-800"
                 }`}
               >
                 {status === "loading" ? (
@@ -187,8 +186,7 @@ export default function Card({
               </button>
 
               <button
-                 onClick={handleAddToChackout}
-
+                onClick={handleAddToChackout}
                 className="whitespace-nowrap px-3 h-8 bg-blue-600 text-white rounded-lg text-[11px] font-bold uppercase hover:bg-blue-700 transition-colors"
               >
                 Rent Now

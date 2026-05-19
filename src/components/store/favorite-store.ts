@@ -1,27 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { products } from "@/app/data/product"
+import { Product } from '@/lib/type';
 
-export interface Product {
-  
-  id: number;
-  ownerId?: string;
-  name: string;
-  price: number;
-  category?: string;
-  location?: string;
-  condition?: string;
-  deposit?: number;
-  description?: string;
-  imageUrl?: string;
-  
-  // Keep these for compatibility with your stores and old code
-  status?: string;
-  image?: string[];
-  deposite?: number;
-  reviews?: number;
-  rating?: number;
-}
+// If you want a narrower favorite item signature in the future,
+// create a separate FavoriteProduct type here and import only the fields you need.
 
 
 interface FavoriteStore {

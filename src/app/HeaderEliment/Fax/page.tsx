@@ -24,7 +24,7 @@ const FAQS: FAQItem[] = [
   {
     category: "Getting Started",
     question: "What do I need to rent?",
-    answer: "You'll need a valid ID, proof of address, and a credit/debit card for security deposit and rental fees. First-time renters may need additional verification. We accept most major credit cards and digital payment methods.",
+    answer: "You'll need a valid ID, proof of address, and a credit/debit card for securitydeposite and rental fees. First-time renters may need additional verification. We accept most major credit cards and digital payment methods.",
     icon: HelpCircle,
     tags: ["requirements", "id", "verification"]
   },
@@ -69,15 +69,15 @@ const FAQS: FAQItem[] = [
   },
   {
     category: "Payments & Security",
-    question: "Do you require a security deposit?",
-    answer: "Yes, most rentals require a refundable security deposit. The deposit amount varies by item value and typically ranges from 10-50% of the item's retail price. Deposits are fully refunded upon return of the item in good condition.",
+    question: "Do you require a securitydeposite?",
+    answer: "Yes, most rentals require a refundable securitydeposite. Thedeposite amount varies by item value and typically ranges from 10-50% of the item's retail price. Deposits are fully refunded upon return of the item in good condition.",
     icon: Shield,
     tags: ["deposit", "security", "refund"]
   },
   {
     category: "Payments & Security",
     question: "When am I charged?",
-    answer: "You'll be charged the rental fee plus any applicable delivery fees at the time of booking. The security deposit is held separately and refunded after the rental period ends and the item is returned.",
+    answer: "You'll be charged the rental fee plus any applicable delivery fees at the time of booking. The securitydeposite is held separately and refunded after the rental period ends and the item is returned.",
     icon: CreditCard,
     tags: ["billing", "charges", "timing"]
   },

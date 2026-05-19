@@ -34,7 +34,7 @@ export interface CartItem {
   name: string;
   price: number;
   image: string[];     
-  deposit: number;   
+ deposit: number;   
   category: string;  
 }
   
@@ -61,7 +61,7 @@ export interface CardsProps {
   productName: string;
   quantity: number;
   price: number;
-  deposit: number;
+ deposite: number;
   totalPrice: number;
   
   location: string;

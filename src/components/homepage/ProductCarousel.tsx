@@ -39,7 +39,7 @@ export default function Content() {
           category: item.category || "Other",
           condition: item.condition,
           location: item.location,
-          deposit: item.deposit,
+         deposite: item.deposit,
           Situation: item.Situation,
           description: item.description,
           image: item.imageUrl ? [item.imageUrl] : [],

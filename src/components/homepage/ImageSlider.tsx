@@ -51,7 +51,7 @@ export default function ImageSlider({
           condition: item.condition || "New",
           location: item.location,
           Situation: item.Situation || item.situation || "New",
-          deposit: item.deposit,
+         deposite: item.deposit,
           description: item.description,
           image: item.imageUrl ? [item.imageUrl] : [],
           ownerId: item.ownerId,

@@ -67,7 +67,7 @@ export default function CartSummary() {
             </div>
 
             <div className="flex justify-between text-orange-600">
-              <span>Security Deposit</span>
+              <span>Securitydeposite</span>
               <span>+${totalDeposit.toFixed(2)}</span>
             </div>
 
@@ -79,7 +79,7 @@ export default function CartSummary() {
             </div>
 
             <p className="text-[10px] text-gray-400 text-right italic">
-              * Security deposit is fully refundable upon safe return
+              * Securitydeposite is fully refundable upon safe return
             </p>
           </div>
         </>

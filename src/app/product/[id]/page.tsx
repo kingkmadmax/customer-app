@@ -160,7 +160,7 @@ export default function ProductDetails() {
         </span>
       </div>
       <p className="text-sm text-gray-400 mt-1 font-medium italic">
-        + {product.deposit?.toLocaleString() || 0} ETB refundable deposit
+        + {product.deposit?.toLocaleString() || 0} ETB refundabledeposite
       </p>
     </div>
 
