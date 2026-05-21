@@ -28,11 +28,41 @@ export default function ProductTabs({ product }: ProductTabsProps) {
   const [dbReviews, setDbReviews] = useState<ReviewFromBackend[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 1. Sync local component state with reviews already attached to the product object
+  // 1. Load review data from the product or fetch it from the backend if not embedded
   useEffect(() => {
-    if (product?.reviews) {
-      setDbReviews(product.reviews);
-    }
+    const loadReviews = async () => {
+      if (!product?.id) return;
+
+      if (product.reviews && product.reviews.length > 0) {
+        setDbReviews(product.reviews);
+        return;
+      }
+
+      try {
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:9090/api";
+        const response = await fetch(`${apiBaseUrl}/products/${product.id}/reviews`, {
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          const errorBody = await response.text();
+          console.warn(
+            `Unable to load product reviews (${response.status} ${response.statusText}) for product ${product.id}:`,
+            errorBody || "No response body"
+          );
+          return;
+        }
+
+        const fetchedReviews: ReviewFromBackend[] = await response.json();
+        if (Array.isArray(fetchedReviews)) {
+          setDbReviews(fetchedReviews);
+        }
+      } catch (error) {
+        console.error("Failed to load reviews for product:", error);
+      }
+    };
+
+    loadReviews();
   }, [product]);
 
   // 2. Submit the comment to your Spring Boot API

@@ -10,6 +10,7 @@ export default function Content() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Filter state (now used directly in API request)
   const [filter, setFilter] = useState<string>("All");
 
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -24,32 +25,41 @@ export default function Content() {
         setLoading(true);
         setError(null);
 
+        // Include category filtering directly in the API request if it's not "All"
+        const categoryParam = filter !== "All" ? `&category=${encodeURIComponent(filter)}` : "";
+        
         const response = await fetch(
-          `http://localhost:9090/api/products/all?page=${currentPage - 1}&size=${itemsPerPage}`
+          `http://localhost:9090/api/products/all?page=${currentPage - 1}&size=${itemsPerPage}${categoryParam}`
         );
 
         if (!response.ok) throw new Error("Failed to fetch products");
 
         const data = await response.json();
 
-        const formattedProducts: Product[] = data.content.map((item: any) => ({
+        // Handle Spring's PagedModel structure or standard Page structure safely
+        const content = data.content || (data._embedded ? data._embedded.rentalProducts : []);
+        const totalPagesCount = data.page?.totalPages ?? data.totalPages ?? 1;
+
+        if (!content) throw new Error("Unexpected API response structure");
+
+        const formattedProducts: Product[] = content.map((item: any) => ({
           id: Number(item.id),
           name: item.name,
           price: Number(item.price) || 0,
           category: item.category || "Other",
           condition: item.condition,
           location: item.location,
-         deposite: item.deposit,
+          deposite: item.deposit,
           Situation: item.Situation,
           description: item.description,
           image: item.imageUrl ? [item.imageUrl] : [],
-          rating: 4.5,
-          reviews: 12,
+          averageRating: Number(item.averageRating) || 0,
+          rating: Number(item.averageRating) || 0,
           ownerId: item.ownerId,
         }));
 
         setProducts(formattedProducts);
-        setTotalPages(data.totalPages); // 👈 IMPORTANT
+        setTotalPages(totalPagesCount); 
       } catch (err) {
         console.error(err);
         setError("Failed to load products. Make sure backend is running.");
@@ -59,27 +69,9 @@ export default function Content() {
     }
 
     fetchProducts();
-  }, [currentPage]);
-
-  // ==================== FILTER (frontend only) ====================
-  const filteredProducts =
-    filter === "All"
-      ? products
-      : products.filter((product) => product.category === filter);
+  }, [currentPage, filter]); 
 
   const categories = ["All", "Houses", "Vehicles", "Electronics", "Condition"];
-
-  // ==================== LOADING / ERROR ====================
-  if (loading)
-    return (
-      <div className="text-center py-24 text-xl">Loading products...</div>
-    );
-
-  if (error)
-    return (
-      <div className="text-center py-24 text-red-500">{error}</div>
-    );
-
   return (
     <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col">
 
@@ -104,7 +96,7 @@ export default function Content() {
               <button
                 onClick={() => {
                   setFilter(cat);
-                  setCurrentPage(1); // reset page
+                  setCurrentPage(1); // Reset back to page 1 on filter change
                 }}
                 className={`py-2 px-6 rounded-full text-sm font-medium transition-all border ${
                   filter === cat
@@ -119,49 +111,52 @@ export default function Content() {
         </ul>
       </nav>
 
-      {/* PRODUCTS GRID */}
-      <div className="w-full transition-all duration-500 py-10">
-        <Cards card={filteredProducts} gap="gap-6" />
-      </div>
+      {/* PRODUCTS DISPLAY GRID */}
+      {loading ? (
+        <div className="text-center py-24 text-xl min-h-[400px]">Loading products...</div>
+      ) : error ? (
+        <div className="text-center py-24 text-red-500 min-h-[400px]">{error}</div>
+      ) : products.length === 0 ? (
+        <div className="text-center py-24 text-gray-400 min-h-[400px]">No products found in this category.</div>
+      ) : (
+        <div className="w-full transition-all duration-500 py-10">
+          <Cards card={products} gap="gap-6" />
+        </div>
+      )}
 
-      {/* PAGINATION */}
-      {totalPages > 1 && (
+      {/* PAGINATION (Now handles exact numbers cleanly) */}
+      {!loading && !error && totalPages > 1 && (
         <div className="flex justify-center items-center gap-3 pt-12 pb-16">
           
-          {/* Prev */}
+          {/* Prev Button */}
           <button
             disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => p - 1)}
-            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-30 hover:bg-gray-50"
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-30 disabled:hover:bg-white hover:bg-gray-50 transition-colors"
           >
             Prev
           </button>
 
-          {/* Pages */}
-          {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .slice(
-              Math.max(0, currentPage - 2),
-              Math.max(3, currentPage + 1)
-            )
-            .map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`px-4 py-2 rounded-lg border transition-all ${
-                  currentPage === page
-                    ? "bg-black text-white border-black scale-105"
-                    : "bg-white text-black border-gray-300 hover:border-black"
-                }`}
-              >
-                {page}
-              </button>
-            ))}
+          {/* Clean Numerical Page Pipeline */}
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-4 py-2 rounded-lg border transition-all ${
+                currentPage === page
+                  ? "bg-black text-white border-black scale-105 font-semibold"
+                  : "bg-white text-black border-gray-300 hover:border-black"
+              }`}
+            >
+              {page}
+            </button>
+          ))}
 
-          {/* Next */}
+          {/* Next Button */}
           <button
             disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((p) => p + 1)}
-            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-30 hover:bg-gray-50"
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-30 disabled:hover:bg-white hover:bg-gray-50 transition-colors"
           >
             Next
           </button>

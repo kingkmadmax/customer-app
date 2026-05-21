@@ -1,7 +1,7 @@
 "use client";
 
-import { useCartStore, useCheckoutStore, useReviewStore } from "@/components/store/cat-store";
-import { useState, useMemo, useEffect } from "react";
+import { useCartStore, useCheckoutStore } from "@/components/store/cat-store";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useFavoriteStore } from "@/components/store/favorite-store";
@@ -25,12 +25,12 @@ export default function ProductDetails() {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [newReview, setNewReview] = useState({ author: "", rating: 0, comment: "" });
 
-
   // Store Hooks
-  const { reviews, addReview } = useReviewStore();
   const { favorites, toggleFavorite } = useFavoriteStore();
   const setCheckoutProduct = useCheckoutStore((state) => state.setProduct);
   const { cartItems, addToCart, increaseQuantity } = useCartStore();
+
+  const reviewCount = product?.reviews?.length ?? 0;
 
   
   useEffect(() => {
@@ -144,7 +144,7 @@ export default function ProductDetails() {
       <div className="flex items-center gap-2">       
             <Star className="w-4 h-4 fill-black text-black" />
         <span className="text-lg text-black font-medium">
-          ({reviews.length }) Rating
+          ({reviewCount}) Rating
         </span>
         <span className="flex items-center gap-1.5 text-green-600 text-sm font-bold ml-2">
           <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />

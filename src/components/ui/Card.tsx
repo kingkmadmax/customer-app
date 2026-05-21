@@ -34,20 +34,22 @@ export default function Card({
   // Safely fallback to handle single-string images or array types securely
   const displayImage = product.imageUrl || (Array.isArray(product.image) ? product.image[0] : product.image) || "";
 
+
   const handleAddToCart = () => {
     setStatus("loading");
 
-  const itemToStore: CartItem = {
+    const itemToStore: CartItem = {
       id: product.id,
       name: product.name,
       price: product.price,
       deposite: product.deposit, 
-      image: product.image[0] ,
+      image: Array.isArray(product.image) ? product.image[0] : displayImage,
       quantity: 1,
       status: "pending",
     };
 
-    addToCart(itemToStore);
+    // Assuming store accepts matching attributes or wrapper maps
+    addToCart(itemToStore as any);
     setStatus("success");
     
     setTimeout(() => {
@@ -68,6 +70,7 @@ export default function Card({
 
     setProduct(itemToCheckout);
     setStatus("success");
+    onRentNow(product);
     
     router.push("/Checkout/checkout");
 
@@ -77,10 +80,10 @@ export default function Card({
   };
 
   return (
-    <div className="w-full max-w-[250px] h-[400px] flex-shrink-0 bg-white border border-gray-300 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group relative flex flex-col mx-auto">
+    <div className="w-full bg-white border border-gray-300 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all group relative flex flex-col">
       
       {/* IMAGE SECTION */}
-      <div className="relative h-60 w-full bg-gray-50 overflow-hidden">
+      <div className="relative aspect-[3/4] sm:aspect-[4/5] w-full bg-gray-50 overflow-hidden">
         <Link href={`/product/${product.id}`} className="w-full h-full block">
           {displayImage ? (
             <Image
@@ -88,6 +91,7 @@ export default function Card({
               alt={product.name}
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-500"
+              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
             />
           ) : (
             <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
@@ -95,17 +99,25 @@ export default function Card({
             </div>
           )}
         </Link>
-        
-        {/* FIX: Lowercase situation property */}
-        <div className="absolute top-3 left-3 z-10 flex items-center gap-2 bg-white/100 rounded-full -translate-x-25 group-hover:translate-x-0 w-22 transition-transform duration-300 ">
-          <span className={`w-3 h-3 rounded-full animate-pulse ${getStatusColor(product.Situation || "Available")}`} />
+
+        {/* Status Badge */}
+        <div className="absolute top-2 left-2 z-10 flex items-center gap-1.5 bg-white rounded-full px-2 py-0.5 shadow-sm">
+          <span className={`w-2 h-2 rounded-full animate-pulse ${getStatusColor(product.Situation || "Available")}`} />
           <span className="text-[10px] font-bold uppercase tracking-wider text-gray-700">
             {product.Situation || "Available"}
           </span>
         </div>
 
-        {/* HOVER ACTIONS */}
-        <div className="absolute top-3 right-3 z-10 flex flex-col gap-2 translate-x-12 group-hover:translate-x-0 transition-transform duration-300">
+        {/* Rating Overlay */}
+        <div className="absolute bottom-2 left-2 z-10 flex items-center gap-1 bg-black/70 backdrop-blur-md rounded-lg px-2.5 py-1 text-white shadow">
+          <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+          <span className="text-sm font-semibold">
+            {product.averageRating ? product.averageRating.toFixed(1) : "0.0"}
+          </span>
+        </div>
+
+        {/* Hover Actions */}
+        <div className="absolute top-2 right-2 z-10 flex flex-col gap-2 translate-x-12 group-hover:translate-x-0 transition-transform duration-300">
           <button
             onClick={() => onQuickView(product)}
             className="bg-white p-2 rounded-full shadow-lg hover:bg-black hover:text-white transition-colors"
@@ -121,77 +133,49 @@ export default function Card({
         </div>
       </div>
 
-      {/* CONTENT SECTION */}
-      <div className="p-2 flex flex-col justify-between flex-1">
-        <div className="space-y-1">
-          <h3 className="font-semibold text-lg text-black h-6 capitalize overflow-hidden text-ellipsis whitespace-nowrap">
+      {/* CONTENT */}
+      <div className="p-3 flex flex-col justify-between flex-1">
+        <div>
+          <h3 className="font-semibold text-base text-black line-clamp-1">
             {product.name}
           </h3>
-
-          <p className="text-[10px] text-gray-400 uppercase tracking-widest font-medium">
-            {product.category}
-          </p>
-
-          <div className="flex items-center gap-1">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                className={`w-3 h-3 ${i < Math.floor(product.rating || 0) ? "fill-yellow-400 text-yellow-400" : "text-gray-200"}`}
-              />
-            ))}
-            {/* FIX: Read array length instead of rendering raw array object */}
-            <span className="text-[10px] text-gray-400">({product.reviews?.length || 0})</span>
-          </div>
+          <p className="text-xs text-gray-500 mt-0.5">{product.category}</p>
         </div>
 
-        {/* BOTTOM SECTION */}
-        <div className="pt-2">
+        {/* Price & Rent Button Area */}
+        <div className="mt-3">
           <div className="flex items-baseline mb-3">
-            <span className="text-lg font-bold text-black tracking-tighter">
+            <span className="text-2xl font-bold text-black">
               {product.price?.toLocaleString() || "0"}
             </span>
-            <span className="text-[10px] text-gray-500 font-medium ml-1 uppercase">ETB / Day</span>
+            <span className="text-xs text-gray-500 ml-1">ETB / Day</span>
           </div>
 
-          <div className="relative flex items-center justify-start w-full h-10 overflow-hidden">
+          <div className="flex gap-2">
+            {/* Add to Cart */}
             <button
-              onClick={() => setIsOpen(!isOpen)}
-              className={`mr-2 z-20 flex items-center justify-center min-w-[36px] min-h-[36px] rounded-full shadow-sm transition-all duration-300 ${
-                isOpen ? "bg-gray-200 text-black" : "bg-blue-600 text-white"
-              }`}
+              onClick={handleAddToCart}
+              disabled={status === "loading"}
+              className="flex-1 flex items-center justify-center gap-2 bg-gray-900 hover:bg-black text-white py-2.5 rounded-lg text-sm font-medium transition-all"
             >
-              {isOpen ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+              {status === "loading" ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : status === "success" ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                <ShoppingCart className="w-4 h-4" />
+              )}
+              <span>Cart</span>
             </button>
 
-            <div
-              className={`flex gap-1.5 transition-all duration-500 ease-out transform ${
-                isOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0 pointer-events-none"
-              }`}
+            {/* Rent Now Button - Main Renting Action */}
+            <button
+              onClick={handleAddToChackout}
+              disabled={status === "loading"}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-all"
             >
-              <button
-                onClick={handleAddToCart}
-                disabled={status !== "idle"}
-                className={`whitespace-nowrap px-3 h-8 rounded-lg text-[11px] font-bold uppercase flex items-center justify-center gap-1.5 transition-all ${
-                  status === "success" ? "bg-green-600 text-white" : "bg-black text-white hover:bg-gray-800"
-                }`}
-              >
-                {status === "loading" ? (
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                ) : status === "success" ? (
-                  <Check className="w-3 h-3" />
-                ) : (
-                  <ShoppingCart className="w-3 h-3" />
-                )}
-                {status === "loading" ? "Adding" : status === "success" ? "Added" : "Add"}
-              </button>
-
-              <button
-                onClick={handleAddToChackout}
-                className="whitespace-nowrap px-3 h-8 bg-blue-600 text-white rounded-lg text-[11px] font-bold uppercase hover:bg-blue-700 transition-colors"
-              >
-                Rent Now
-              </button>
-            </div>
+              Rent Now
+            </button>
           </div>
         </div>
       </div>

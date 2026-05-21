@@ -26,7 +26,9 @@ export interface Product {
   image: string[];
   deposite?: number;
   reviews?: ReviewFromBackend[];
+  averageRating?: number;   
   rating?: number;
+  
 }
 export interface CartItem {
   id: number;
