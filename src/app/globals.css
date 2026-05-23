@@ -23,12 +23,12 @@
 
 
 html, body {
-  background-color: #ECF2F2 !important;
+  background-color: #dedede !important;
   color: black !important;
 }
 
 body {
-  background: #ECF2F2;
+  background: #ffffff;
   color: black;
 }
 @layer utilities {
