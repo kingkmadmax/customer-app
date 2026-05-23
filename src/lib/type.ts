@@ -11,6 +11,13 @@ interface ReviewFromBackend {
 }
 export interface Product {
 
+
+
+
+
+
+
+
   id: number;
   ownerId?: string;
   name: string;
@@ -28,6 +35,7 @@ export interface Product {
   reviews?: ReviewFromBackend[];
   averageRating?: number;   
   rating?: number;
+  ownerName: string;
   
 }
 export interface CartItem {
