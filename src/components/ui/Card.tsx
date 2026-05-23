@@ -80,10 +80,10 @@ export default function Card({
   };
 
   return (
-    <div className="w-full bg-white border border-gray-300 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all group relative flex flex-col">
+    <div className="w-full bg-white border border-gray-400 rounded-xl overflow-hidden shadow-xl hover:shadow-3xl transition-all group relative flex flex-col">
       
       {/* IMAGE SECTION */}
-      <div className="relative aspect-[3/4] sm:aspect-[4/5] w-full bg-gray-50 overflow-hidden">
+      <div className="relative aspect-[3/4] sm:aspect-[6/5] w-full bg-gray-50 overflow-hidden">
         <Link href={`/product/${product.id}`} className="w-full h-full block">
           {displayImage ? (
             <Image
@@ -91,7 +91,7 @@ export default function Card({
               alt={product.name}
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-500"
-              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+              sizes="(max-width: 640px) 50vw, (max-width: 708px) 33vw, 25vw"
             />
           ) : (
             <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
@@ -136,7 +136,7 @@ export default function Card({
       {/* CONTENT */}
       <div className="p-3 flex flex-col justify-between flex-1">
         <div>
-          <h3 className="font-semibold text-base text-black line-clamp-1">
+          <h3 className="font-semibold text-base capitalize text-black line-clamp-1">
             {product.name}
           </h3>
           <p className="text-xs text-gray-500 mt-0.5">{product.category}</p>
@@ -145,10 +145,15 @@ export default function Card({
         {/* Price & Rent Button Area */}
         <div className="mt-3">
           <div className="flex items-baseline mb-3">
-            <span className="text-2xl font-bold text-black">
-              {product.price?.toLocaleString() || "0"}
+            <span className="text-xs md:text-sm lg:text-base font-bold text-gray-900">
+              {product.price?.toLocaleString() }
             </span>
-            <span className="text-xs text-gray-500 ml-1">ETB / Day</span>
+            <span className="text-xs text-blue-900 ml-1">ETB / Day</span>
+          </div>
+          <div>
+           
+           
+            <span className="font-medium text-sm">{product.ownerName}</span>
           </div>
 
           <div className="flex gap-2">
@@ -156,7 +161,7 @@ export default function Card({
             <button
               onClick={handleAddToCart}
               disabled={status === "loading"}
-              className="flex-1 flex items-center justify-center gap-2 bg-gray-900 hover:bg-black text-white py-2.5 rounded-lg text-sm font-medium transition-all"
+              className="w-20 sm:w-24 md:w-28 lg:w-32 xl:w-30 h-7 sm:h-8 md:h-9 lg:h-9 xl:h-9 flex items-center justify-center bg-gray-600 hover:bg-blue-700 text-white rounded-xl text-xs md:text-sm lg:text-base font-semibold transition-all"
             >
               {status === "loading" ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -165,14 +170,14 @@ export default function Card({
               ) : (
                 <ShoppingCart className="w-4 h-4" />
               )}
-              <span>Cart</span>
+              <span className="text-xs md:text-sm lg:text-base">Cart</span>
             </button>
 
             {/* Rent Now Button - Main Renting Action */}
             <button
               onClick={handleAddToChackout}
               disabled={status === "loading"}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-all"
+             className="w-20 sm:w-24 md:w-28 lg:w-32 xl:w-30 h-7 sm:h-8 md:h-9 lg:h-9 xl:h-9 flex items-center justify-center bg-blue-900 hover:bg-blue-700 text-white rounded-xl text-xs md:text-sm lg:text-base font-semibold transition-all"
             >
               Rent Now
             </button>

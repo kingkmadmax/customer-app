@@ -56,6 +56,7 @@ export default function Content() {
           averageRating: Number(item.averageRating) || 0,
           rating: Number(item.averageRating) || 0,
           ownerId: item.ownerId,
+          ownerName: item.ownerName
         }));
 
         setProducts(formattedProducts);
