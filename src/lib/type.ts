@@ -10,14 +10,6 @@ interface ReviewFromBackend {
   createdAt: string;
 }
 export interface Product {
-
-
-
-
-
-
-
-
   id: number;
   ownerId?: string;
   name: string;

@@ -112,7 +112,7 @@ export default function Card({
         <div className="absolute bottom-2 left-2 z-10 flex items-center gap-1 bg-black/70 backdrop-blur-md rounded-lg px-2.5 py-1 text-white shadow">
           <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
           <span className="text-sm font-semibold">
-            {product.averageRating ? product.averageRating.toFixed(1) : "0.0"}
+            {product.averageRating?.toFixed(1)  }
           </span>
         </div>
 
@@ -134,26 +134,28 @@ export default function Card({
       </div>
 
       {/* CONTENT */}
-      <div className="p-3 flex flex-col justify-between flex-1">
+      <div className="p-2 flex flex-col justify-between flex-1">
         <div>
-          <h3 className="font-semibold text-base capitalize text-black line-clamp-1">
+          <h3 className="font-semibold text-base capitalize text-black line-clamp-2">
             {product.name}
           </h3>
           <p className="text-xs text-gray-500 mt-0.5">{product.category}</p>
         </div>
 
         {/* Price & Rent Button Area */}
-        <div className="mt-3">
-          <div className="flex items-baseline mb-3">
+        <div className="">
+          <div className="flex items-baseline ">
             <span className="text-xs md:text-sm lg:text-base font-bold text-gray-900">
               {product.price?.toLocaleString() }
             </span>
             <span className="text-xs text-blue-900 ml-1">ETB / Day</span>
           </div>
           <div>
-           
-           
-            <span className="font-medium text-sm">{product.ownerName}</span>
+             <div className="mb-3">
+               <span className="font-medium text-sm">{product.ownerName}</span>
+              <span className="font-medium text-sm">{product.ownerName}</span>
+            </div>
+          
           </div>
 
           <div className="flex gap-2">

@@ -83,8 +83,17 @@ export function Header() {
   ];
 
   const handleSearch = () => {
-    if (!inputValue.trim()) return;
-    router.push(`/search?query=${encodeURIComponent(inputValue)}&location=${selectedLocation}`);
+    const trimmedQuery = inputValue.trim();
+    if (!trimmedQuery) return;
+
+    const params = new URLSearchParams();
+    params.set("query", trimmedQuery);
+    if (selectedLocation) {
+      params.set("location", selectedLocation);
+    }
+
+    const queryString = params.toString();
+    router.push(`/search${queryString ? `?${queryString}` : ""}`);
   };
 
   return (

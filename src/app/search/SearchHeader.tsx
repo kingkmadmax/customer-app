@@ -61,7 +61,8 @@ export default function SearchHeader() {
       else params.delete("rating");
     }
 
-    router.push(`${pathname}?${params.toString()}`);
+    const queryString = params.toString();
+    router.push(`${pathname}${queryString ? `?${queryString}` : ""}`);
   };
 
   const handleSearch = () => {

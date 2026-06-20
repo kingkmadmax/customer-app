@@ -26,8 +26,22 @@ export default function SearchPage() {
 
         const data = await res.json();
 
-        // 3. Format data to match your Frontend 'Product' Type
-        const formatted: Product[] = data.map((item: any) => ({
+        // 3. Handle different response formats from backend
+        let productsArray: any[] = [];
+        if (Array.isArray(data)) {
+          productsArray = data;
+        } else if (data && Array.isArray(data.data)) {
+          productsArray = data.data;
+        } else if (data && Array.isArray(data.content)) {
+          productsArray = data.content;
+        } else if (data && Array.isArray(data.products)) {
+          productsArray = data.products;
+        } else {
+          throw new Error("Backend response is not in expected format");
+        }
+
+        // 4. Format data to match your Frontend 'Product' Type
+        const formatted: Product[] = productsArray.map((item: any) => ({
           ...item,
           // Ensure image is always an array if your Card expects an array
           // or just use item.imageUrl if you updated Card to use a string
@@ -55,9 +69,17 @@ export default function SearchPage() {
   const minRating = params.get("rating") ? parseInt(params.get("rating")!) : null;
 
   const filteredProducts = products.filter((product) => {
-    const matchesQuery = !query || product.name.toLowerCase().includes(query);
-    const matchesCategory = category === "All Categories" || product.category === category;
-    const matchesLocation = !location || product.location?.toLowerCase() === location.toLowerCase();
+    const matchesQuery = !query || [
+      product.name,
+      product.description,
+      product.category,
+      product.ownerName,
+      product.Situation,
+      product.status,
+    ].some((field) => field?.toLowerCase().includes(query));
+
+    const matchesCategory = category === "All Categories" || !category || product.category === category;
+    const matchesLocation = !location || location === "Select Location" || product.location?.toLowerCase() === location.toLowerCase();
     const matchesRating = !minRating || (product.rating || 0) >= minRating;
 
     return matchesQuery && matchesCategory && matchesLocation && matchesRating;

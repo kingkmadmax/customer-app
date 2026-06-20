@@ -62,7 +62,7 @@ export default function Content() {
         setProducts(formattedProducts);
         setTotalPages(totalPagesCount); 
       } catch (err) {
-        console.error(err);
+        console.error(err);+
         setError("Failed to load products. Make sure backend is running.");
       } finally {
         setLoading(false);
