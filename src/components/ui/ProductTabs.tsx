@@ -21,9 +21,13 @@ interface ProductTabsProps {
 export default function ProductTabs({ product }: ProductTabsProps) {
   const [selectedTab, setSelectedTab] = useState<TabType>("detail");
   const [showReviewForm, setShowReviewForm] = useState(false);
-  const [newReview, setNewReview] = useState({ author: "", rating: 0, comment: "" });
+  const [newReview, setNewReview] = useState({
+    author: "",
+    rating: 0,
+    comment: "",
+  });
   const [hoverRating, setHoverRating] = useState(0);
-  
+
   // Real database state instead of Zustand
   const [dbReviews, setDbReviews] = useState<ReviewFromBackend[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,16 +43,20 @@ export default function ProductTabs({ product }: ProductTabsProps) {
       }
 
       try {
-        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:9090/api";
-        const response = await fetch(`${apiBaseUrl}/products/${product.id}/reviews`, {
-          cache: "no-store",
-        });
+        const apiBaseUrl =
+          process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:9090/api";
+        const response = await fetch(
+          `${apiBaseUrl}/products/${product.id}/reviews`,
+          {
+            cache: "no-store",
+          },
+        );
 
         if (!response.ok) {
           const errorBody = await response.text();
           console.warn(
             `Unable to load product reviews (${response.status} ${response.statusText}) for product ${product.id}:`,
-            errorBody || "No response body"
+            errorBody || "No response body",
           );
           return;
         }
@@ -68,23 +76,27 @@ export default function ProductTabs({ product }: ProductTabsProps) {
   // 2. Submit the comment to your Spring Boot API
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newReview.author || newReview.rating === 0 || !newReview.comment) return;
+    if (!newReview.author || newReview.rating === 0 || !newReview.comment)
+      return;
 
     setIsSubmitting(true);
 
     try {
       // Points exactly to your @PostMapping("/{productId}/reviews") Spring controller endpoint
-      const response = await fetch(`http://localhost:9090/api/products/${product.id}/reviews`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `http://localhost:9090/api/products/${product.id}/reviews`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            author: newReview.author,
+            rating: newReview.rating,
+            comment: newReview.comment,
+          }),
         },
-        body: JSON.stringify({
-          author: newReview.author,
-          rating: newReview.rating,
-          comment: newReview.comment,
-        }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Failed to save review to the database");
@@ -100,7 +112,9 @@ export default function ProductTabs({ product }: ProductTabsProps) {
       setShowReviewForm(false);
     } catch (error) {
       console.error("Error connecting to backend server:", error);
-      alert("Could not save your comment right now. Is the Spring Boot server running?");
+      alert(
+        "Could not save your comment right now. Is the Spring Boot server running?",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -113,7 +127,11 @@ export default function ProductTabs({ product }: ProductTabsProps) {
         {[
           { id: "detail", name: "Product Details", icon: Info },
           { id: "specifications", name: "Technical Specs", icon: List },
-          { id: "reviews", name: `Reviews (${dbReviews.length})`, icon: MessageSquare },
+          {
+            id: "reviews",
+            name: `Reviews (${dbReviews.length})`,
+            icon: MessageSquare,
+          },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -134,18 +152,24 @@ export default function ProductTabs({ product }: ProductTabsProps) {
       <div className="min-h-[300px] bg-white rounded-3xl p-8 border border-gray-50 shadow-sm">
         {selectedTab === "detail" && (
           <div className="max-w-3xl space-y-4 animate-in slide-in-from-bottom-2">
-            <h3 className="text-xl font-bold text-gray-900">About this product</h3>
+            <h3 className="text-xl font-bold text-gray-900">
+              About this product
+            </h3>
             <p className="text-gray-600 leading-relaxed">
               {product.description || "No detailed description provided."}
             </p>
             <div className="grid grid-cols-2 gap-4 mt-6">
               <div className="p-4 bg-gray-50 rounded-xl">
                 <p className="text-xl text-black font-bold ">Condition</p>
-                <p className="font-bold text-gray-600">{product.condition || "Mint Condition"}</p>
+                <p className="font-bold text-gray-600">
+                  {product.condition || "Mint Condition"}
+                </p>
               </div>
               <div className="p-4 bg-gray-50 rounded-xl">
                 <p className="text-xl text-black font-bold ">Location</p>
-                <p className="font-bold text-gray-600">{product.location || "Addis Ababa"}</p>
+                <p className="font-bold text-gray-600">
+                  {product.location || "Addis Ababa"}
+                </p>
               </div>
             </div>
           </div>
@@ -168,7 +192,9 @@ export default function ProductTabs({ product }: ProductTabsProps) {
                   <td className="py-4 text-green-600 font-bold">In Stock</td>
                 </tr>
                 <tr>
-                  <td className="py-4 font-bold text-black">Min Rental Period</td>
+                  <td className="py-4 font-bold text-black">
+                    Min Rental Period
+                  </td>
                   <td className="py-4 text-gray-800">1 Month</td>
                 </tr>
               </tbody>
@@ -179,7 +205,9 @@ export default function ProductTabs({ product }: ProductTabsProps) {
         {selectedTab === "reviews" && (
           <div className="animate-in slide-in-from-bottom-2 flex flex-col gap-8">
             <div className="flex justify-between items-center">
-              <h3 className="text-xl font-bold text-gray-900">User Experience</h3>
+              <h3 className="text-xl font-bold text-gray-900">
+                User Experience
+              </h3>
               <button
                 onClick={() => setShowReviewForm(!showReviewForm)}
                 className="px-6 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold"
@@ -189,7 +217,10 @@ export default function ProductTabs({ product }: ProductTabsProps) {
             </div>
 
             {showReviewForm && (
-              <form onSubmit={handleSubmitReview} className="bg-gray-50 p-6 rounded-2xl space-y-4 border border-gray-100">
+              <form
+                onSubmit={handleSubmitReview}
+                className="bg-gray-50 p-6 rounded-2xl space-y-4 border border-gray-100"
+              >
                 <div className="grid grid-cols-2 gap-4">
                   <input
                     type="text"
@@ -197,7 +228,9 @@ export default function ProductTabs({ product }: ProductTabsProps) {
                     placeholder="Your Name"
                     className="p-3 rounded-xl border border-gray-300 focus:border-gray-600 focus:outline-none"
                     value={newReview.author}
-                    onChange={(e) => setNewReview({ ...newReview, author: e.target.value })}
+                    onChange={(e) =>
+                      setNewReview({ ...newReview, author: e.target.value })
+                    }
                   />
                   <div className="flex items-center gap-2 px-3">
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -206,7 +239,9 @@ export default function ProductTabs({ product }: ProductTabsProps) {
                         className={`w-7 h-7 cursor-pointer transition-colors ${(hoverRating || newReview.rating) >= star ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
                         onMouseEnter={() => setHoverRating(star)}
                         onMouseLeave={() => setHoverRating(0)}
-                        onClick={() => setNewReview({ ...newReview, rating: star })}
+                        onClick={() =>
+                          setNewReview({ ...newReview, rating: star })
+                        }
                       />
                     ))}
                   </div>
@@ -216,9 +251,11 @@ export default function ProductTabs({ product }: ProductTabsProps) {
                   placeholder="Tell others about your rental experience..."
                   className="w-full p-3 rounded-xl border border-gray-300 focus:border-gray-600 focus:outline-none min-h-[100px]"
                   value={newReview.comment}
-                  onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                  onChange={(e) =>
+                    setNewReview({ ...newReview, comment: e.target.value })
+                  }
                 />
-                <button 
+                <button
                   disabled={isSubmitting}
                   className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-100 disabled:bg-blue-400"
                 >
@@ -230,7 +267,10 @@ export default function ProductTabs({ product }: ProductTabsProps) {
             <div className="space-y-6">
               {dbReviews.length > 0 ? (
                 dbReviews.map((review) => (
-                  <div key={review.id || review.createdAt} className="border-b border-gray-50 pb-6 last:border-0">
+                  <div
+                    key={review.id || review.createdAt}
+                    className="border-b border-gray-50 pb-6 last:border-0"
+                  >
                     <div className="flex items-center gap-2 mb-2">
                       <div className="flex">
                         {[...Array(5)].map((_, i) => (
@@ -242,13 +282,17 @@ export default function ProductTabs({ product }: ProductTabsProps) {
                       </div>
                       <span className="font-bold text-sm">{review.author}</span>
                     </div>
-                    <p className="text-gray-600 text-sm leading-relaxed">{review.comment}</p>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      {review.comment}
+                    </p>
                   </div>
                 ))
               ) : (
                 <div className="text-center py-10">
                   <MessageSquare className="w-12 h-12 text-gray-200 mx-auto mb-4" />
-                  <p className="text-gray-400 font-medium">Be the first to review this product!</p>
+                  <p className="text-gray-400 font-medium">
+                    Be the first to review this product!
+                  </p>
                 </div>
               )}
             </div>

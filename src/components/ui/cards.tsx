@@ -12,7 +12,9 @@ export default function Cards({ card = [], gap = "gap-6" }: CardsProps) {
   const toggleFavorite = useFavoriteStore((state) => state.toggleFavorite);
 
   return (
-    <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 ${gap || "gap-3 sm:gap-3"} w-full justify-items-center`}>
+    <div
+      className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 ${gap || "gap-3 sm:gap-3"} w-full justify-items-center`}
+    >
       {card.length > 0 ? (
         card.map((product) => (
           <Card
@@ -25,7 +27,9 @@ export default function Cards({ card = [], gap = "gap-6" }: CardsProps) {
           />
         ))
       ) : (
-        <p className="col-span-full text-center py-10 text-gray-500">No products available</p>
+        <p className="col-span-full text-center py-10 text-gray-500">
+          No products available
+        </p>
       )}
     </div>
   );
