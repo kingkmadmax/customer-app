@@ -6,20 +6,19 @@ import { useRouter } from "next/navigation";
 import { LoginUser } from "@/lib/auth";
 import { z } from "zod";
 
-
 const loginSchema = z.object({
   username: z.string().min(1, "Username or email is required"),
   password: z.string().min(1, "Password is required"),
 });
 
 export default function LoginPage() {
-  const [formData,setFormData]=  useState ({
-    username:'',
-    password:""
-  })  
-  const [message, setMessage] = useState ('');
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -30,49 +29,45 @@ export default function LoginPage() {
 
     if (message) setMessage("");
   };
-  const isFormInvalid =
-    !formData.username.trim() ||
-    !formData.password.trim();
+  const isFormInvalid = !formData.username.trim() || !formData.password.trim();
 
-      const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-    
-        if (isFormInvalid) {
-          setMessage("❌ Please fill in all fields.");
-          
-          return;
-          
-        }
-    
-        try {
-          setLoading(true);
-          setMessage("");
-    
-          const data = new FormData();
-          data.append("username", formData.username);
-          data.append("password", formData.password);
-          const result = await LoginUser(data);
-    
-          if (result.success) {
-            setMessage("✅ Account created successfully!");
-             router.push("/")
-    
-            setFormData({
-              username: "",
-              password: "",
-            });
-          } else {
-            setMessage(`❌ ${result.error}`);
-          }
-        } catch (error) {
-          setMessage("❌ Something went wrong.");
-        } finally {
-          setLoading(false);
-        }
-      };
-    
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (isFormInvalid) {
+      setMessage("❌ Please fill in all fields.");
+
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setMessage("");
+
+      const data = new FormData();
+      data.append("username", formData.username);
+      data.append("password", formData.password);
+      const result = await LoginUser(data);
+
+      if (result.success) {
+        setMessage("✅ Account created successfully!");
+        router.push("/");
+
+        setFormData({
+          username: "",
+          password: "",
+        });
+      } else {
+        setMessage(`❌ ${result.error}`);
+      }
+    } catch (error) {
+      setMessage("❌ Something w ent wrong.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const router = useRouter();
-
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-white text-black">
@@ -83,55 +78,76 @@ export default function LoginPage() {
             Login to Exclusive
           </h1>
 
-           <form onSubmit={handleSubmit} className="space-y-4">
-          
-                      <input
-                        name="username"
-                        type="text"
-                        placeholder="Username"
-                        value={formData.username}
-                        onChange={handleInputChange}
-                        className="w-full p-3 border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:outline-none"
-                      />
-          
-                     
-          
-                      <input
-                        name="password"
-                        type="password"
-                        placeholder="Password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        className="w-full p-3 border-0 border-b-2 border-gray-300 focus:border-blue-500 focus:outline-none"
-                      />
-          
-          
-                      {/* Submit */}
-                      <button
-                        type="submit"
-                        disabled={loading || isFormInvalid}
-                        className={`w-full h-11 rounded-lg font-semibold transition-all ${
-                          loading || isFormInvalid
-                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                            : "bg-blue-500 hover:bg-blue-600 text-white active:scale-95"
-                        }`}
-                      >
-                        {loading ? "Creating Account..." : "Sign Up"}
-                      </button>
-          
-                    
-                      {message && (
-                        <p
-                          className={`text-center mt-2 text-sm ${
-                            message.includes("✅")
-                              ? "text-green-500"
-                              : "text-red-500"
-                          }`}
-                        >
-                          {message}
-                        </p>
-                      )}
-                    </form>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Username or Email
+              </label>
+
+              <input
+                name="username"
+                type="text"
+                placeholder="Username"
+                value={formData.username}
+                onChange={handleInputChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+
+              <input
+                name="password"
+                type="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleInputChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition"
+              />
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading || isFormInvalid}
+              className={`w-full h-11 rounded-lg font-semibold transition-all ${
+                loading || isFormInvalid
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-600 text-white active:scale-95"
+              }`}
+            >
+              {loading ? "Creating Account..." : " Login In"}
+            </button>
+
+            {message && (
+              <p
+                className={`text-center mt-2 text-sm ${
+                  message.includes("✅") ? "text-green-500" : "text-red-500"
+                }`}
+              >
+                {message}
+              </p>
+            )}
+          </form>
+          <div className="flex flex-col sm:flex-row justify-between items-center text-sm gap-4">
+            <a
+              href="/forgot-password"
+              className="text-blue-600 hover:underline"
+            >
+              Forgot Password?
+            </a>
+            <p>
+              Don’t have an account?{" "}
+              <a
+                href="/Pages/auth/SignUp"
+                className="text-blue-600 hover:underline font-medium"
+              >
+                Sign Up
+              </a>
+            </p>
+          </div>
         </div>
 
         {/* Right Side Image */}
