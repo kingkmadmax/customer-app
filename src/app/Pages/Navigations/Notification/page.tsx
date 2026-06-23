@@ -6,11 +6,13 @@ export default function NotificationPage() {
   return (
     // MAIN CONTAINER: White background, 100vh height
     <div className="min-h-screen text-gray-900 flex flex-col items-center">
-      
       {/* 1. BREADCRUMB SECTION (Top Left) */}
       <section className="w-full max-w-7xl mx-auto px-6 py-6 border-b border-gray-100">
         <nav className="flex items-center gap-1.5 text-sm">
-          <Link href="/" className="text-gray-400 hover:text-blue-600 transition">
+          <Link
+            href="/"
+            className="text-gray-400 hover:text-blue-600 transition"
+          >
             Home
           </Link>
           <span className="text-gray-300">/</span>
@@ -22,15 +24,13 @@ export default function NotificationPage() {
       <main className="w-full max-w-5xl mx-auto px-6 pt-12 pb-24 flex-grow">
         <div className="flex flex-col gap-6">
           {notifications.map((notif) => (
-            
             // INDIVIDUAL NOTIFICATION ITEM (Row)
-            <div 
-              key={notif.id} 
+            <div
+              key={notif.id}
               className="flex justify-between gap-6 hover:bg-gray-50 p-2 rounded-xl transition group"
             >
               {/* LEFT GROUP: Image + Content */}
               <div className="flex gap-4 items-start">
-                
                 {/* IMAGE CONTAINER with Badge */}
                 <div className="relative flex-shrink-0 w-12 h-12">
                   <Image
@@ -71,7 +71,7 @@ export default function NotificationPage() {
 
       {/* 3. FOOTER BUTTON (Centered) */}
       <footer className="w-full max-w-7xl mx-auto pb-16 flex justify-center mt-auto">
-        <Link 
+        <Link
           href="/"
           className="bg-[#0084FF] text-white px-10 py-4 rounded-xl font-medium text-base hover:bg-blue-700 transition transform active:scale-95 shadow-md shadow-blue-100"
         >

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Image from "next/image";
 import { FaGoogle } from "react-icons/fa";
@@ -7,7 +7,7 @@ import { useState } from "react";
 import { registerUser } from "@/app/Pages/auth/SignUp/actions";
 
 export default function RegisterPage() {
-   const router = useRouter(); 
+  const router = useRouter();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -45,9 +45,8 @@ export default function RegisterPage() {
 
     if (isFormInvalid) {
       setMessage("❌ Please fill in all fields.");
-      
+
       return;
-      
     }
 
     try {
@@ -65,7 +64,7 @@ export default function RegisterPage() {
 
       if (result.success) {
         setMessage("✅ Account created successfully!");
-         router.push("/Pages/auth/LogIn")
+        router.push("/Pages/auth/LogIn");
 
         setFormData({
           username: "",
@@ -87,7 +86,6 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen  items-center justify-center  text-black ">
       <main className="flex flex-row items-stretch justify-center min-h-screen w-full max-w-7xl py-20 px-10 bg-white gap-10">
-
         {/* Left Side */}
         <div className=" rounded-xl flex-1 flex items-center justify-center overflow-hidden">
           <Image
@@ -102,7 +100,6 @@ export default function RegisterPage() {
 
         {/* Right Side */}
         <div className="border border-gray-300 p-8 rounded-xl flex-1 flex flex-col justify-center max-w-md w-full shadow-lg bg-white">
-
           <h1 className="text-3xl font-bold text-center text-black mb-2">
             Create an Account
           </h1>
@@ -112,7 +109,6 @@ export default function RegisterPage() {
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-
             <input
               name="username"
               type="text"
@@ -181,9 +177,7 @@ export default function RegisterPage() {
             {message && (
               <p
                 className={`text-center mt-2 text-sm ${
-                  message.includes("✅")
-                    ? "text-green-500"
-                    : "text-red-500"
+                  message.includes("✅") ? "text-green-500" : "text-red-500"
                 }`}
               >
                 {message}
