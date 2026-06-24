@@ -111,6 +111,9 @@ export function BiometricKYCStep({
               : "Complete"}
         </div>
       </div>
+      <div>
+     
+      </div>
 
       <canvas ref={canvasRef} className="hidden" />
 

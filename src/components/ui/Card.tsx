@@ -1,5 +1,6 @@
 "use client";
-import Avatar from "./Avatar";
+
+import { GeneratedAvatar } from "@/components/ui/genrated-avatar";
 import {
   ShoppingCart,
   Star,
@@ -172,7 +173,12 @@ export default function Card({
           </div>
           <div>
             <div className="flex items-center gap-2 mt-3">
-              <Avatar name={product.ownerName} />
+              // this is the the avatar that genrate it takes the props
+              <GeneratedAvatar
+                seed={product.ownerName}
+                variant="initials"
+                className="size-5"
+              />
               <span className="font-medium text-sm text-gray-700">
                 {product.ownerName}
               </span>

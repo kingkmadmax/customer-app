@@ -26,10 +26,11 @@ export default function Content() {
         setError(null);
 
         // Include category filtering directly in the API request if it's not "All"
-        const categoryParam = filter !== "All" ? `&category=${encodeURIComponent(filter)}` : "";
-        
+        const categoryParam =
+          filter !== "All" ? `&category=${encodeURIComponent(filter)}` : "";
+
         const response = await fetch(
-          `http://localhost:9090/api/products/all?page=${currentPage - 1}&size=${itemsPerPage}${categoryParam}`
+          `http://localhost:9090/api/products/all?page=${currentPage - 1}&size=${itemsPerPage}${categoryParam}`,
         );
 
         if (!response.ok) throw new Error("Failed to fetch products");
@@ -37,7 +38,8 @@ export default function Content() {
         const data = await response.json();
 
         // Handle Spring's PagedModel structure or standard Page structure safely
-        const content = data.content || (data._embedded ? data._embedded.rentalProducts : []);
+        const content =
+          data.content || (data._embedded ? data._embedded.rentalProducts : []);
         const totalPagesCount = data.page?.totalPages ?? data.totalPages ?? 1;
 
         if (!content) throw new Error("Unexpected API response structure");
@@ -56,26 +58,26 @@ export default function Content() {
           averageRating: Number(item.averageRating) || 0,
           rating: Number(item.averageRating) || 0,
           ownerId: item.ownerId,
-          ownerName: item.ownerName
+          ownerName: item.ownerName,
         }));
 
         setProducts(formattedProducts);
-        setTotalPages(totalPagesCount); 
+        setTotalPages(totalPagesCount);
       } catch (err) {
-        console.error(err);+
-        setError("Failed to load products. Make sure backend is running.");
+        console.error(err);
+        +setError("Failed to load products. Make sure backend is running.");
       } finally {
         setLoading(false);
       }
-    }
+    } 
 
     fetchProducts();
-  }, [currentPage, filter]); 
+  }, [currentPage, filter]);
 
   const categories = ["All", "Houses", "Vehicles", "Electronics", "Condition"];
   return (
-    <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col">
-
+    // w is the main content that store all the cards
+    <div className="w-full px-4 sm:px-6 lg:px-8 flex flex-col">
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6 mt-10">
         <div>
@@ -83,7 +85,8 @@ export default function Content() {
             Featured Properties
           </h1>
           <p className="text-gray-500 text-sm md:text-base font-medium max-w-xl">
-            Browse our curated selection of premium listings across all categories.
+            Browse our curated selection of premium listings across all
+            categories.
           </p>
         </div>
         <div className="h-[2px] flex-1 bg-gray-100 mb-2 hidden md:block mx-10"></div>
@@ -114,11 +117,17 @@ export default function Content() {
 
       {/* PRODUCTS DISPLAY GRID */}
       {loading ? (
-        <div className="text-center py-24 text-xl min-h-[400px]">Loading products...</div>
+        <div className="text-center py-24 text-xl min-h-[400px]">
+          Loading products...
+        </div>
       ) : error ? (
-        <div className="text-center py-24 text-red-500 min-h-[400px]">{error}</div>
+        <div className="text-center py-24 text-red-500 min-h-[400px]">
+          {error}
+        </div>
       ) : products.length === 0 ? (
-        <div className="text-center py-24 text-gray-400 min-h-[400px]">No products found in this category.</div>
+        <div className="text-center py-24 text-gray-400 min-h-[400px]">
+          No products found in this category.
+        </div>
       ) : (
         <div className="w-full transition-all duration-500 py-10">
           <Cards card={products} gap="gap-6" />
@@ -128,7 +137,6 @@ export default function Content() {
       {/* PAGINATION (Now handles exact numbers cleanly) */}
       {!loading && !error && totalPages > 1 && (
         <div className="flex justify-center items-center gap-3 pt-12 pb-16">
-          
           {/* Prev Button */}
           <button
             disabled={currentPage === 1}
